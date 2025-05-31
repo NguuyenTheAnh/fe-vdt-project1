@@ -1,0 +1,14 @@
+/* Các style tùy chỉnh cho login-page nếu cần */
+/* Ví dụ: */
+/*
+:host ::ng-deep .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #E74C3C;
+  border-color: #E74C3C;
+}
+
+:host ::ng-deep .ant-checkbox-wrapper:hover .ant-checkbox-inner,
+:host ::ng-deep .ant-checkbox:hover .ant-checkbox-inner,
+:host ::ng-deep .ant-checkbox-input:focus + .ant-checkbox-inner {
+  border-color: #C0392B;
+}
+*/
