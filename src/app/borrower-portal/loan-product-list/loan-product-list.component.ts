@@ -7,7 +7,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 @Component({
   selector: 'app-loan-product-list',
   templateUrl: './loan-product-list.component.html',
-  styleUrls: ['./loan-product-list.component.css'],
+  styleUrls: ['./loan-product-list.component.css', './modal-fix.css'],
   animations: [
     trigger('modalAnimation', [
       transition(':enter', [
@@ -100,15 +100,18 @@ export class LoanProductListComponent implements OnInit {
   }
 
   openProductDetails(product: LoanProduct): void {
-    // Hiển thị loading
+    // First set initial product data to prevent modal flickering
     this.selectedProduct = product;
+
+    // Immediately open modal with initial data to improve perceived performance
     this.isModalOpen = true;
     document.body.style.overflow = 'hidden';
 
-    // Gọi API để lấy thông tin chi tiết
+    // Call API to load detailed product info
     this.loanService.getLoanProductById(product.id).subscribe({
       next: (response) => {
         if (response && response.data) {
+          // Update with complete data
           this.selectedProduct = response.data;
         }
       },
@@ -122,6 +125,13 @@ export class LoanProductListComponent implements OnInit {
     this.isModalOpen = false;
     // Re-enable body scrolling
     document.body.style.overflow = 'auto';
+    // Add a small delay before clearing the selected product
+    setTimeout(() => {
+      if (!this.isModalOpen) {
+        // Only clear if modal is still closed (prevents flickering if reopened quickly)
+        this.selectedProduct = null;
+      }
+    }, 200); // Match the animation out duration
   }
 
   applyForLoan(product: LoanProduct): void {
@@ -143,9 +153,13 @@ export class LoanProductListComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
-    const modalElement = document.querySelector('.bg-white');
-    if (this.isModalOpen && modalElement && !modalElement.contains(event.target as Node)) {
-      this.closeModal();
+    // Check if click was on the modal overlay (the semi-transparent background)
+    // But not on the modal content itself (which would have stopped propagation)
+    if (this.isModalOpen && event.target instanceof Element) {
+      const isModalOverlay = event.target.classList.contains('modal-overlay');
+      if (isModalOverlay) {
+        this.closeModal();
+      }
     }
   }
 }

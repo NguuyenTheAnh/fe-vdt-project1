@@ -40,16 +40,17 @@
 
 .modal-overlay {
     animation: fadeIn 0.3s ease-out;
+    z-index: 9000 !important;
 }
 
 .modal-container {
     animation: scaleIn 0.3s ease-out;
+    z-index: 9100 !important;
 }
 
 /* Accessibility focus styles */
 button:focus,
 a:focus {
-    outline: 2px solid #E74C3C;
     outline-offset: 2px;
 }
 

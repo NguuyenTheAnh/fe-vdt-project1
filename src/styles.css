@@ -20,6 +20,16 @@
     /* More padding */
 }
 
+/* Ensure modals display correctly across the app */
+.fixed.inset-0.bg-black.bg-opacity-50 {
+    z-index: 8000 !important;
+}
+
+/* Ensure modal content sits above the overlay */
+.fixed.inset-0 .bg-white {
+    z-index: 8100 !important;
+}
+
 .ant-notification-top .ant-notification-notice {
     margin-top: 16px !important;
     /* Spacing from top of screen */
