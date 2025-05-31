@@ -22,17 +22,28 @@ import { trigger, transition, style, animate } from '@angular/animations';
 })
 export class LoanProductListComponent implements OnInit {
   loanProducts: LoanProduct[] = [];
+  filteredProducts: LoanProduct[] = []; // For search/filter results
   isLoading: boolean = true;
   error: string | null = null;
   selectedProduct: LoanProduct | null = null;
   isModalOpen: boolean = false;
   isLoggedIn: boolean = false;
 
+  // Search and filter properties
+  searchTerm: string = '';
+  interestRateRange: [number, number] = [0, 30]; // Default interest rate range
+  amountRange: [number, number] = [0, 1000000000]; // Default amount range in VND
+  termRange: [number, number] = [1, 60]; // Default term range in months
+
   // Pagination properties
   currentPage: number = 0;
   pageSize: number = 6;
   totalPages: number = 0;
   totalElements: number = 0;
+
+  // Sorting
+  sortField: string = 'id';
+  sortDirection: string = 'desc';
 
   constructor(
     private loanService: LoanService,
@@ -49,16 +60,24 @@ export class LoanProductListComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    this.loanService.getLoanProducts(this.currentPage, this.pageSize).subscribe({
+    const sortParam = `${this.sortField},${this.sortDirection}`;
+
+    this.loanService.getLoanProducts(this.currentPage, this.pageSize, sortParam).subscribe({
       next: (response) => {
         if (response && response.data) {
           this.loanProducts = response.data.content;
+          this.filteredProducts = [...this.loanProducts]; // Initialize filtered products
+
           // Cập nhật thông tin phân trang
           this.totalPages = response.data.totalPages;
           this.totalElements = response.data.totalElements;
           this.currentPage = response.data.number;
+
+          // Apply any current filters
+          this.applyFilters();
         } else {
           this.loanProducts = [];
+          this.filteredProducts = [];
         }
         this.isLoading = false;
       },
@@ -68,6 +87,68 @@ export class LoanProductListComponent implements OnInit {
         console.error('Error loading loan products:', err);
       }
     });
+  }
+
+  // Apply search and filters
+  applyFilters(): void {
+    if (!this.loanProducts.length) return;
+
+    let filtered = [...this.loanProducts];
+
+    // Apply search term filter
+    if (this.searchTerm.trim()) {
+      const term = this.searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(term) ||
+        product.description.toLowerCase().includes(term)
+      );
+    }
+
+    // Apply interest rate filter
+    filtered = filtered.filter(product =>
+      product.interestRate >= this.interestRateRange[0] &&
+      product.interestRate <= this.interestRateRange[1]
+    );
+
+    // Apply amount filter (min amount must be less than or equal to the max filter, or max amount must be greater than or equal to min filter)
+    filtered = filtered.filter(product =>
+      (product.minAmount <= this.amountRange[1] && product.maxAmount >= this.amountRange[0])
+    );
+
+    // Apply term filter
+    filtered = filtered.filter(product =>
+      (product.minTerm <= this.termRange[1] && product.maxTerm >= this.termRange[0])
+    );
+
+    this.filteredProducts = filtered;
+  }
+
+  // Search method
+  onSearch(): void {
+    this.applyFilters();
+  }
+
+  // Reset all filters
+  resetFilters(): void {
+    this.searchTerm = '';
+    this.interestRateRange = [0, 30];
+    this.amountRange = [0, 1000000000];
+    this.termRange = [1, 60];
+    this.filteredProducts = [...this.loanProducts];
+  }
+
+  // Sort products
+  sortProducts(field: string): void {
+    if (this.sortField === field) {
+      // Toggle direction if same field
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDirection = 'asc'; // Default to ascending for new field
+    }
+
+    this.currentPage = 0; // Reset to first page when sorting
+    this.loadLoanProducts();
   }
 
   formatCurrency(amount: number): string {
@@ -84,6 +165,18 @@ export class LoanProductListComponent implements OnInit {
       this.currentPage = page;
       this.loadLoanProducts();
     }
+  }
+
+  // For NG-Zorro pagination
+  onPageIndexChange(index: number): void {
+    // NG-Zorro pagination is 1-based, but our API is 0-based
+    this.goToPage(index - 1);
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 0; // Reset to first page when changing page size
+    this.loadLoanProducts();
   }
 
   // Lấy mảng các số trang để hiển thị trong phân trang

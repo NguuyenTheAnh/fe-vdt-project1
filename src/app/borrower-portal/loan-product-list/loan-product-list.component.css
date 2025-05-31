@@ -7,12 +7,121 @@
     transform: translateY(-5px);
 }
 
+/* Enhanced custom pagination styling */
+:host ::ng-deep .custom-pagination .ant-pagination-item-active {
+    border-color: #E74C3C;
+    background-color: #E74C3C;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.25);
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-item-active a {
+    color: white;
+    font-weight: 600;
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-item {
+    border-radius: 6px;
+    transition: all 0.3s;
+    margin: 0 4px;
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-item:hover {
+    border-color: #E74C3C;
+    transform: translateY(-1px);
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-item:hover a {
+    color: #E74C3C;
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-prev .ant-pagination-item-link,
+:host ::ng-deep .custom-pagination .ant-pagination-next .ant-pagination-item-link {
+    border-radius: 6px;
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-prev:hover .ant-pagination-item-link,
+:host ::ng-deep .custom-pagination .ant-pagination-next:hover .ant-pagination-item-link {
+    border-color: #E74C3C;
+    color: #E74C3C;
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-jump-prev:hover .ant-pagination-item-container .ant-pagination-item-link-icon,
+:host ::ng-deep .custom-pagination .ant-pagination-jump-next:hover .ant-pagination-item-container .ant-pagination-item-link-icon {
+    color: #E74C3C;
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-options .ant-select:hover .ant-select-selector,
+:host ::ng-deep .custom-pagination .ant-pagination-options .ant-select-focused .ant-select-selector {
+    border-color: #E74C3C;
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-options .ant-select-item-option-selected {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #E74C3C;
+}
+
+:host ::ng-deep .custom-pagination .ant-pagination-options-quick-jumper input:hover,
+:host ::ng-deep .custom-pagination .ant-pagination-options-quick-jumper input:focus {
+    border-color: #E74C3C;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+/* Enhanced slider styling */
+:host ::ng-deep .ant-slider-track {
+    background-color: #E74C3C;
+    height: 4px;
+}
+
+:host ::ng-deep .ant-slider-rail {
+    height: 4px;
+    background-color: #e4e4e4;
+}
+
+:host ::ng-deep .ant-slider-handle {
+    width: 16px;
+    height: 16px;
+    border-color: #E74C3C;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+    margin-top: -6px;
+}
+
+:host ::ng-deep .custom-slider .ant-slider-handle {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+:host ::ng-deep .custom-slider .ant-slider-handle:hover {
+    transform: scale(1.2);
+}
+
+:host ::ng-deep .ant-slider:hover .ant-slider-track {
+    background-color: #C0392B;
+}
+
+:host ::ng-deep .ant-slider-handle:focus {
+    box-shadow: 0 0 0 5px rgba(231, 76, 60, 0.12);
+}
+
+/* Dropdown menu enhancements */
+:host ::ng-deep .ant-dropdown-menu {
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    padding: 8px;
+}
+
+:host ::ng-deep .ant-dropdown-menu-item:hover {
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
 /* Line clamp for description */
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Modal animation */
@@ -52,6 +161,63 @@
 button:focus,
 a:focus {
     outline-offset: 2px;
+}
+
+/* Enhanced input field styling */
+input[type="text"] {
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Filter button hover effect */
+button.filter-btn {
+    transition: all 0.3s ease;
+}
+
+button.filter-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Tag/badge styles for filter items */
+.filter-tag {
+    transition: all 0.2s ease;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.filter-tag:hover {
+    background-color: #f3f4f6;
+}
+
+/* Add a subtle pulse animation to search icon when focused */
+.search-focused .search-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+}
+
+/* Enhance the card styles */
+.loan-card {
+    transition: all 0.3s ease;
+}
+
+.loan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
 }
 
 /* Custom scrollbar for modal */

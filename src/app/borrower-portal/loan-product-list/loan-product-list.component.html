@@ -6,6 +6,171 @@
         </p>
     </div>
 
+    <!-- Search and Filters Section -->
+    <div class="bg-gradient-to-r from-white to-gray-50 rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
+            <!-- Search Bar with Enhanced Design -->
+            <div class="w-full md:w-1/2 lg:w-2/5 mb-4 md:mb-0">
+                <div class="relative group">
+                    <input type="text" [(ngModel)]="searchTerm" placeholder="Tìm kiếm theo tên khoản vay, mô tả..."
+                        (keyup.enter)="onSearch()"
+                        class="w-full pl-12 pr-10 py-3 border-2 border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E74C3C]/30 focus:border-[#E74C3C] transition-all duration-300 shadow-sm hover:shadow-md" />
+                    <span
+                        class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 transition-colors group-hover:text-[#E74C3C]">
+                        <i nz-icon nzType="search" nzTheme="outline" class="text-lg"></i>
+                    </span>
+                    <button *ngIf="searchTerm" (click)="searchTerm = ''; onSearch()"
+                        class="absolute right-4 border-none rounded-full bg-white top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#E74C3C] transition-colors">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" class="text-lg"></i>
+                    </button>
+                </div>
+                <div class="text-xs text-gray-500 mt-1 pl-2">
+                    Nhập từ khóa và nhấn Enter để tìm kiếm
+                </div>
+            </div>
+
+            <!-- Enhanced Filter Buttons -->
+            <div class="flex flex-wrap gap-3">
+                <button
+                    class="px-5 py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-lg hover:border-[#E74C3C] hover:text-[#E74C3C] flex items-center shadow-sm hover:shadow-md transition-all duration-300"
+                    nz-dropdown [nzDropdownMenu]="filterMenu" nzTrigger="click" nzPlacement="bottomRight">
+                    <i nz-icon nzType="filter" nzTheme="outline" class="mr-2 text-lg"></i>
+                    Bộ lọc nâng cao
+                </button>
+
+                <button
+                    class="px-5 py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-lg hover:border-[#E74C3C] hover:text-[#E74C3C] flex items-center shadow-sm hover:shadow-md transition-all duration-300"
+                    (click)="sortProducts('interestRate')">
+                    <i nz-icon
+                        [nzType]="sortField === 'interestRate' ? (sortDirection === 'asc' ? 'arrow-up' : 'arrow-down') : 'swap'"
+                        nzTheme="outline" class="mr-2 text-lg"></i>
+                    Sắp xếp lãi suất
+                </button>
+
+                <button
+                    class="px-5 py-3 border-2 border-gray-200 text-white bg-[#E74C3C] rounded-lg hover:bg-[#C0392B] flex items-center shadow-sm hover:shadow-md transition-all duration-300"
+                    (click)="onSearch()">
+                    <i nz-icon nzType="search" nzTheme="outline" class="mr-2 text-lg"></i>
+                    Tìm kiếm
+                </button>
+            </div>
+
+            <!-- Filter Dropdown Menu -->
+            <nz-dropdown-menu #filterMenu="nzDropdownMenu">
+                <div class="bg-white rounded-xl shadow-xl p-6 w-80 border border-gray-100">
+                    <div class="flex items-center justify-between mb-5">
+                        <h4 class="text-xl font-semibold text-gray-800">Bộ lọc tìm kiếm</h4>
+                        <i nz-icon nzType="filter" nzTheme="outline" class="text-[#E74C3C] text-lg"></i>
+                    </div>
+
+                    <!-- Interest Rate Filter -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-medium text-gray-700">Lãi suất (%/năm)</label>
+                            <span class="text-xs px-2 py-0.5 bg-gray-100 rounded-md text-[#E74C3C] font-medium">
+                                {{interestRateRange[0]}}% - {{interestRateRange[1]}}%
+                            </span>
+                        </div>
+                        <nz-slider nzRange [(ngModel)]="interestRateRange" [nzMin]="0" [nzMax]="30" [nzStep]="0.5"
+                            class="custom-slider"></nz-slider>
+                    </div>
+
+                    <!-- Loan Amount Filter -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-medium text-gray-700">Khoản vay</label>
+                            <span class="text-xs px-2 py-0.5 bg-gray-100 rounded-md text-gray-600 font-medium">
+                                {{formatCurrency(amountRange[0])}} - {{formatCurrency(amountRange[1])}}
+                            </span>
+                        </div>
+                        <nz-slider nzRange [(ngModel)]="amountRange" [nzMin]="0" [nzMax]="1000000000"
+                            [nzStep]="10000000" class="custom-slider"></nz-slider>
+                    </div>
+
+                    <!-- Term Filter -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-medium text-gray-700">Thời hạn (tháng)</label>
+                            <span class="text-xs px-2 py-0.5 bg-gray-100 rounded-md text-gray-600 font-medium">
+                                {{termRange[0]}} - {{termRange[1]}} tháng
+                            </span>
+                        </div>
+                        <nz-slider nzRange [(ngModel)]="termRange" [nzMin]="1" [nzMax]="60" [nzStep]="1"
+                            class="custom-slider"></nz-slider>
+                    </div>
+
+                    <div class="flex justify-between mt-8">
+                        <button
+                            class="px-4 py-2 rounded-md border-gray-100 text-gray-600 hover:text-gray-800 flex items-center transition-colors"
+                            (click)="resetFilters()">
+                            <i nz-icon nzType="reload" nzTheme="outline" class="mr-1"></i>
+                            Đặt lại
+                        </button>
+                        <button
+                            class="px-4 py-2 border-gray-100 text-white bg-[#E74C3C] rounded-lg hover:bg-[#C0392B] flex items-center shadow-sm hover:shadow-md transition-all"
+                            (click)="onSearch()">
+                            <i nz-icon nzType="check" nzTheme="outline" class="mr-1"></i>
+                            Áp dụng
+                        </button>
+                    </div>
+                </div>
+            </nz-dropdown-menu>
+        </div>
+
+        <!-- Active Filters Display -->
+        <div *ngIf="searchTerm || interestRateRange[0] > 0 || interestRateRange[1] < 30 || amountRange[0] > 0 || amountRange[1] < 1000000000 || termRange[0] > 1 || termRange[1] < 60"
+            class="flex flex-wrap items-center mt-4 text-sm">
+            <span class="mr-3 text-gray-700 font-medium">Bộ lọc đang áp dụng:</span>
+
+            <div *ngIf="searchTerm"
+                class="bg-gray-100 rounded-full px-3 py-1.5 mr-2 mb-2 flex items-center hover:bg-gray-200 transition-colors duration-200 border border-gray-200">
+                <span class="mr-1 text-gray-700">Từ khóa: <span class="font-medium">{{searchTerm}}</span></span>
+                <button class="text-gray-400 border-none bg-gray hover:text-[#E74C3C] ml-2 flex items-center"
+                    (click)="searchTerm = ''; onSearch()">
+                    <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+                </button>
+            </div>
+
+            <div *ngIf="interestRateRange[0] > 0 || interestRateRange[1] < 30"
+                class="bg-gray-100 rounded-full px-3 py-1.5 mr-2 mb-2 flex items-center hover:bg-gray-200 transition-colors duration-200 border border-gray-200">
+                <span class="text-gray-700">Lãi suất: <span class="font-medium">{{interestRateRange[0]}}% -
+                        {{interestRateRange[1]}}%</span></span>
+                <button class="text-gray-400 hover:text-[#E74C3C] ml-2 flex items-center"
+                    (click)="interestRateRange = [0, 30]; onSearch()">
+                    <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+                </button>
+            </div>
+
+            <div *ngIf="amountRange[0] > 0 || amountRange[1] < 1000000000"
+                class="bg-gray-100 rounded-full px-3 py-1.5 mr-2 mb-2 flex items-center hover:bg-gray-200 transition-colors duration-200 border border-gray-200">
+                <span class="text-gray-700">Khoản vay: <span class="font-medium">{{formatCurrency(amountRange[0])}} -
+                        {{formatCurrency(amountRange[1])}}</span></span>
+                <button class="text-gray-400 hover:text-[#E74C3C] ml-2 flex items-center"
+                    (click)="amountRange = [0, 1000000000]; onSearch()">
+                    <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+                </button>
+            </div>
+
+            <div *ngIf="termRange[0] > 1 || termRange[1] < 60"
+                class="bg-gray-100 rounded-full px-3 py-1.5 mr-2 mb-2 flex items-center hover:bg-gray-200 transition-colors duration-200 border border-gray-200">
+                <span class="text-gray-700">Thời hạn: <span class="font-medium">{{termRange[0]}} - {{termRange[1]}}
+                        tháng</span></span>
+                <button class="text-gray-400 hover:text-[#E74C3C] ml-2 flex items-center"
+                    (click)="termRange = [1, 60]; onSearch()">
+                    <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+                </button>
+            </div>
+
+            <button
+                *ngIf="searchTerm || interestRateRange[0] > 0 || interestRateRange[1] < 30 || amountRange[0] > 0 || amountRange[1] < 1000000000 || termRange[0] > 1 || termRange[1] < 60"
+                class="text-[#E74C3C] border-none rounded-2xl p-1.5 hover:text-[#C0392B] font-medium flex items-center ml-1 mb-2"
+                (click)="resetFilters(); onSearch()">
+                <i nz-icon nzType="delete" nzTheme="outline" class="mr-1"></i>
+                Xóa tất cả bộ lọc
+            </button>
+        </div>
+    </div>
+
     <!-- Loading State -->
     <div *ngIf="isLoading" class="flex justify-center items-center py-16">
         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E74C3C]"></div>
@@ -24,10 +189,10 @@
     </div>
 
     <!-- Loan Products Grid -->
-    <div *ngIf="!isLoading && !error && loanProducts.length > 0"
+    <div *ngIf="!isLoading && !error && filteredProducts.length > 0"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Loan Product Card -->
-        <div *ngFor="let product of loanProducts"
+        <div *ngFor="let product of filteredProducts"
             class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer">
             <div class="p-6">
                 <h2 class="text-xl font-bold mb-2 text-gray-800">{{ product.name }}</h2>
@@ -59,7 +224,23 @@
         </div>
     </div>
 
-    <!-- Empty State -->
+    <!-- Empty State for Filtered Results -->
+    <div *ngIf="!isLoading && !error && loanProducts.length > 0 && filteredProducts.length === 0"
+        class="text-center py-16">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h3 class="text-xl font-medium text-gray-600 mb-2">Không tìm thấy khoản vay phù hợp</h3>
+        <p class="text-gray-500">Không có khoản vay nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
+        <button (click)="resetFilters(); onSearch();"
+            class="mt-4 px-6 py-2 bg-[#E74C3C] text-white rounded-md hover:bg-[#C0392B]">
+            Đặt lại bộ lọc
+        </button>
+    </div>
+
+    <!-- Empty State for No Products -->
     <div *ngIf="!isLoading && !error && loanProducts.length === 0" class="text-center py-16">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none"
             viewBox="0 0 24 24" stroke="currentColor">
@@ -70,35 +251,62 @@
         <p class="text-gray-500">Hiện tại chưa có khoản vay nào được cung cấp.</p>
     </div>
 
-    <!-- Pagination -->
-    <div *ngIf="!isLoading && !error && loanProducts.length > 0 && totalPages > 1" class="mt-10 flex justify-center">
-        <nav class="flex items-center">
-            <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0"
-                [ngClass]="{'cursor-not-allowed opacity-50': currentPage === 0}"
-                class="flex items-center justify-center px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 bg-white border rounded-md hover:bg-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                        clip-rule="evenodd" />
-                </svg>
-            </button>
+    <!-- Results Summary and Pagination -->
+    <div *ngIf="!isLoading && !error && loanProducts.length > 0" class="mt-8">
+        <!-- Results Summary with Enhanced Styling -->
+        <div
+            class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+            <p class="text-gray-700 mb-3 md:mb-0 flex items-center">
+                <i nz-icon nzType="info-circle" nzTheme="fill" class="text-[#E74C3C] mr-2"></i>
+                Hiển thị <span class="font-semibold mx-1">{{filteredProducts.length}}</span> khoản vay
+                <span *ngIf="loanProducts.length !== filteredProducts.length" class="ml-1">
+                    (lọc từ <span class="font-semibold">{{loanProducts.length}}</span> khoản vay)
+                </span>
+            </p>
 
-            <button *ngFor="let page of pages" (click)="goToPage(page)"
-                class="px-4 py-2 mx-1 transition-colors duration-300 border rounded-md hover:bg-gray-100"
-                [ngClass]="{'bg-[#E74C3C] text-white hover:bg-[#C0392B]': currentPage === page, 'text-gray-700 bg-white': currentPage !== page}">
-                {{ page + 1 }}
-            </button>
+            <div class="flex items-center bg-gray-50 rounded-lg border border-gray-200 px-3 py-1.5">
+                <span class="text-gray-700 mr-2 font-medium">Hiển thị:</span>
+                <select [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)"
+                    class="bg-transparent border-none focus:outline-none text-[#E74C3C] font-medium">
+                    <option [value]="6">6</option>
+                    <option [value]="12">12</option>
+                    <option [value]="24">24</option>
+                    <option [value]="48">48</option>
+                </select>
+                <span class="text-gray-700 ml-1">khoản vay</span>
+            </div>
+        </div>
 
-            <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1"
-                [ngClass]="{'cursor-not-allowed opacity-50': currentPage === totalPages - 1}"
-                class="flex items-center justify-center px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 bg-white border rounded-md hover:bg-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd" />
-                </svg>
-            </button>
-        </nav>
+        <!-- NG-Zorro Pagination with Enhanced Styling -->
+        <div *ngIf="totalPages > 1" class="flex justify-center mt-8 mb-6">
+            <nz-pagination [nzPageIndex]="currentPage + 1" [nzTotal]="totalElements" [nzPageSize]="pageSize"
+                (nzPageIndexChange)="onPageIndexChange($event)" nzShowQuickJumper nzShowSizeChanger
+                [nzPageSizeOptions]="[6, 12, 24, 48]" (nzPageSizeChange)="onPageSizeChange($event)"
+                class="custom-pagination"></nz-pagination>
+        </div>
+
+        <!-- Enhanced Mobile Pagination -->
+        <div *ngIf="totalPages > 1" class="flex justify-center mt-6 md:hidden">
+            <div class="flex items-center bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0"
+                    class="flex items-center justify-center w-12 h-12 border-r border-gray-200 transition-colors"
+                    [ngClass]="currentPage === 0 ? 'text-gray-300 bg-gray-50' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
+                    <i nz-icon nzType="left" nzTheme="outline" class="text-lg"></i>
+                </button>
+
+                <div class="px-4 py-2 font-medium text-gray-800 flex items-center">
+                    <span class="text-[#E74C3C]">{{currentPage + 1}}</span>
+                    <span class="mx-1">/</span>
+                    <span>{{totalPages}}</span>
+                </div>
+
+                <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1"
+                    class="flex items-center justify-center w-12 h-12 border-l border-gray-200 transition-colors"
+                    [ngClass]="currentPage === totalPages - 1 ? 'text-gray-300 bg-gray-50' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
+                    <i nz-icon nzType="right" nzTheme="outline" class="text-lg"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Product Details Modal -->

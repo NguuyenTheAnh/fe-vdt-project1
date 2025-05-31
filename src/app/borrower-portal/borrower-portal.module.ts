@@ -19,6 +19,10 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzSliderModule } from 'ng-zorro-antd/slider';
 
 @NgModule({
     declarations: [
@@ -38,11 +42,14 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
         NzButtonModule,
         NzFormModule,
         NzInputModule,
-        NzSelectModule,
-        NzCardModule,
+        NzSelectModule, NzCardModule,
         NzModalModule,
         NzSpinModule,
-        NzAlertModule
+        NzAlertModule,
+        NzPaginationModule,
+        NzIconModule,
+        NzDropDownModule,
+        NzSliderModule
     ], exports: [
         LoanProductListComponent,
         LoanApplicationFormComponent,
