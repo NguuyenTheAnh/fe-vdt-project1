@@ -7,7 +7,7 @@ import {
     HttpErrorResponse
 } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, switchMap, filter, take } from 'rxjs/operators';
+import { catchError, switchMap, filter, take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { AuthService } from './auth.service';
@@ -21,38 +21,37 @@ export class ApiInterceptor implements HttpInterceptor {
         private router: Router,
         private notification: NzNotificationService,
         private injector: Injector
-    ) { }
-    intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-        // Bỏ qua các request refresh token để tránh vòng lặp vô hạn
-        if (request.url.includes('/auth/refresh')) {
-            return next.handle(request);
-        }
+    ) { } intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+        // Danh sách các URL không cần thêm token
+        const publicUrls = [
+            '/auth/login',
+            '/auth/refresh',
+            '/users'  // Đăng ký
+        ];
+
+        // Kiểm tra xem request hiện tại có thuộc danh sách public không
+        const isPublicRequest = publicUrls.some(url => request.url.includes(url));
 
         // Lấy token từ localStorage
         const token = localStorage.getItem('authToken');
 
-        // Log để debug
-        console.log(`Processing request to: ${request.url}`);
-
-        // Thêm token vào header nếu có
-        if (token) {
-            console.log(`Adding auth token to request: ${request.url}`);
+        // Bỏ qua việc thêm token cho các request public
+        if (!isPublicRequest && token) {
+            // Thêm token vào header
             request = this.addTokenToRequest(request, token);
-        } else {
-            console.warn(`No auth token available for request: ${request.url}`);
         }
 
         // Xử lý response và bắt các lỗi xác thực
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
-                // Log lỗi để debug
-                console.error(`Error ${error.status} for request ${request.url}:`, error.message);
+                // Log lỗi để debug (giảm log không cần thiết)
+                if (error.status !== 0) { // Bỏ qua lỗi mạng
+                    console.error(`Error ${error.status} for request ${request.url}`);
+                }
 
-                // Chỉ xử lý lỗi 401 nếu không phải là request đến API login hoặc register
-                if (error.status === 401 &&
-                    !request.url.includes('/auth/login') &&
-                    !request.url.includes('/users')) {
-
+                // Chỉ xử lý lỗi 401 (Unauthorized) nếu không phải là request public
+                if (error.status === 401 && !isPublicRequest) {
+                    console.log('Received 401 error, attempting to refresh token');
                     // Thử refresh token
                     return this.handleTokenRefresh(request, next);
                 }
@@ -60,9 +59,7 @@ export class ApiInterceptor implements HttpInterceptor {
                 return throwError(() => error);
             })
         );
-    }
-
-    // Hàm xử lý refresh token
+    }// Hàm xử lý refresh token
     private handleTokenRefresh(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         if (!this.isRefreshing) {
             this.isRefreshing = true;
@@ -88,12 +85,15 @@ export class ApiInterceptor implements HttpInterceptor {
                         // Lưu token mới vào localStorage
                         localStorage.setItem('authToken', newToken);
 
-                        // Cập nhật token trong thông tin người dùng
-                        const userData = authService.getCurrentUser();
-                        if (userData) {
-                            const updatedUserData = { ...userData, token: newToken };
-                            authService['userService'].updateCurrentUser(updatedUserData);
-                        }
+                        // Cập nhật token trong thông tin người dùng và đảm bảo dữ liệu profile là mới nhất
+                        authService['userService'].fetchCurrentUserProfile().subscribe({
+                            next: (userData) => {
+                                console.log('User profile refreshed after token refresh');
+                            },
+                            error: (error) => {
+                                console.error('Error refreshing user profile after token refresh:', error);
+                            }
+                        });
 
                         // Thông báo thành công
                         this.refreshTokenSubject.next(newToken);
@@ -108,7 +108,12 @@ export class ApiInterceptor implements HttpInterceptor {
                 catchError((error) => {
                     console.error('Error refreshing token:', error);
                     this.isRefreshing = false;
+                    // Xóa token và đăng xuất nếu không thể refresh
                     return this.logoutAndRedirect();
+                }),
+                // Đảm bảo isRefreshing được reset kể cả khi có lỗi không xử lý được
+                finalize(() => {
+                    this.isRefreshing = false;
                 })
             );
         } else {
@@ -130,12 +135,13 @@ export class ApiInterceptor implements HttpInterceptor {
                 Authorization: `Bearer ${token}`
             }
         });
-    }
-
-    // Hàm xử lý logout và chuyển hướng
+    }    // Hàm xử lý logout và chuyển hướng
     private logoutAndRedirect(): Observable<HttpEvent<any>> {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('currentUser');
+        // Lấy AuthService thông qua Injector để tránh circular dependency
+        const authService = this.injector.get(AuthService);
+
+        // Gọi phương thức logout chính thức qua AuthService
+        authService.logout();
 
         // Hiển thị thông báo
         this.notification.error(
@@ -144,8 +150,11 @@ export class ApiInterceptor implements HttpInterceptor {
             { nzDuration: 5000 }
         );
 
-        // Chuyển hướng về trang đăng nhập
-        this.router.navigate(['/login']);
+        // Đợi một chút trước khi chuyển hướng để đảm bảo thông báo được hiển thị
+        setTimeout(() => {
+            // Chuyển hướng về trang đăng nhập
+            this.router.navigate(['/login']);
+        }, 100);
 
         return throwError(() => new Error('Session expired'));
     }

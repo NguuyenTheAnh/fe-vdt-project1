@@ -22,6 +22,13 @@ export class AppComponent implements OnInit {
     // Khởi tạo thông tin người dùng từ localStorage trước
     this.userService.initializeFromLocalStorage();
 
+    // Theo dõi sự thay đổi router để cập nhật trạng thái header
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      // Logic xử lý khi route thay đổi có thể được thêm vào đây nếu cần
+    });
+
     // Sau đó gọi API lấy thông tin profile mới nhất nếu có token
     const authToken = localStorage.getItem('authToken');
     const storedUser = localStorage.getItem('currentUser');
@@ -34,7 +41,7 @@ export class AppComponent implements OnInit {
         console.log('Using stored user data while validating token');
       }
 
-      // Cố gắng lấy thông tin người dùng mới nhất
+      // Cố gắng lấy thông tin người dùng mới nhất và xác thực token
       this.userService.fetchCurrentUserProfile().subscribe({
         next: (userData) => {
           if (userData) {
@@ -42,7 +49,7 @@ export class AppComponent implements OnInit {
           } else {
             console.warn('Could not validate authentication, user data is null');
 
-            // Nếu không lấy được dữ liệu mới nhưng có dữ liệu cũ, giữ nguyên dữ liệu cũ
+            // Nếu không lấy được dữ liệu và không có dữ liệu cũ, xóa token
             if (!storedUser) {
               console.warn('No stored user found, removing auth token');
               localStorage.removeItem('authToken');
@@ -51,10 +58,17 @@ export class AppComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error fetching user profile:', err);
-          // Xử lý lỗi cụ thể nếu cần
-          if (err.status === 401) {
+
+          // Xử lý lỗi xác thực cụ thể
+          if (err.status === 401 || err.status === 403) {
+            console.warn('Authentication error, clearing credentials');
             localStorage.removeItem('authToken');
             this.userService.clearCurrentUser();
+
+            // Nếu không ở trang login hoặc register, chuyển hướng về trang login
+            if (!this.router.url.includes('/login') && !this.router.url.includes('/register')) {
+              this.router.navigate(['/login']);
+            }
           }
         }
       });

@@ -12,8 +12,41 @@ export interface LoanProduct {
     maxAmount: number;
     minTerm: number;
     maxTerm: number;
-    requirements: string[];
-    features: string[];
+    status: string;
+    requiredDocuments: string;
+    createdAt: string;
+    updatedAt: string;
+    requirements?: string[];
+    features?: string[];
+}
+
+export interface PageableResponse<T> {
+    content: T[];
+    pageable: {
+        pageNumber: number;
+        pageSize: number;
+        sort: {
+            sorted: boolean;
+            empty: boolean;
+            unsorted: boolean;
+        };
+        offset: number;
+        paged: boolean;
+        unpaged: boolean;
+    };
+    last: boolean;
+    totalPages: number;
+    totalElements: number;
+    first: boolean;
+    size: number;
+    number: number;
+    sort: {
+        sorted: boolean;
+        empty: boolean;
+        unsorted: boolean;
+    };
+    numberOfElements: number;
+    empty: boolean;
 }
 
 export interface LoanApplication {
@@ -34,12 +67,8 @@ export interface LoanApplication {
 })
 export class LoanService {
     constructor(private apiService: ApiService) { }
-
-    /**
-     * Lấy danh sách sản phẩm vay
-     */
-    getLoanProducts(): Observable<ApiResponse<LoanProduct[]>> {
-        return this.apiService.get<LoanProduct[]>('/loan-products');
+    getLoanProducts(page: number = 0, size: number = 10, sort: string = "id,desc"): Observable<ApiResponse<PageableResponse<LoanProduct>>> {
+        return this.apiService.get<PageableResponse<LoanProduct>>(`/loan-products?page=${page}&size=${size}&sort=${sort}`);
     }
 
     /**

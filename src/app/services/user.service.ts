@@ -13,8 +13,7 @@ export class UserService {
 
     constructor(private apiService: ApiService) { }    /**
      * Lấy thông tin profile của người dùng đang đăng nhập
-     */
-    fetchCurrentUserProfile(): Observable<UserData | null> {
+     */    fetchCurrentUserProfile(): Observable<UserData | null> {
         // Kiểm tra nếu có token thì mới gọi API
         const token = localStorage.getItem('authToken');
         const currentUser = this.currentUserSubject.value;
@@ -30,10 +29,11 @@ export class UserService {
         return this.apiService.get<UserData>('/auth/my-profile').pipe(
             tap(response => {
                 if (response && response.code === 1000 && response.data) {
-                    // Kết hợp thông tin người dùng với token
-                    const userData = {
-                        ...response.data,
-                        token: token  // Đảm bảo token được lưu cùng thông tin người dùng
+                    // Kết hợp thông tin người dùng với token và bảo toàn các trường khác nếu có
+                    const userData: UserData = {
+                        ...(currentUser || {}),  // Giữ lại các trường cũ nếu có
+                        ...response.data,        // Cập nhật từ response mới
+                        token: token             // Đảm bảo token được lưu cùng thông tin người dùng
                     };
 
                     // Cập nhật thông tin người dùng vào BehaviorSubject
@@ -42,7 +42,7 @@ export class UserService {
                     // Lưu thông tin người dùng vào localStorage
                     this.saveUserToLocalStorage(userData);
 
-                    console.log('User profile updated and saved to localStorage:', userData.fullName);
+                    console.log('User profile updated and saved to localStorage');
                 } else {
                     console.warn('Invalid user data from API:', response);
                     // Nếu API không trả về data hợp lệ nhưng vẫn có user data cũ, giữ nguyên
@@ -56,21 +56,30 @@ export class UserService {
                 }
             }),
             // Map the ApiResponse<UserData> to UserData | null
-            map(response => (response && response.code === 1000 && response.data) ? response.data : null),
+            map(response => {
+                if (response && response.code === 1000 && response.data) {
+                    return {
+                        ...(currentUser || {}),
+                        ...response.data,
+                        token: token
+                    };
+                }
+                return null;
+            }),
             catchError(error => {
                 console.error('Error fetching user profile:', error);
 
-                // Nếu lỗi 401 Unauthorized, xóa token và thông tin người dùng
-                if (error.status === 401) {
-                    console.warn('Unauthorized error (401), clearing credentials');
+                // Xử lý các lỗi xác thực
+                if (error.status === 401 || error.status === 403) {
+                    console.warn('Authentication error, clearing credentials');
                     localStorage.removeItem('authToken');
                     this.clearCurrentUser();
-                } else {
-                    // Với các lỗi khác (như lỗi mạng), giữ nguyên thông tin hiện có
-                    console.log('Network or server error, keeping existing session if available');
+                    return of(null);
                 }
 
-                return of(null);
+                // Với các lỗi khác (như lỗi mạng), giữ nguyên thông tin hiện có và trả về user hiện tại
+                console.log('Network or server error, keeping existing session if available');
+                return of(currentUser);
             })
         );
     }

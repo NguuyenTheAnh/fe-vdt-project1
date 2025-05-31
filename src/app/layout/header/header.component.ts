@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserData } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
@@ -14,19 +14,21 @@ export class HeaderComponent implements OnInit {
     isLoggedIn = false;
     showMobileMenu = false;
     showUserDropdown = false;
+    isScrolled = false;
 
     constructor(
         private userService: UserService,
         private authService: AuthService,
         private router: Router
-    ) { }
-
-    ngOnInit(): void {
+    ) { } ngOnInit(): void {
         // Subscribe để luôn cập nhật khi thông tin người dùng thay đổi
         this.userService.currentUser$.subscribe(user => {
             this.currentUser = user;
             this.isLoggedIn = !!user;
         });
+
+        // Kiểm tra vị trí cuộn ban đầu
+        this.isScrolled = window.scrollY > 30;
     }
 
     logout(): void {
@@ -58,5 +60,11 @@ export class HeaderComponent implements OnInit {
         if (dropdownBtn) {
             dropdownBtn.classList.remove('active');
         }
+    } @HostListener('window:scroll', [])
+    onWindowScroll() {
+        // Kiểm tra vị trí cuộn
+        this.isScrolled = window.scrollY > 30;
+
+        // Không cần thêm class vào body nữa vì padding được xử lý bởi main element
     }
 }

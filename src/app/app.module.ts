@@ -9,7 +9,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import vi from '@angular/common/locales/vi';
 import { NZ_I18N, vi_VN } from 'ng-zorro-antd/i18n';
+import { NZ_CONFIG, NzConfig } from 'ng-zorro-antd/core/config';
 import { ApiInterceptor } from './services/api.interceptor';
+import { BorrowerPortalModule } from './borrower-portal/borrower-portal.module';
 // Import các module của NG-ZORRO
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -61,6 +63,7 @@ registerLocaleData(vi);
     ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    BorrowerPortalModule,
     // NG-ZORRO modules
     NzButtonModule,
     NzDatePickerModule,
@@ -89,6 +92,16 @@ registerLocaleData(vi);
   ],
   providers: [
     { provide: NZ_I18N, useValue: vi_VN },
+    {
+      provide: NZ_CONFIG,
+      useValue: {
+        notification: {
+          nzTop: 24, // Khoảng cách từ trên xuống
+          nzMaxStack: 7, // Số thông báo tối đa hiển thị
+          nzZIndex: 9999 // z-index cao để hiển thị trên header
+        }
+      } as NzConfig
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ApiInterceptor,

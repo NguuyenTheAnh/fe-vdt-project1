@@ -1,1 +1,197 @@
-<p>loan-product-list works!</p>
+<div class="container mx-auto p-4 py-8">
+    <!-- Page Header -->
+    <div class="mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-semibold mb-3 text-gray-800">Các khoản vay</h1>
+        <p class="text-gray-600 max-w-2xl mx-auto">Khám phá các giải pháp tài chính đa dạng phù hợp với nhu cầu của bạn
+        </p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-16">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E74C3C]"></div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <p class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+            </svg>
+            {{ error }}
+        </p>
+    </div>
+
+    <!-- Loan Products Grid -->
+    <div *ngIf="!isLoading && !error && loanProducts.length > 0"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Loan Product Card -->
+        <div *ngFor="let product of loanProducts"
+            class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer">
+            <div class="p-6">
+                <h2 class="text-xl font-bold mb-2 text-gray-800">{{ product.name }}</h2>
+                <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ product.description }}</p>
+
+                <div class="space-y-2 mb-4">
+                    <p class="text-lg font-bold text-gray-800">
+                        Lãi suất: <span class="text-[#E74C3C]">{{ product.interestRate }}%/năm</span>
+                    </p>
+                    <p class="text-base text-gray-700">
+                        Khoản vay: {{ formatCurrency(product.minAmount) }} - {{ formatCurrency(product.maxAmount) }}
+                    </p>
+                    <p class="text-base text-gray-700">
+                        Thời hạn: {{ product.minTerm }} - {{ product.maxTerm }} tháng
+                    </p>
+                </div>
+
+                <button (click)="openProductDetails(product)"
+                    class="w-full py-3 px-4 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-md transition-colors duration-300 flex items-center justify-center border-gray-100">
+                    <span>Xem chi tiết</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !error && loanProducts.length === 0" class="text-center py-16">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="text-xl font-medium text-gray-600 mb-2">Không tìm thấy khoản vay nào</h3>
+        <p class="text-gray-500">Hiện tại chưa có khoản vay nào được cung cấp.</p>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!isLoading && !error && loanProducts.length > 0 && totalPages > 1" class="mt-10 flex justify-center">
+        <nav class="flex items-center">
+            <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0"
+                [ngClass]="{'cursor-not-allowed opacity-50': currentPage === 0}"
+                class="flex items-center justify-center px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 bg-white border rounded-md hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
+
+            <button *ngFor="let page of pages" (click)="goToPage(page)"
+                class="px-4 py-2 mx-1 transition-colors duration-300 border rounded-md hover:bg-gray-100"
+                [ngClass]="{'bg-[#E74C3C] text-white hover:bg-[#C0392B]': currentPage === page, 'text-gray-700 bg-white': currentPage !== page}">
+                {{ page + 1 }}
+            </button>
+
+            <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1"
+                [ngClass]="{'cursor-not-allowed opacity-50': currentPage === totalPages - 1}"
+                class="flex items-center justify-center px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 bg-white border rounded-md hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Product Details Modal -->
+    <div *ngIf="selectedProduct && isModalOpen"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            [@modalAnimation]="isModalOpen ? 'open' : 'closed'">
+            <!-- Modal Header with Close Button -->
+            <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800">{{ selectedProduct.name }}</h2>
+                <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6">
+                <p class="text-gray-700 mb-6">{{ selectedProduct.description }}</p>
+
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V5z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-gray-700 font-medium">Lãi suất: <span class="text-[#E74C3C] font-bold">{{
+                                selectedProduct.interestRate }}%/năm</span></span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path
+                                d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-gray-700 font-medium">Khoản vay: {{ formatCurrency(selectedProduct.minAmount)
+                            }}
+                            - {{ formatCurrency(selectedProduct.maxAmount) }}</span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-gray-700 font-medium">Thời hạn: {{ selectedProduct.minTerm }} - {{
+                            selectedProduct.maxTerm }} tháng</span>
+                    </div>
+                </div>
+
+                <!-- Requirements Section -->
+                <div *ngIf="selectedProduct.requiredDocuments" class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Yêu cầu hồ sơ</h3>
+                    <div class="text-gray-700">
+                        {{ selectedProduct.requiredDocuments }}
+                    </div>
+                </div>
+
+                <!-- Features Section - only display if features exist -->
+                <div *ngIf="selectedProduct.features && selectedProduct.features.length > 0" class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Tính năng và lợi ích</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li *ngFor="let feature of selectedProduct.features" class="text-gray-700">{{ feature }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-gray-200 flex justify-end">
+                <button (click)="closeModal()"
+                    class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md transition-colors duration-300 mr-3">
+                    Đóng
+                </button>
+                <button *ngIf="isLoggedIn && selectedProduct" (click)="applyForLoan(selectedProduct)"
+                    class="px-6 py-2 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-md transition-colors duration-300">
+                    Đăng ký vay
+                </button>
+                <button *ngIf="!isLoggedIn" routerLink="/login"
+                    class="px-6 py-2 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-md transition-colors duration-300">
+                    Đăng nhập để đăng ký
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

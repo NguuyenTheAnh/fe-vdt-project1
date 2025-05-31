@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { tap, switchMap, catchError } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { ApiService } from './api.service';
 
@@ -98,18 +98,28 @@ export class AuthService {
 
   // Logout user
   logout(): void {
-    // Có thể thêm gọi API logout nếu backend yêu cầu
-    this.apiService.post<void>('/auth/logout', { token: localStorage.getItem('authToken') }).subscribe({
-      next: () => {
-        console.log('User logged out successfully');
-        this.userService.clearCurrentUser();
-        localStorage.removeItem('authToken');
-      },
-      error: (error) => {
-        console.error('Error during logout:', error);
-        // Xử lý lỗi nếu cần, ví dụ: hiển thị thông báo lỗi
-      }
-    });
+    const token = localStorage.getItem('authToken');
+
+    // Xóa dữ liệu trên client ngay lập tức 
+    // để đảm bảo UI phản hồi ngay kể cả khi API chậm hoặc lỗi
+    this.userService.clearCurrentUser();
+    localStorage.removeItem('authToken');
+
+    // Nếu có token thì thông báo cho server
+    if (token) {
+      // Gọi API logout nếu backend yêu cầu
+      this.apiService.post<void>('/auth/logout', { token }).subscribe({
+        next: () => {
+          console.log('User logged out successfully on server');
+        },
+        error: (error) => {
+          console.error('Error during logout API call:', error);
+          // Chỉ log lỗi, không ảnh hưởng đến trạng thái client
+        }
+      });
+    } else {
+      console.log('No token to logout with');
+    }
   }
 
   // Update user profile
@@ -131,6 +141,26 @@ export class AuthService {
 
   // Refresh token
   refreshToken(token: string): Observable<ApiResponse<{ token: string }>> {
-    return this.apiService.post<{ token: string }>('/auth/refresh', { token });
+    return this.apiService.post<{ token: string }>('/auth/refresh', { token })
+      .pipe(
+        tap(response => {
+          if (response.code === 1000 && response.data && response.data.token) {
+            // Log thành công
+            console.log('Token refreshed successfully');
+          } else {
+            // Log thất bại nếu API trả về code khác 1000
+            console.warn('Token refresh API returned unexpected code:', response.code);
+          }
+        }),
+        catchError(error => {
+          console.error('Error during token refresh:', error);
+          // Xóa token hiện tại nếu gặp lỗi nghiêm trọng
+          if (error.status === 401 || error.status === 403) {
+            localStorage.removeItem('authToken');
+            this.userService.clearCurrentUser();
+          }
+          return throwError(() => error);
+        })
+      );
   }
 }

@@ -3,6 +3,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Override NG-Zorro notification styles to keep them above all elements */
+.ant-notification,
+.cdk-overlay-container {
+    z-index: 9999 !important;
+    /* Ensure notifications appear above header */
+}
+
+/* Enhance notification visibility and styling */
+.ant-notification-notice {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    /* Stronger shadow */
+    border-radius: 8px !important;
+    /* Rounded corners */
+    padding: 16px !important;
+    /* More padding */
+}
+
+.ant-notification-top .ant-notification-notice {
+    margin-top: 16px !important;
+    /* Spacing from top of screen */
+}
+
 /* Custom form styles */
 @layer components {
     .form-input-elegant {
@@ -49,6 +71,25 @@
     .input-focus-scale:focus {
         @apply transform scale-[1.02] transition-transform duration-300;
     }
+}
+
+/* Header fixed styles */
+body.header-is-fixed {
+    /* This body padding is a fallback but primary spacing is handled by <main> element */
+    padding-top: 0;
+}
+
+/* Router content spacing (applies spacing to all routed content) */
+.pt-16 {
+    padding-top: 4rem;
+    /* 64px - matches the header height */
+}
+
+/* Transition mượt mà cho tất cả các phần tử */
+* {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
 }
 
 /* Keyframes for animations */

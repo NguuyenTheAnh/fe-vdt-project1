@@ -1,122 +1,417 @@
-<div class="container mx-auto px-4 py-8">
-    <section class="mb-16">
-        <div class="bg-gradient-to-r from-[#E74C3C] to-[#C0392B] rounded-lg shadow-lg p-8 text-white">
-            <div class="max-w-2xl">
-                <h1 class="text-4xl font-bold mb-4">Giải pháp tài chính toàn diện cho mọi nhu cầu</h1>
-                <p class="text-lg mb-6">Kết nối nhu cầu vay vốn của bạn với các khoản vay phù hợp nhất từ các tổ chức
-                    tài chính uy tín.</p>
-                <button routerLink="/borrower-portal/loan-product-list"
-                    class="bg-white text-[#E74C3C] hover:bg-gray-100 py-3 px-6 rounded-md font-medium transition-colors duration-300 shadow-md">
-                    Tìm khoản vay ngay
-                </button>
+<div class="min-h-screen bg-[#F5F5F5]">
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden bg-gradient-to-r from-[#E74C3C] to-[#C0392B] py-20">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                <div class="w-full md:w-1/2">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white leading-tight">
+                        Giải pháp tài chính toàn diện cho mọi nhu cầu
+                    </h1>
+                    <p class="text-xl mb-8 text-white opacity-90 max-w-xl">
+                        Kết nối nhu cầu vay vốn của bạn với các khoản vay phù hợp nhất từ các tổ chức
+                        tài chính uy tín.
+                    </p>
+                    <div class="flex flex-wrap gap-5">
+                        <button routerLink="/borrower-portal/loan-product-list"
+                            class="bg-white border-gray-100 text-[#E74C3C] hover:bg-gray-100 py-3 px-8 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl flex items-center focus:outline-none focus:ring-2 focus:ring-[#E74C3C] focus:ring-offset-2">
+                            <span>Tìm khoản vay ngay</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <button routerLink="/borrower-portal/loan-application-form"
+                            class="bg-transparent text-white border border-white hover:bg-white/20 py-3 px-8 rounded-lg font-medium transition-all duration-300 shadow-md">
+                            Đăng ký vay ngay
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full md:w-2/5 flex justify-center">
+                    <div class="relative w-full">
+                        <div class="absolute -inset-1 bg-white/20 rounded-full blur-md"></div>
+                        <div
+                            class="relative bg-[#E74C3C]/90 p-8 rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300">
+                            <h2 class="text-4xl text-white mb-4 text-center">
+                                <span class="font-bold">Loan</span><span class="font-light">Conv</span>
+                            </h2>
+                            <p class="text-white/90 text-lg text-center mb-6">Đồng hành cùng tương lai tài chính của bạn
+                            </p>
+
+                            <div class="flex justify-center mt-6">
+                                <div class="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
+                                    <div class="flex flex-col space-y-4">
+                                        <div class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white mr-3"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="text-white text-md">Lãi suất cạnh tranh</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white mr-3"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="text-white text-md">Thủ tục đơn giản</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white mr-3"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span class="text-white text-md">Giải ngân nhanh chóng</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+        <!-- Wave SVG at bottom of hero section -->
+        <div class="absolute bottom-0 left-0 right-0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" class="w-full h-auto">
+                <path fill="#F5F5F5" fill-opacity="1"
+                    d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z">
+                </path>
+            </svg>
         </div>
     </section>
 
-    <section class="mb-16">
-        <h2 class="text-3xl font-semibold mb-8 text-center">Tại sao chọn <span class="text-[#E74C3C]">LoanConv</span>?
-        </h2>
+    <!-- Features Section -->
+    <section class="py-16 container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-semibold mb-4">Tại sao chọn <span
+                    class="text-[#E74C3C] font-bold">Loan</span><span class="text-[#E74C3C] font-light">Conv</span>?
+            </h2>
+            <p class="text-gray-700 max-w-2xl mx-auto">Chúng tôi cung cấp giải pháp tài chính hiện đại, an toàn và hiệu
+                quả cho mọi nhu cầu của bạn</p>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="w-12 h-12 bg-[#E74C3C]/20 rounded-full flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#E74C3C]" fill="none"
+            <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-8 group">
+                <div
+                    class="w-16 h-16 bg-[#E74C3C]/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#E74C3C]/20 transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#E74C3C]" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Nhanh chóng</h3>
-                <p class="text-gray-600">Thủ tục đơn giản, phê duyệt nhanh chóng, giải ngân trong vòng 24 giờ.</p>
+                <h3 class="text-xl font-semibold mb-3 group-hover:text-[#E74C3C] transition-colors duration-300">Nhanh
+                    chóng</h3>
+                <p class="text-gray-700">Thủ tục đơn giản, phê duyệt nhanh chóng, giải ngân trong vòng 24 giờ sau khi hồ
+                    sơ được chấp thuận.</p>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="w-12 h-12 bg-[#E74C3C]/20 rounded-full flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#E74C3C]" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">An toàn</h3>
-                <p class="text-gray-600">Mã hóa thông tin cá nhân, bảo mật dữ liệu và đối tác tài chính uy tín.</p>
-            </div>
-
-            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="w-12 h-12 bg-[#E74C3C]/20 rounded-full flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#E74C3C]" fill="none"
+            <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-8 group">
+                <div
+                    class="w-16 h-16 bg-[#E74C3C]/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#E74C3C]/20 transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#E74C3C]" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Linh hoạt</h3>
-                <p class="text-gray-600">Nhiều gói vay phù hợp với từng nhu cầu, lãi suất cạnh tranh và kỳ hạn linh
-                    hoạt.</p>
+                <h3 class="text-xl font-semibold mb-3 group-hover:text-[#E74C3C] transition-colors duration-300">An toàn
+                </h3>
+                <p class="text-gray-700">Bảo mật thông tin cá nhân tuyệt đối, quy trình minh bạch, đảm bảo quyền lợi của
+                    khách hàng.</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-8 group">
+                <div
+                    class="w-16 h-16 bg-[#E74C3C]/10 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#E74C3C]/20 transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#E74C3C]" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 group-hover:text-[#E74C3C] transition-colors duration-300">Linh
+                    hoạt</h3>
+                <p class="text-gray-700">Nhiều gói vay phù hợp với từng nhu cầu, lãi suất cạnh tranh và kỳ hạn linh hoạt
+                    theo khả năng tài chính.</p>
             </div>
         </div>
     </section>
 
-    <section class="mb-16">
-        <h2 class="text-3xl font-semibold mb-8 text-center">Các khoản vay phổ biến</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div
-                class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold text-[#E74C3C]">Vay tiêu dùng</h3>
-                    <span class="bg-[#E74C3C]/10 text-[#E74C3C] text-sm font-medium px-3 py-1 rounded-full">Lãi suất
-                        thấp</span>
-                </div>
-                <p class="text-gray-600 mb-4">Giải pháp tài chính linh hoạt cho các nhu cầu cá nhân với thủ tục đơn
-                    giản.</p>
-                <div class="flex justify-between items-center text-sm text-gray-600 mb-6">
-                    <span>Lãi suất từ: <span class="font-medium">0.8%/tháng</span></span>
-                    <span>Kỳ hạn: <span class="font-medium">6-36 tháng</span></span>
-                </div>
-                <button routerLink="/borrower-portal/loan-product-list"
-                    class="w-full py-2 px-4 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-md transition-colors duration-300">
-                    Tìm hiểu thêm
-                </button>
+    <!-- Popular Loans Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-semibold mb-4">Các khoản vay phổ biến</h2>
+                <p class="text-gray-700 max-w-2xl mx-auto">Khám phá các giải pháp tài chính đa dạng phù hợp với nhu cầu
+                    của bạn</p>
             </div>
 
-            <div
-                class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold text-[#E74C3C]">Vay mua nhà</h3>
-                    <span class="bg-[#E74C3C]/10 text-[#E74C3C] text-sm font-medium px-3 py-1 rounded-full">Ưu
-                        đãi</span>
-                </div>
-                <p class="text-gray-600 mb-4">Hiện thực hóa giấc mơ sở hữu ngôi nhà của riêng bạn với lãi suất ưu đãi.
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="flex justify-center items-center py-16">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E74C3C]"></div>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <p class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    {{ error }}
                 </p>
-                <div class="flex justify-between items-center text-sm text-gray-600 mb-6">
-                    <span>Lãi suất từ: <span class="font-medium">6.5%/năm</span></span>
-                    <span>Kỳ hạn: <span class="font-medium">5-25 năm</span></span>
-                </div>
-                <button routerLink="/borrower-portal/loan-product-list"
-                    class="w-full py-2 px-4 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-md transition-colors duration-300">
-                    Tìm hiểu thêm
-                </button>
             </div>
 
-            <div
-                class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold text-[#E74C3C]">Vay kinh doanh</h3>
-                    <span class="bg-[#E74C3C]/10 text-[#E74C3C] text-sm font-medium px-3 py-1 rounded-full">Phát
-                        triển</span>
+            <!-- Loan Products Grid -->
+            <div *ngIf="!isLoading && !error && popularLoans.length > 0"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Loan Product Card -->
+                <div *ngFor="let product of popularLoans"
+                    class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
+                    <div class="h-3 bg-gradient-to-r from-[#E74C3C] to-[#C0392B]"></div>
+                    <div class="p-6">
+                        <h2 class="text-xl font-bold mb-2 text-gray-800">{{ product.name }}</h2>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ product.description }}</p>
+
+                        <div class="space-y-2 mb-4">
+                            <p class="text-lg font-bold text-gray-800">
+                                Lãi suất: <span class="text-[#E74C3C]">{{ product.interestRate }}%/năm</span>
+                            </p>
+                            <p class="text-base text-gray-700">
+                                Khoản vay: {{ formatCurrency(product.minAmount) }} - {{
+                                formatCurrency(product.maxAmount) }}
+                            </p>
+                            <p class="text-base text-gray-700">
+                                Thời hạn: {{ product.minTerm }} - {{ product.maxTerm }} tháng
+                            </p>
+                        </div> <button (click)="openProductDetails(product)"
+                            class="w-full border-gray-100 py-3 px-4 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-md transition-colors duration-300 flex items-center justify-center">
+                            <span>Xem chi tiết</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <p class="text-gray-600 mb-4">Hỗ trợ vốn cho doanh nghiệp với nhiều hình thức, đáp ứng nhu cầu phát
-                    triển.</p>
-                <div class="flex justify-between items-center text-sm text-gray-600 mb-6">
-                    <span>Lãi suất từ: <span class="font-medium">7.2%/năm</span></span>
-                    <span>Hạn mức: <span class="font-medium">1-10 tỷ</span></span>
-                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="!isLoading && !error && popularLoans.length === 0" class="text-center py-16">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="text-xl font-medium text-gray-600 mb-2">Không tìm thấy khoản vay nào</h3>
+                <p class="text-gray-500">Hiện tại chưa có khoản vay nào được cung cấp.</p>
+            </div>
+
+            <!-- View All Loans Button -->
+            <div *ngIf="!isLoading && popularLoans.length > 0" class="mt-10 flex justify-center">
                 <button routerLink="/borrower-portal/loan-product-list"
-                    class="w-full py-2 px-4 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-md transition-colors duration-300">
-                    Tìm hiểu thêm
+                    class="py-3 border-gray-100 px-8 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-lg transition-colors duration-300 flex items-center justify-center shadow-md hover:shadow-lg">
+                    <span>Xem tất cả khoản vay</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
                 </button>
             </div>
         </div>
+    </section> <!-- CTA Section -->
+    <section class="py-16 container mx-auto px-4">
+        <div class="bg-gradient-to-r from-[#E74C3C] to-[#C0392B] rounded-2xl shadow-xl overflow-hidden">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="w-full md:w-3/4 mx-auto p-8 md:p-12 text-center">
+                    <!-- Nội dung cho người dùng chưa đăng nhập -->
+                    <ng-container *ngIf="!isLoggedIn">
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Bắt đầu hành trình tài chính của bạn
+                            ngay
+                            hôm nay</h2>
+                        <p class="text-white/90 text-lg mb-8 max-w-2xl mx-auto">Đăng ký tài khoản miễn phí và khám phá
+                            các
+                            giải pháp tài chính
+                            phù hợp với nhu cầu của bạn.</p>
+
+                        <div class="flex flex-wrap gap-5 justify-center">
+                            <button routerLink="/register"
+                                class="bg-white border-gray-100 text-[#E74C3C] hover:bg-gray-100 py-3 px-8 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl flex items-center">
+                                <span>Đăng ký ngay</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <button routerLink="/borrower-portal/loan-product-list"
+                                class="bg-transparent text-white border border-white hover:bg-white/20 py-3 px-8 rounded-lg font-medium transition-all duration-300">
+                                Tìm hiểu thêm
+                            </button>
+                        </div>
+                    </ng-container>
+
+                    <!-- Nội dung cho người dùng đã đăng nhập -->
+                    <ng-container *ngIf="isLoggedIn">
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+                            Khám phá các khoản vay phù hợp với bạn
+                        </h2>
+                        <p class="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+                            Hành trình tài chính của bạn đã bắt đầu. Hãy lựa chọn sản phẩm vay phù hợp nhất để đạt được
+                            mục tiêu cá nhân.
+                        </p>
+
+                        <div class="flex flex-wrap gap-5 justify-center">
+                            <button routerLink="/borrower-portal/loan-product-list"
+                                class="bg-white border-gray-100 text-[#E74C3C] hover:bg-gray-100 py-3 px-8 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl flex items-center">
+                                <span>Xem các khoản vay</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <button routerLink="/borrower-portal/loan-application-form"
+                                class="bg-transparent text-white border border-white hover:bg-white/20 py-3 px-8 rounded-lg font-medium transition-all duration-300">
+                                Đăng ký vay ngay
+                            </button>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
     </section>
+    
+     <!-- Product Details Modal -->
+    <div *ngIf="selectedProduct && isModalOpen"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            [@modalAnimation]="isModalOpen ? 'open' : 'closed'">
+
+            <!-- Loading state for product details -->
+            <div *ngIf="isLoadingProduct" class="p-6 flex justify-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#E74C3C]"></div>
+            </div>
+
+            <!-- Error state -->
+            <div *ngIf="productError" class="p-6">
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    <p class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        {{ productError }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Modal Content -->
+            <div *ngIf="!isLoadingProduct && !productError">
+                <!-- Modal Header with Close Button -->
+                <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                    <h2 class="text-2xl font-bold text-gray-800">{{ selectedProduct.name }}</h2>
+                    <button (click)="closeModal()"
+                        class="text-gray-500 border-gray-100 hover:text-gray-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6">
+                    <p class="text-gray-700 mb-6">{{ selectedProduct.description }}</p>
+
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2"
+                                viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="text-gray-700 font-medium">Lãi suất: <span class="text-[#E74C3C] font-bold">{{
+                                    selectedProduct.interestRate }}%/năm</span></span>
+                        </div>
+
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2"
+                                viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="text-gray-700 font-medium">Khoản vay: {{
+                                formatCurrency(selectedProduct.minAmount) }}
+                                - {{ formatCurrency(selectedProduct.maxAmount) }}</span>
+                        </div>
+
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2"
+                                viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="text-gray-700 font-medium">Thời hạn: {{ selectedProduct.minTerm }} - {{
+                                selectedProduct.maxTerm }} tháng</span>
+                        </div>
+                    </div>
+
+                    <!-- Requirements Section -->
+                    <div *ngIf="selectedProduct.requiredDocuments" class="mb-6">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Yêu cầu hồ sơ</h3>
+                        <div class="text-gray-700">
+                            {{ selectedProduct.requiredDocuments }}
+                        </div>
+                    </div>
+
+                    <!-- Features Section - only display if features exist -->
+                    <div *ngIf="selectedProduct.features && selectedProduct.features.length > 0" class="mb-6">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Tính năng và lợi ích</h3>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li *ngFor="let feature of selectedProduct.features" class="text-gray-700">{{ feature }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-6 border-t border-gray-200 flex justify-end">
+                    <button (click)="closeModal()"
+                        class="px-6 border-gray-100 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md transition-colors duration-300 mr-3">
+                        Đóng
+                    </button>
+                    <button *ngIf="isLoggedIn && selectedProduct" (click)="applyForLoan(selectedProduct)"
+                        class="px-6 border-gray-100 py-2 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-md transition-colors duration-300">
+                        Đăng ký vay
+                    </button>
+                    <button *ngIf="!isLoggedIn" routerLink="/login"
+                        class="px-6 border-gray-100 py-2 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-md transition-colors duration-300">
+                        Đăng nhập để đăng ký
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

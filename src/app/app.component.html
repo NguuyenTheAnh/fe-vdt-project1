@@ -3,7 +3,7 @@
     <app-header *ngIf="router.url !== '/login' && router.url !== '/register'"></app-header>
 
     <!-- Content -->
-    <main class="flex-grow">
+    <main class="flex-grow" [ngClass]="{'pt-16': router.url !== '/login' && router.url !== '/register'}">
         <router-outlet></router-outlet>
     </main>
 
