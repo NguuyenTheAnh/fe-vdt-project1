@@ -6,6 +6,7 @@ import { registerLocaleData } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 import vi from '@angular/common/locales/vi';
 import { NZ_I18N, vi_VN } from 'ng-zorro-antd/i18n';
 import { ApiInterceptor } from './services/api.interceptor';
@@ -17,14 +18,29 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
-
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
-import { HomePageComponent } from './home-page/home-page.component';
+import { HomePageComponent } from './borrower-portal/home-page/home-page.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
-
+import { HeaderComponent } from './layout/header/header.component';
+import { FooterComponent } from './layout/footer/footer.component';
 registerLocaleData(vi);
 
 @NgModule({
@@ -40,6 +56,7 @@ registerLocaleData(vi);
   imports: [
     BrowserModule,
     AppRoutingModule,
+    RouterModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
@@ -51,11 +68,32 @@ registerLocaleData(vi);
     NzInputModule,
     NzCheckboxModule,
     NzIconModule,
-    NzNotificationModule
+    NzNotificationModule,
+    NzSelectModule,
+    NzLayoutModule,
+    NzMenuModule,
+    NzTableModule,
+    NzDropDownModule,
+    NzCardModule,
+    NzModalModule,
+    NzToolTipModule,
+    NzTabsModule,
+    NzSpinModule,
+    NzAlertModule,
+    NzBadgeModule,
+    NzPopconfirmModule,
+    NzDividerModule,
+    NzStepsModule,
+    NzPopoverModule,
+    NzAvatarModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: vi_VN },
-    { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true }
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ApiInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

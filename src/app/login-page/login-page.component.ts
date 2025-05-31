@@ -24,7 +24,7 @@ export class LoginPageComponent implements OnInit {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
-      remember: [true] // Giá trị mặc định cho checkbox "Ghi nhớ đăng nhập"
+      remember: [true]
     });
   }
 
@@ -33,39 +33,37 @@ export class LoginPageComponent implements OnInit {
       this.isLoading = true;
 
       const loginData: LoginRequest = {
-        email: this.email?.value,
-        password: this.password?.value
+        email: this.loginForm.get('email')?.value || '',
+        password: this.loginForm.get('password')?.value || ''
       };
 
       this.authService.login(loginData).subscribe({
         next: (response) => {
-          if (response.code === 1000) {
+          this.isLoading = false;
+          if (response.code === 1000 && response.data) {
+            // Hiển thị thông báo thành công
             this.notification.success(
               'Đăng nhập thành công',
-              'Chào mừng bạn quay trở lại!',
-              { nzDuration: 3000 }
+              'Chào mừng bạn quay trở lại!'
             );
-            // Chuyển hướng đến trang chủ sau khi đăng nhập thành công
+
             setTimeout(() => {
               this.router.navigate(['/home']);
             }, 1000);
           } else {
             this.notification.error(
               'Đăng nhập thất bại',
-              response.message || 'Email hoặc mật khẩu không chính xác.',
-              { nzDuration: 5000 }
+              response.message || 'Email hoặc mật khẩu không chính xác.'
             );
           }
-          this.isLoading = false;
         },
         error: (error) => {
+          this.isLoading = false;
           console.error('Login error:', error);
           this.notification.error(
             'Đăng nhập thất bại',
-            'Đã xảy ra lỗi khi kết nối đến máy chủ. Vui lòng thử lại sau.',
-            { nzDuration: 5000 }
+            'Đã xảy ra lỗi khi kết nối đến máy chủ. Vui lòng thử lại sau.'
           );
-          this.isLoading = false;
         }
       });
     } else {
@@ -78,7 +76,6 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
-  // Helper để lấy control cho template dễ dàng hơn (tùy chọn)
   get email() { return this.loginForm.get('email'); }
   get password() { return this.loginForm.get('password'); }
 }

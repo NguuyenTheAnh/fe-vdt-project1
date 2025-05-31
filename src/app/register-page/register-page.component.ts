@@ -11,18 +11,16 @@ export function passwordMatchValidator(controlName: string, matchingControlName:
     const matchingControl = formGroup.get(matchingControlName);
 
     if (!control || !matchingControl) {
-      return null; // Controls not found
+      return null;
     }
 
-    // Nếu control nhập lại mật khẩu đã có lỗi khác (không phải lỗi passwordMismatch) thì không cần validate nữa
     if (matchingControl.errors && !matchingControl.errors['passwordMismatch']) {
       return null;
     }
 
-    // Set lỗi nếu mật khẩu không khớp
     if (control.value !== matchingControl.value) {
       matchingControl.setErrors({ passwordMismatch: true });
-      return { passwordMismatch: true }; // Trả về lỗi cho form group để có thể truy cập từ form group level nếu cần
+      return { passwordMismatch: true };
     } else {
       matchingControl.setErrors(null);
       return null;
@@ -53,7 +51,7 @@ export class RegisterPageComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
       fullName: ['', [Validators.required]],
-      phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]], // Ví dụ pattern cho SĐT Việt Nam
+      phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       address: ['', [Validators.required]]
     }, {
       validators: passwordMatchValidator('password', 'confirmPassword')
@@ -65,42 +63,38 @@ export class RegisterPageComponent implements OnInit {
       this.isLoading = true;
 
       const registerData: RegisterRequest = {
-        email: this.email?.value,
-        password: this.password?.value,
-        fullName: this.fullName?.value,
-        phoneNumber: this.phoneNumber?.value,
-        address: this.address?.value
+        email: this.registerForm.get('email')?.value || '',
+        password: this.registerForm.get('password')?.value || '',
+        fullName: this.registerForm.get('fullName')?.value || '',
+        phoneNumber: this.registerForm.get('phoneNumber')?.value || '',
+        address: this.registerForm.get('address')?.value || ''
       };
 
       this.authService.register(registerData).subscribe({
         next: (response) => {
+          this.isLoading = false;
           if (response.code === 1000) {
             this.notification.success(
               'Đăng ký thành công',
-              'Tài khoản của bạn đã được tạo thành công.',
-              { nzDuration: 3000 }
+              'Tài khoản của bạn đã được tạo thành công.'
             );
-            // Chuyển hướng đến trang đăng nhập sau khi đăng ký thành công
             setTimeout(() => {
               this.router.navigate(['/login']);
             }, 1500);
           } else {
             this.notification.error(
               'Đăng ký thất bại',
-              response.message || 'Đã xảy ra lỗi khi đăng ký tài khoản.',
-              { nzDuration: 5000 }
+              response.message || 'Đã xảy ra lỗi khi đăng ký tài khoản.'
             );
           }
-          this.isLoading = false;
         },
         error: (error) => {
+          this.isLoading = false;
           console.error('Register error:', error);
           this.notification.error(
             'Đăng ký thất bại',
-            'Đã xảy ra lỗi khi kết nối đến máy chủ. Vui lòng thử lại sau.',
-            { nzDuration: 5000 }
+            'Đã xảy ra lỗi khi kết nối đến máy chủ. Vui lòng thử lại sau.'
           );
-          this.isLoading = false;
         }
       });
     } else {
@@ -110,7 +104,6 @@ export class RegisterPageComponent implements OnInit {
           control.updateValueAndValidity({ onlySelf: true });
         }
       });
-      // Xử lý lỗi cho confirmPassword nếu lỗi từ validator của group
       const confirmPasswordControl = this.registerForm.get('confirmPassword');
       if (this.registerForm.hasError('passwordMismatch') && confirmPasswordControl) {
         confirmPasswordControl.setErrors({ passwordMismatch: true });
@@ -120,7 +113,6 @@ export class RegisterPageComponent implements OnInit {
     }
   }
 
-  // Helper để lấy control cho template dễ dàng hơn (tùy chọn)
   get email() { return this.registerForm.get('email'); }
   get password() { return this.registerForm.get('password'); }
   get confirmPassword() { return this.registerForm.get('confirmPassword'); }

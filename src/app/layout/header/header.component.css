@@ -1,0 +1,209 @@
+.user-avatar {
+    background-color: #E74C3C;
+    color: white;
+}
+
+.dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+.user-menu:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Animation for dropdown menu */
+.group:hover .group-hover\:block {
+    animation: fadeInDown 0.3s ease forwards;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Active link styling */
+.router-link-active {
+    position: relative;
+}
+
+.router-link-active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #E74C3C;
+    transform: scaleX(1);
+    transition: transform 0.3s ease;
+}
+
+/* Mobile menu animation */
+@keyframes slideDown {
+    from {
+        max-height: 0;
+        opacity: 0;
+    }
+
+    to {
+        max-height: 500px;
+        opacity: 1;
+    }
+}
+
+/* User avatar hover effect */
+.user-avatar {
+    transition: transform 0.2s ease;
+}
+
+.user-avatar:hover {
+    transform: scale(1.05);
+}
+
+/* Mobile menu container */
+.mobile-menu {
+    animation: slideDown 0.3s ease forwards;
+    overflow: hidden;
+}
+
+/* Underline animation for active links */
+a.text-\[\#E74C3C\] {
+    position: relative;
+}
+
+a.text-\[\#E74C3C\]:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: #E74C3C;
+    transform: scaleX(1);
+    transform-origin: bottom left;
+    transition: transform 0.3s ease-out;
+}
+
+/* Hover effect for navigation links */
+a.text-gray-700:hover {
+    position: relative;
+}
+
+a.text-gray-700:hover:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: #E74C3C;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+    animation: expandUnderline 0.3s forwards;
+}
+
+@keyframes expandUnderline {
+    to {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+}
+
+/* Styled dropdown menu */
+.user-dropdown {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    animation: fadeInDown 0.3s ease forwards;
+    border: 1px solid rgba(231, 76, 60, 0.1);
+    overflow: hidden;
+}
+
+.dropdown-item {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
+.dropdown-item:active {
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.dropdown-item:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.logout-btn {
+    position: relative;
+    transition: all 0.2s ease;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.logout-btn:hover {
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
+.logout-btn:active {
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+/* Improve the button animation */
+button:active {
+    transform: scale(0.98);
+}
+
+/* Animation for user dropdown */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.user-dropdown-btn {
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.user-dropdown-btn:active {
+    transform: scale(0.96);
+}
+
+/* Add a subtle indicator when dropdown is open */
+.user-dropdown-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    height: 2px;
+    width: 100%;
+    background-color: #E74C3C;
+    transition: transform 0.3s ease;
+}
+
+.user-dropdown-btn.active::after {
+    transform: translateX(-50%) scaleX(1);
+}

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
+import { Observable, of } from 'rxjs';
+import { tap, switchMap } from 'rxjs/operators';
+import { UserService } from './user.service';
+import { ApiService } from './api.service';
 
 // Interfaces for API requests
 export interface RegisterRequest {
@@ -39,18 +39,18 @@ export interface UserData {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = environment.apiUrl;
-  private currentUser: UserData | null = null;
-
-  constructor(private http: HttpClient) { }
+  constructor(
+    private apiService: ApiService,
+    private userService: UserService
+  ) { }
 
   // Register a new user
   register(userData: RegisterRequest): Observable<ApiResponse<UserData>> {
-    return this.http.post<ApiResponse<UserData>>(`${this.API_URL}/users`, userData)
+    return this.apiService.post<UserData>('/users', userData)
       .pipe(
         tap(response => {
           if (response.code === 1000 && response.data) {
-            this.currentUser = response.data;
+            this.userService.updateCurrentUser(response.data);
           }
         })
       );
@@ -58,12 +58,24 @@ export class AuthService {
 
   // Login user
   login(credentials: LoginRequest): Observable<ApiResponse<UserData>> {
-    return this.http.post<ApiResponse<UserData>>(`${this.API_URL}/auth/login`, credentials)
+    return this.apiService.post<UserData>('/auth/login', credentials)
       .pipe(
         tap(response => {
-          if (response.code === 1000 && response.data) {
-            this.currentUser = response.data;
-            this.saveUserToLocalStorage(response.data);
+          if (response.code === 1000 && response.data && response.data.token) {
+            // Lưu token vào localStorage
+            const token = String(response.data.token);
+            localStorage.setItem('authToken', token);
+
+            // Bổ sung token vào data để đảm bảo nó được lưu trong localStorage
+            const userData = {
+              ...response.data,
+              token: token
+            };
+
+            // Lưu thông tin người dùng từ response đăng nhập
+            this.userService.updateCurrentUser(userData);
+
+            console.log('User authenticated and saved to localStorage');
           }
         })
       );
@@ -71,18 +83,12 @@ export class AuthService {
 
   // Get current user
   getCurrentUser(): UserData | null {
-    if (!this.currentUser) {
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        this.currentUser = JSON.parse(storedUser);
-      }
-    }
-    return this.currentUser;
+    return this.userService.getCurrentUser();
   }
 
   // Check if user is logged in
   isLoggedIn(): boolean {
-    return !!this.getCurrentUser();
+    return this.userService.isLoggedIn();
   }
 
   // Get authentication token
@@ -92,17 +98,39 @@ export class AuthService {
 
   // Logout user
   logout(): void {
-    this.currentUser = null;
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authToken');
+    // Có thể thêm gọi API logout nếu backend yêu cầu
+    this.apiService.post<void>('/auth/logout', { token: localStorage.getItem('authToken') }).subscribe({
+      next: () => {
+        console.log('User logged out successfully');
+        this.userService.clearCurrentUser();
+        localStorage.removeItem('authToken');
+      },
+      error: (error) => {
+        console.error('Error during logout:', error);
+        // Xử lý lỗi nếu cần, ví dụ: hiển thị thông báo lỗi
+      }
+    });
   }
 
-  // Save user data to localStorage
-  private saveUserToLocalStorage(user: UserData): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    // Lưu token riêng để dễ truy cập
-    if (user.token) {
-      localStorage.setItem('authToken', String(user.token));
-    }
+  // Update user profile
+  updateProfile(userId: number, profileData: Partial<UserData>): Observable<ApiResponse<UserData>> {
+    return this.apiService.patch<UserData>(`/users/${userId}`, profileData)
+      .pipe(
+        tap(response => {
+          if (response.code === 1000 && response.data) {
+            this.userService.updateCurrentUser(response.data);
+          }
+        })
+      );
+  }
+
+  // Change password
+  changePassword(userId: number, passwordData: { oldPassword: string; newPassword: string }): Observable<ApiResponse<void>> {
+    return this.apiService.post<void>(`/users/${userId}/change-password`, passwordData);
+  }
+
+  // Refresh token
+  refreshToken(token: string): Observable<ApiResponse<{ token: string }>> {
+    return this.apiService.post<{ token: string }>('/auth/refresh', { token });
   }
 }

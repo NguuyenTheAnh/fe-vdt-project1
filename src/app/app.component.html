@@ -1,1 +1,12 @@
-<router-outlet></router-outlet>
+<div class="min-h-screen flex flex-col">
+    <!-- Header hiển thị trên tất cả các trang -->
+    <app-header *ngIf="router.url !== '/login' && router.url !== '/register'"></app-header>
+
+    <!-- Content -->
+    <main class="flex-grow">
+        <router-outlet></router-outlet>
+    </main>
+
+    <!-- Footer hiển thị trên tất cả các trang, ngoại trừ login và register -->
+    <app-footer *ngIf="router.url !== '/login' && router.url !== '/register'"></app-footer>
+</div>
