@@ -1,0 +1,47 @@
+/* Global styles cho modal - thiết kế mới với modal hiển thị dưới header */
+
+/* Container bao bọc nội dung dưới header */
+.content-below-header {
+    position: relative;
+    min-height: calc(100vh - 64px);
+}
+
+/* Style cho modal overlay hiển thị dưới header */
+.modal-overlay {
+    position: fixed !important;
+    top: 64px;
+    /* Chiều cao của header */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+/* Điều chỉnh cho thiết bị di động */
+@media (max-width: 768px) {
+    .modal-overlay {
+        top: 56px;
+        /* Header thường thấp hơn trên mobile */
+    }
+}
+
+/* Style cho modal content */
+.modal-content {
+    position: relative;
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+    width: 100%;
+    max-width: 48rem;
+}
+
+/* Style cho body khi có modal mở */
+body.modal-open {
+    overflow: hidden;
+}

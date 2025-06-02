@@ -1,0 +1,149 @@
+/* Xử lý hiển thị modal trong notification-list - thiết kế modal hiển thị dưới header */
+
+/* Giữ nguyên cuộn trang khi modal mở */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Container chứa toàn bộ nội dung dưới header */
+.content-below-header {
+    position: relative;
+}
+
+/* Modal overlay styles - bắt đầu từ vị trí dưới header */
+.modal-overlay {
+    position: fixed !important;
+    top: 64px;
+    /* Chiều cao của header */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    /* Căn nội dung giữa màn hình */
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    overflow-y: auto;
+    /* Cho phép cuộn nếu nội dung quá dài */
+    z-index: 9000 !important;
+}
+
+/* Điều chỉnh modal overlay trên màn hình nhỏ */
+@media (max-width: 768px) {
+    .modal-overlay {
+        top: 56px;
+        /* Chiều cao header trên mobile */
+    }
+}
+
+/* Modal content styles */
+.modal-content {
+    background-color: white;
+    border-radius: 0.75rem;
+    width: 100%;
+    max-width: 36rem;
+    /* Giảm kích thước tối đa từ 42rem xuống 36rem cho modal nhỏ gọn hơn */
+    margin-top: 0;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 85px);
+    z-index: 9100 !important;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Thêm border-left-width: 3px cho class border-l-3 */
+.border-l-3 {
+    border-left-width: 3px;
+}
+
+/* Thêm hiệu ứng mờ cho modal */
+.modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: #E74C3C #f1f1f1;
+    max-height: 55vh;
+}
+
+/* Căn chỉnh cho các thẻ p trong modal */
+.info-card p {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Modal body styles */
+.modal-body {
+    max-height: 55vh;
+    overflow-y: auto;
+    padding: 0.75rem !important;
+}
+
+/* Animation for modal */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced animations */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-animation {
+    animation: slideDown 0.3s ease-out;
+}
+
+/* Fix for header z-index */
+header {
+    position: relative;
+    z-index: 10 !important;
+}
+
+/* Fix for has-modal class */
+.has-modal {
+    position: relative;
+    z-index: 1;
+}
+
+/* Responsive container for notification list */
+@media (max-width: 768px) {
+    .notification-container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    /* Better mobile spacing */
+    .notification-item {
+        padding: 0.75rem 0.5rem;
+    }
+
+    /* More compact header on mobile */
+    .modal-header {
+        padding: 1rem;
+    }
+}
+
+/* Better container width control */
+.notification-container {
+    width: 100%;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}

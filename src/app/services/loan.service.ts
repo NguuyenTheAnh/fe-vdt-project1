@@ -53,13 +53,12 @@ export interface LoanApplication {
     id?: number;
     userId?: number;
     productId: number;
-    amount: number;
-    term: number;
-    purpose: string;
+    requestedAmount: number;
+    requestedTerm: number;
+    personalInfo: string; // Dạng JSON string với format: {"Thu nhập":15000000,"Nghề nghiệp":"Nhân viên văn phòng"}
     status?: string;
     createdAt?: string;
     updatedAt?: string;
-    additionalInfo?: Record<string, any>;
 }
 
 @Injectable({
@@ -76,10 +75,10 @@ export class LoanService {
      */
     getLoanProductById(id: number): Observable<ApiResponse<LoanProduct>> {
         return this.apiService.get<LoanProduct>(`/loan-products/${id}`);
-    }
-
-    /**
+    }    /**
      * Gửi đơn đăng ký khoản vay
+     * @param application object chứa productId, requestedAmount, requestedTerm, personalInfo
+     * @returns Observable chứa kết quả đăng ký khoản vay
      */
     applyForLoan(application: LoanApplication): Observable<ApiResponse<LoanApplication>> {
         return this.apiService.post<LoanApplication>('/loan-applications', application);

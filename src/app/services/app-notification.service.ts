@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { ApiResponse } from './auth.service';
@@ -21,17 +21,22 @@ export interface Notification {
 })
 export class AppNotificationService {
     private unreadCount = 0;
+    private unreadCountSubject = new BehaviorSubject<number>(0);
 
-    constructor(private apiService: ApiService) { }
+    // Observable that components can subscribe to
+    public unreadCount$ = this.unreadCountSubject.asObservable();
+
+    constructor(private apiService: ApiService) {
+        // Initialize by fetching unread count
+        this.getUnreadCount().subscribe();
+    }
 
     /**
      * Lấy danh sách thông báo của người dùng
      */
     getNotifications(page: number = 1, limit: number = 10): Observable<ApiResponse<Notification[]>> {
         return this.apiService.get<Notification[]>('/notifications', { page, limit });
-    }
-
-    /**
+    }    /**
      * Lấy số lượng thông báo chưa đọc
      */
     getUnreadCount(): Observable<ApiResponse<{ count: number }>> {
@@ -40,6 +45,7 @@ export class AppNotificationService {
                 tap(response => {
                     if (response.code === 1000 && response.data) {
                         this.unreadCount = response.data.count;
+                        this.unreadCountSubject.next(this.unreadCount);
                     }
                 })
             );
@@ -54,6 +60,7 @@ export class AppNotificationService {
                 tap(response => {
                     if (response.code === 1000 && this.unreadCount > 0) {
                         this.unreadCount--;
+                        this.unreadCountSubject.next(this.unreadCount);
                     }
                 })
             );
@@ -68,6 +75,7 @@ export class AppNotificationService {
                 tap(response => {
                     if (response.code === 1000) {
                         this.unreadCount = 0;
+                        this.unreadCountSubject.next(this.unreadCount);
                     }
                 })
             );
@@ -78,12 +86,36 @@ export class AppNotificationService {
      */
     deleteNotification(notificationId: number): Observable<ApiResponse<void>> {
         return this.apiService.delete<void>(`/notifications/${notificationId}`);
-    }
-
-    /**
+    }    /**
      * Lấy số lượng thông báo chưa đọc từ bộ nhớ cache
      */
     getCachedUnreadCount(): number {
         return this.unreadCount;
+    }
+
+    /**
+     * Cập nhật số lượng thông báo chưa đọc theo số lượng cụ thể
+     */
+    updateUnreadCount(count: number): void {
+        this.unreadCount = count;
+        this.unreadCountSubject.next(this.unreadCount);
+    }
+
+    /**
+     * Tăng số lượng thông báo chưa đọc khi có một thông báo mới
+     */
+    incrementUnreadCount(): void {
+        this.unreadCount++;
+        this.unreadCountSubject.next(this.unreadCount);
+    }
+
+    /**
+     * Giảm số lượng thông báo chưa đọc
+     */
+    decrementUnreadCount(): void {
+        if (this.unreadCount > 0) {
+            this.unreadCount--;
+            this.unreadCountSubject.next(this.unreadCount);
+        }
     }
 }

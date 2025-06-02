@@ -1,12 +1,15 @@
 <div class="min-h-screen flex flex-col">
-    <!-- Header hiển thị trên tất cả các trang -->
-    <app-header *ngIf="router.url !== '/login' && router.url !== '/register'"></app-header>
+    <!-- Header hiển thị trên tất cả các trang, ngoại trừ login, register và 404 page -->
+    <app-header
+        *ngIf="router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404')"></app-header>
 
     <!-- Content -->
-    <main class="flex-grow" [ngClass]="{'pt-16': router.url !== '/login' && router.url !== '/register'}">
+    <main class="flex-grow"
+        [ngClass]="{'pt-16': router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404')}">
         <router-outlet></router-outlet>
     </main>
 
-    <!-- Footer hiển thị trên tất cả các trang, ngoại trừ login và register -->
-    <app-footer *ngIf="router.url !== '/login' && router.url !== '/register'"></app-footer>
+    <!-- Footer hiển thị trên tất cả các trang, ngoại trừ login, register và 404 page -->
+    <app-footer
+        *ngIf="router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404')"></app-footer>
 </div>

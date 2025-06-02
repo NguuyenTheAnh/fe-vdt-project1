@@ -277,33 +277,63 @@
             </div>
         </div>
 
-        <!-- NG-Zorro Pagination with Enhanced Styling -->
-        <div *ngIf="totalPages > 1" class="flex justify-center mt-8 mb-6">
-            <nz-pagination [nzPageIndex]="currentPage + 1" [nzTotal]="totalElements" [nzPageSize]="pageSize"
-                (nzPageIndexChange)="onPageIndexChange($event)" nzShowQuickJumper nzShowSizeChanger
-                [nzPageSizeOptions]="[6, 12, 24, 48]" (nzPageSizeChange)="onPageSizeChange($event)"
-                class="custom-pagination"></nz-pagination>
-        </div>
-
-        <!-- Enhanced Mobile Pagination -->
-        <div *ngIf="totalPages > 1" class="flex justify-center mt-6 md:hidden">
-            <div class="flex items-center bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <!-- Simple Pagination with < 1 2 3 > Style -->
+        <div *ngIf="totalPages > 0" class="flex justify-center mt-8 mb-6">
+            <div
+                class="custom-pagination-simple bg-white rounded-lg shadow-md border border-gray-200 px-4 py-2 flex items-center gap-1">
+                <!-- Previous Button -->
                 <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0"
-                    class="flex items-center justify-center w-12 h-12 border-r border-gray-200 transition-colors"
-                    [ngClass]="currentPage === 0 ? 'text-gray-300 bg-gray-50' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
-                    <i nz-icon nzType="left" nzTheme="outline" class="text-lg"></i>
+                    class="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-300"
+                    [ngClass]="currentPage === 0 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'">
+                    &lt;
                 </button>
 
-                <div class="px-4 py-2 font-medium text-gray-800 flex items-center">
-                    <span class="text-[#E74C3C]">{{currentPage + 1}}</span>
-                    <span class="mx-1">/</span>
-                    <span>{{totalPages}}</span>
+                <!-- Page Numbers -->
+                <div class="flex items-center mx-2 space-x-2">
+                    <ng-container *ngFor="let page of getPaginationRange(); let i = index">
+                        <button *ngIf="page !== '...'" (click)="goToPage(+page - 1)"
+                            class="flex items-center justify-center mx-0.5 w-8 h-8 rounded-md transition-all duration-300 text-base font-medium"
+                            [ngClass]="currentPage + 1 === +page ? 'bg-[#E74C3C] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 hover:text-[#E74C3C]'">
+                            {{ page }}
+                        </button>
+
+                        <!-- Ellipsis -->
+                        <span *ngIf="page === '...'"
+                            class="flex items-center justify-center w-8 h-8 text-gray-500">...</span>
+                    </ng-container>
                 </div>
 
+                <!-- Next Button -->
                 <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1"
-                    class="flex items-center justify-center w-12 h-12 border-l border-gray-200 transition-colors"
-                    [ngClass]="currentPage === totalPages - 1 ? 'text-gray-300 bg-gray-50' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
-                    <i nz-icon nzType="right" nzTheme="outline" class="text-lg"></i>
+                    class="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-300"
+                    [ngClass]="currentPage === totalPages - 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'">
+                    &gt;
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Pagination -->
+        <div *ngIf="totalPages > 0" class="flex md:hidden justify-center mt-6">
+            <div class="flex items-center bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
+                <!-- Previous Button -->
+                <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0"
+                    class="flex items-center justify-center w-12 h-12 transition-all duration-300"
+                    [ngClass]="currentPage === 0 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
+                    &lt;
+                </button>
+
+                <!-- Current Page / Total Pages -->
+                <div class="px-4 py-2 font-medium flex items-center bg-gray-50">
+                    <span class="text-[#E74C3C] text-xl">{{currentPage + 1}}</span>
+                    <span class="mx-1 text-gray-400">/</span>
+                    <span class="text-gray-700">{{totalPages || 1}}</span>
+                </div>
+
+                <!-- Next Button -->
+                <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1"
+                    class="flex items-center justify-center w-12 h-12 transition-all duration-300"
+                    [ngClass]="currentPage === totalPages - 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
+                    &gt;
                 </button>
             </div>
         </div>

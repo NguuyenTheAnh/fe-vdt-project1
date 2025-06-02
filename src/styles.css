@@ -10,6 +10,21 @@
     /* Ensure notifications appear above header */
 }
 
+/* Global modal styles to ensure modals appear above other elements */
+body.modal-open header {
+    z-index: 40 !important;
+}
+
+.modal-overlay {
+    position: fixed !important;
+    z-index: 9999 !important;
+}
+
+.modal-content {
+    position: relative !important;
+    z-index: 10000 !important;
+}
+
 /* Enhance notification visibility and styling */
 .ant-notification-notice {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
@@ -28,6 +43,17 @@
 /* Ensure modal content sits above the overlay */
 .fixed.inset-0 .bg-white {
     z-index: 8100 !important;
+}
+
+/* Xử lý hiển thị modal trong notification-list */
+.modal-overlay {
+    z-index: 9000 !important;
+    position: fixed !important;
+}
+
+.modal-content {
+    z-index: 9100 !important;
+    position: relative !important;
 }
 
 .ant-notification-top .ant-notification-notice {

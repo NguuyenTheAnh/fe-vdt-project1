@@ -1,1 +1,90 @@
-<p>page-not-found works!</p>
+<div class="min-h-screen bg-[#F5F5F5] flex flex-col items-center justify-center p-4">
+    <div class="max-w-3xl w-full text-center">
+        <!-- Error Code -->
+        <div class="relative mb-8">
+            <h1 class="text-9xl font-bold text-gray-200">404</h1>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div class="bg-[#E74C3C] text-white p-4 rounded-full shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8 transform transition-all duration-300 hover:shadow-xl">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Trang không tìm thấy</h2>
+            <p class="text-gray-600 text-lg mb-6">Rất tiếc, trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.
+            </p>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button (click)="goBack()"
+                    class="px-6 border-gray-100 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-all duration-300 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Quay lại
+                </button>
+                <button routerLink="/home"
+                    class="px-6 border-gray-100 py-3 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-lg transition-all duration-300 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7m-7-7v14" />
+                    </svg>
+                    Về trang chủ
+                </button>
+            </div>
+        </div>
+
+        <!-- Suggestions -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Bạn có thể thử:</h3>
+            <ul class="space-y-3 text-left">
+                <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2 mt-0.5" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-gray-700">Kiểm tra lại đường dẫn URL</span>
+                </li>
+                <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2 mt-0.5" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-gray-700">Truy cập <a routerLink="/borrower-portal/loan-product-list"
+                            class="text-[#E74C3C] hover:underline">danh sách khoản vay</a> để tìm sản phẩm phù
+                        hợp</span>
+                </li>
+                <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2 mt-0.5" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-gray-700">Liên hệ với chúng tôi nếu bạn cần hỗ trợ</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Logo -->
+        <div class="mt-8">
+            <a routerLink="/home" class="inline-block">
+                <div
+                    class="bg-[#E74C3C] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                    <h2 class="text-2xl">
+                        <span class="font-bold text-white">Loan</span><span class="font-light text-white">Conv</span>
+                    </h2>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

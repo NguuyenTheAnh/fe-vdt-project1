@@ -26,7 +26,8 @@ const routes: Routes = [
       { path: 'approved-loan-detail', component: ApprovedLoanDetailComponent },
       { path: 'user-profile', component: UserProfileComponent }]
   },
-  { path: '**', component: PageNotFoundComponent }
+  { path: '404', component: PageNotFoundComponent },
+  { path: '**', redirectTo: '/404' }
 ];
 
 @NgModule({

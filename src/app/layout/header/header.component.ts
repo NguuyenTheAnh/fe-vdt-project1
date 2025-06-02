@@ -1,34 +1,57 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserData } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { AppNotificationService } from '../../services/app-notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
     currentUser: UserData | null = null;
     isLoggedIn = false;
     showMobileMenu = false;
     showUserDropdown = false;
     isScrolled = false;
+    unreadNotificationCount = 0;
+    private subscriptions: Subscription[] = [];
 
     constructor(
         private userService: UserService,
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private appNotificationService: AppNotificationService
     ) { } ngOnInit(): void {
         // Subscribe để luôn cập nhật khi thông tin người dùng thay đổi
-        this.userService.currentUser$.subscribe(user => {
+        const userSubscription = this.userService.currentUser$.subscribe(user => {
             this.currentUser = user;
             this.isLoggedIn = !!user;
+
+            // Only subscribe to notifications when user is logged in
+            if (user) {
+                // Get initial unread count
+                this.appNotificationService.getUnreadCount().subscribe();
+            }
         });
+        this.subscriptions.push(userSubscription);
+
+        // Subscribe to unread notification count
+        const notificationSubscription = this.appNotificationService.unreadCount$.subscribe(count => {
+            this.unreadNotificationCount = count;
+        });
+        this.subscriptions.push(notificationSubscription);
 
         // Kiểm tra vị trí cuộn ban đầu
         this.isScrolled = window.scrollY > 30;
+    }
+
+    ngOnDestroy(): void {
+        // Unsubscribe from all subscriptions to avoid memory leaks
+        this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 
     logout(): void {

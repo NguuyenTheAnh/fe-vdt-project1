@@ -37,7 +37,7 @@ export class LoanProductListComponent implements OnInit {
 
   // Pagination properties
   currentPage: number = 0;
-  pageSize: number = 6;
+  pageSize: number = 6; // Hiển thị mặc định 6 khoản vay mỗi trang
   totalPages: number = 0;
   totalElements: number = 0;
 
@@ -64,20 +64,34 @@ export class LoanProductListComponent implements OnInit {
 
     this.loanService.getLoanProducts(this.currentPage, this.pageSize, sortParam).subscribe({
       next: (response) => {
+        console.log('API Response:', response);
         if (response && response.data) {
           this.loanProducts = response.data.content;
           this.filteredProducts = [...this.loanProducts]; // Initialize filtered products
 
           // Cập nhật thông tin phân trang
-          this.totalPages = response.data.totalPages;
-          this.totalElements = response.data.totalElements;
-          this.currentPage = response.data.number;
+          this.totalPages = response.data.totalPages || 0;
+          this.totalElements = response.data.totalElements || 0;
+          this.currentPage = response.data.number || 0;
+
+          // Debug information
+          console.log('Total Pages:', this.totalPages);
+          console.log('Current Page:', this.currentPage);
+          console.log('Products count:', this.filteredProducts.length);
+
+          // Ensure totalPages is at least 1 if we have products (fix for pagination visibility)
+          if (this.loanProducts.length > 0 && this.totalPages === 0) {
+            this.totalPages = Math.ceil(this.loanProducts.length / this.pageSize) || 1;
+            console.log('Corrected Total Pages:', this.totalPages);
+          }
 
           // Apply any current filters
           this.applyFilters();
         } else {
           this.loanProducts = [];
           this.filteredProducts = [];
+          this.totalPages = 0;
+          console.log('No data in response or invalid response format');
         }
         this.isLoading = false;
       },
@@ -121,6 +135,13 @@ export class LoanProductListComponent implements OnInit {
     );
 
     this.filteredProducts = filtered;
+
+    // Update pagination values based on filtered results when doing client-side filtering
+    // Note: This ensures pagination is shown correctly even with client-side filtering
+    if (this.totalPages <= 1 && this.filteredProducts.length > this.pageSize) {
+      this.totalPages = Math.ceil(this.filteredProducts.length / this.pageSize);
+      console.log('Updated total pages based on filtered results:', this.totalPages);
+    }
   }
 
   // Search method
@@ -161,9 +182,28 @@ export class LoanProductListComponent implements OnInit {
 
   // Phương thức chuyển trang
   goToPage(page: number): void {
-    if (page >= 0 && page < this.totalPages) {
+    // Ensure page is a valid number
+    page = Number(page);
+    if (isNaN(page)) page = 0;
+
+    // Make sure we have valid totalPages
+    const maxPage = Math.max(1, this.totalPages || 1) - 1;
+
+    // Validate the page range
+    if (page >= 0 && page <= maxPage) {
       this.currentPage = page;
       this.loadLoanProducts();
+
+      // Scroll to top of products list for better UX
+      setTimeout(() => {
+        const container = document.querySelector('.container');
+        if (container) {
+          window.scrollTo({
+            top: container.getBoundingClientRect().top + window.scrollY - 100,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
     }
   }
 
@@ -188,6 +228,59 @@ export class LoanProductListComponent implements OnInit {
     for (let i = startPage; i <= endPage; i++) {
       result.push(i);
     }
+
+    return result;
+  }
+
+  // Tạo mảng các số trang hiển thị cho pagination kiểu "< 1 2 3 >"
+  getPaginationRange(): (number | string)[] {
+    const result: (number | string)[] = [];
+
+    // Guard clause - nếu không có trang nào thì trả về mảng trống
+    if (!this.totalPages || this.totalPages <= 0) {
+      console.log('No pages available for pagination');
+      return [];
+    }
+
+    const currentPage = this.currentPage + 1; // Convert to 1-based for display
+    const totalPages = this.totalPages;
+
+    console.log('getPaginationRange - totalPages:', totalPages);
+    console.log('getPaginationRange - currentPage:', currentPage);
+
+    // Nếu chỉ có 1 trang, chỉ hiện trang đó
+    if (totalPages === 1) {
+      result.push(1);
+      return result;
+    }
+
+    // Luôn hiển thị trang đầu tiên
+    result.push(1);
+
+    // Hiển thị "..." nếu trang hiện tại > 3
+    if (currentPage > 3) {
+      result.push('...');
+    }
+
+    // Hiển thị các trang xung quanh trang hiện tại
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+      // Tránh hiển thị trùng với trang đầu tiên hoặc trang cuối
+      if (i !== 1 && i !== totalPages) {
+        result.push(i);
+      }
+    }
+
+    // Hiển thị "..." nếu trang hiện tại < totalPages - 2
+    if (currentPage < totalPages - 2) {
+      result.push('...');
+    }
+
+    // Luôn hiển thị trang cuối cùng nếu có nhiều hơn 1 trang
+    if (totalPages > 1) {
+      result.push(totalPages);
+    }
+
+    console.log('Pagination range result:', result);
 
     return result;
   }

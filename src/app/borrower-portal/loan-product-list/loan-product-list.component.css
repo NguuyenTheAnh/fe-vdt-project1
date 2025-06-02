@@ -51,6 +51,54 @@
     color: #E74C3C;
 }
 
+/* Custom Simple Pagination Style < 1 2 3 ... > */
+.custom-pagination-simple {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0;
+    margin: 10px 0;
+}
+
+.custom-pagination-simple button {
+    min-width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    margin: 0 4px;
+    border: 1px solid transparent;
+}
+
+.custom-pagination-simple button:not([disabled]):hover {
+    background-color: #f8d7d4;
+    color: #E74C3C;
+    border-color: #E74C3C;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-pagination-simple button.active {
+    background-color: #E74C3C;
+    color: white;
+    box-shadow: 0 2px 6px rgba(231, 76, 60, 0.25);
+}
+
+.custom-pagination-simple button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Extra visibility for ellipsis */
+.custom-pagination-simple span {
+    min-width: 36px;
+    height: 36px;
+    font-weight: bold;
+}
+
 :host ::ng-deep .custom-pagination .ant-pagination-options .ant-select:hover .ant-select-selector,
 :host ::ng-deep .custom-pagination .ant-pagination-options .ant-select-focused .ant-select-selector {
     border-color: #E74C3C;
@@ -65,6 +113,42 @@
 :host ::ng-deep .custom-pagination .ant-pagination-options-quick-jumper input:focus {
     border-color: #E74C3C;
     box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+/* Styling for custom simplified pagination */
+.custom-pagination-simple {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.custom-pagination-simple:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.custom-pagination-simple button {
+    position: relative;
+    overflow: hidden;
+}
+
+.custom-pagination-simple button::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(231, 76, 60, 0.1);
+    border-radius: 8px;
+    transform: scale(0);
+    transition: transform 0.3s ease;
+}
+
+.custom-pagination-simple button:hover::after {
+    transform: scale(1);
+}
+
+.custom-pagination-simple button:active {
+    transform: scale(0.95);
 }
 
 /* Enhanced slider styling */
