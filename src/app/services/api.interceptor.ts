@@ -25,12 +25,14 @@ export class ApiInterceptor implements HttpInterceptor {
         // Danh sách các URL không cần thêm token
         const publicUrls = [
             '/auth/login',
-            '/auth/refresh',
-            '/users'  // Đăng ký
+            '/auth/refresh'
         ];
 
+        // Đăng ký tài khoản (POST /users) không cần token, nhưng cập nhật (PATCH /users) cần token
+        const isPublicUsersEndpoint = request.url.includes('/users') && request.method === 'POST';
+
         // Kiểm tra xem request hiện tại có thuộc danh sách public không
-        const isPublicRequest = publicUrls.some(url => request.url.includes(url));
+        const isPublicRequest = publicUrls.some(url => request.url.includes(url)) || isPublicUsersEndpoint;
 
         // Lấy token từ localStorage
         const token = localStorage.getItem('authToken');

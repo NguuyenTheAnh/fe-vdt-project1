@@ -19,16 +19,15 @@ export interface UserNotification {
     providedIn: 'root'
 })
 export class UserNotificationService {
-    constructor(private apiService: ApiService) { }
-
-    /**
+    constructor(private apiService: ApiService) { }    /**
      * Lấy danh sách thông báo của người dùng
      * @param page Số trang
      * @param size Số lượng thông báo mỗi trang
+     * @param sort Trường sắp xếp và hướng sắp xếp (mặc định là createdAt,desc)
      * @returns Danh sách thông báo theo trang
      */
-    getNotifications(page: number = 0, size: number = 10): Observable<ApiResponse<PageableResponse<UserNotification>>> {
-        return this.apiService.get<PageableResponse<UserNotification>>(`/notifications?page=${page}&size=${size}`);
+    getNotifications(page: number = 0, size: number = 10, sort: string = 'createdAt,desc'): Observable<ApiResponse<PageableResponse<UserNotification>>> {
+        return this.apiService.get<PageableResponse<UserNotification>>(`/notifications?page=${page}&size=${size}&sort=${sort}`);
     }
 
     /**

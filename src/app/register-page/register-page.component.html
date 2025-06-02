@@ -149,9 +149,8 @@
                 </nz-form-control>
             </nz-form-item> <!-- Submit -->
             <nz-form-item class="mt-6">
-                <nz-form-control>
-                    <button nz-button nzType="primary" [nzLoading]="isLoading" [disabled]="!registerForm.valid"
-                        class="form-button-primary">
+                <nz-form-control> <button nz-button nzType="primary" [nzLoading]="isLoading"
+                        [disabled]="!registerForm.valid" class="form-button-primary cursor-pointer">
                         {{ isLoading ? 'Đang xử lý...' : 'Đăng ký' }}
                     </button>
                 </nz-form-control>

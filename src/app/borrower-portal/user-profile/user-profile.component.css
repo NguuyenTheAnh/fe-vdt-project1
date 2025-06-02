@@ -1,0 +1,191 @@
+/* Profile component animations and styles */
+
+/* Fade-in animation for content */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Card hover effect */
+.bg-white {
+    transition: all 0.3s ease;
+}
+
+.bg-white:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced avatar styling */
+.rounded-full {
+    transition: transform 0.3s ease;
+}
+
+.rounded-full:hover {
+    transform: scale(1.05);
+}
+
+/* Staggered animation for children */
+.fade-in>* {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.fade-in>*:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.fade-in>*:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.fade-in>*:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+/* Badge hover effect */
+.px-3.py-1 {
+    transition: all 0.3s ease;
+}
+
+.px-3.py-1:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal enhancements */
+::ng-deep .ant-modal-content {
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+::ng-deep .ant-modal-header {
+    padding: 16px 24px !important;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: #fff !important;
+}
+
+::ng-deep .ant-modal-title {
+    font-weight: 600 !important;
+}
+
+::ng-deep .ant-modal-close {
+    transition: all 0.3s ease;
+}
+
+::ng-deep .ant-modal-close:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+::ng-deep .ant-modal-footer {
+    border-top: 1px solid #f0f0f0;
+    padding: 14px 24px !important;
+}
+
+/* Form input focus effects */
+::ng-deep .ant-input-affix-wrapper:focus,
+::ng-deep .ant-input-affix-wrapper-focused,
+::ng-deep .ant-input:focus,
+::ng-deep .ant-input-focused {
+    border-color: #E74C3C !important;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2) !important;
+}
+
+/* Button effects */
+::ng-deep .ant-btn-primary.ant-btn-dangerous {
+    background-color: #E74C3C !important;
+    border-color: #E74C3C !important;
+    transition: all 0.3s ease !important;
+}
+
+::ng-deep .ant-btn-primary.ant-btn-dangerous:hover {
+    background-color: #C0392B !important;
+    border-color: #C0392B !important;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3) !important;
+}
+
+::ng-deep .ant-btn-default:hover {
+    border-color: #E74C3C !important;
+    color: #E74C3C !important;
+}
+
+/* Modal entrance animation */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+::ng-deep .ant-modal {
+    animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+/* Custom badge class for password strength indicators */
+.password-strength-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.password-weak {
+    background-color: rgba(235, 87, 87, 0.15);
+    color: #EB5757;
+}
+
+.password-medium {
+    background-color: rgba(242, 201, 76, 0.15);
+    color: #F2994A;
+}
+
+.password-strong {
+    background-color: rgba(39, 174, 96, 0.15);
+    color: #27AE60;
+}
+
+/* Form input hover effects */
+::ng-deep .ant-input-affix-wrapper:hover,
+::ng-deep .ant-input:hover {
+    border-color: #E74C3C !important;
+}
+
+/* Modal content transition */
+::ng-deep .ant-modal-body {
+    transition: all 0.3s ease;
+}
+
+/* Tooltip-like element for password suggestions */
+.password-tip {
+    position: relative;
+    padding-left: 22px;
+}
+
+.password-tip::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}

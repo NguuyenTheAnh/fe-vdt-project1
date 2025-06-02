@@ -74,26 +74,40 @@ export class NotificationListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
 
+    // Create a timer to ensure loading state is displayed for at least 1.5 seconds
+    // This artificial delay ensures users can see the loading indicator even on fast connections
+    const minLoadingTime = 500; // 0.5 seconds
+    const loadingStartTime = Date.now();
+
     this.userNotificationService.getNotifications(this.currentPage, this.pageSize).subscribe({
       next: (response) => {
-        if (response && response.data) {
-          this.notifications = response.data.content.map(notification => ({
-            ...notification,
-            expanded: false // Add UI state for expanded view
-          }));
+        // Calculate how long we've been loading so far
+        const loadingElapsedTime = Date.now() - loadingStartTime;
+        const remainingDelay = Math.max(0, minLoadingTime - loadingElapsedTime);
 
-          // Update pagination info
-          this.totalPages = response.data.totalPages;
-          this.totalElements = response.data.totalElements;
+        // If the API responded too quickly, add artificial delay to show loading message
+        setTimeout(() => {
+          if (response && response.data) {
+            this.notifications = response.data.content.map(notification => ({
+              ...notification,
+              expanded: false // Add UI state for expanded view
+            }));
 
-          // Calculate unread count
-          this.unreadCount = this.notifications.filter(n => !n.isRead).length;
+            // Update pagination info
+            this.totalPages = response.data.totalPages;
+            this.totalElements = response.data.totalElements;
 
-          // Update the shared notification count
-          this.appNotificationService.updateUnreadCount(this.unreadCount);
+            // Calculate unread count
+            this.unreadCount = this.notifications.filter(n => !n.isRead).length;
 
+            // Update the shared notification count
+            this.appNotificationService.updateUnreadCount(this.unreadCount);
+          } else {
+            console.error('No data received from notifications API');
+            this.error = 'Không nhận được dữ liệu thông báo từ hệ thống.';
+          }
           this.isLoading = false;
-        }
+        }, remainingDelay);
       },
       error: (error) => {
         console.error('Error loading notifications', error);
@@ -165,7 +179,7 @@ export class NotificationListComponent implements OnInit, OnDestroy {
     if (this.unreadCount === 0) return;
 
     this.isLoading = true;
-    this.apiService.post<any>('/notifications/mark-all-as-read', {}).subscribe({
+    this.appNotificationService.markAllAsRead().subscribe({
       next: () => {
         // Update all notifications to read
         this.notifications.forEach(n => n.isRead = true);
@@ -292,7 +306,7 @@ export class NotificationListComponent implements OnInit, OnDestroy {
     this.loadNotifications();
 
     // Hiển thị thông báo thành công
-    this.notificationService.success('Cập nhật thành công', 'Thông tin đã được cập nhật.');
+    this.notificationService.success('Cập nhật thành công', 'Thông báo được đánh dấu đã đọc.');
   }
 
   // Close modal when pressing Escape key

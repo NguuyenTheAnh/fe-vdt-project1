@@ -39,12 +39,13 @@ export class AppNotificationService {
     }    /**
      * Lấy số lượng thông báo chưa đọc
      */
-    getUnreadCount(): Observable<ApiResponse<{ count: number }>> {
-        return this.apiService.get<{ count: number }>('/notifications/unread-count')
+    getUnreadCount(): Observable<ApiResponse<number>> {
+        return this.apiService.get<number>('/notifications/unread-count')
             .pipe(
                 tap(response => {
-                    if (response.code === 1000 && response.data) {
-                        this.unreadCount = response.data.count;
+                    if (response.code === 1000) {
+                        // API trả về data là số lượng unread trực tiếp, không phải object
+                        this.unreadCount = response.data || 0;
                         this.unreadCountSubject.next(this.unreadCount);
                     }
                 })
@@ -64,13 +65,11 @@ export class AppNotificationService {
                     }
                 })
             );
-    }
-
-    /**
+    }    /**
      * Đánh dấu tất cả thông báo đã đọc
      */
     markAllAsRead(): Observable<ApiResponse<void>> {
-        return this.apiService.patch<void>('/notifications/mark-all-read', {})
+        return this.apiService.post<void>('/notifications/mark-all-as-read', {})
             .pipe(
                 tap(response => {
                     if (response.code === 1000) {

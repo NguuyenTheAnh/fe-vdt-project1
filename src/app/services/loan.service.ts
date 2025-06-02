@@ -52,13 +52,35 @@ export interface PageableResponse<T> {
 export interface LoanApplication {
     id?: number;
     userId?: number;
-    productId: number;
+    productId?: number;
     requestedAmount: number;
     requestedTerm: number;
     personalInfo: string; // Dạng JSON string với format: {"Thu nhập":15000000,"Nghề nghiệp":"Nhân viên văn phòng"}
     status?: string;
+    disbursedAmount?: number | null;
+    disbursedDate?: string | null;
+    internalNotes?: string | null;
     createdAt?: string;
     updatedAt?: string;
+    loanProduct?: LoanProduct;
+    user?: {
+        id: number;
+        email: string;
+        fullName: string;
+        phoneNumber: string;
+        address: string;
+        accountStatus: string;
+        createdAt: string;
+        updatedAt: string;
+        role?: {
+            name: string;
+            description: string;
+            permissions: {
+                name: string;
+                description: string;
+            }[];
+        };
+    };
 }
 
 @Injectable({
@@ -85,10 +107,14 @@ export class LoanService {
     }
 
     /**
-     * Lấy danh sách đơn đăng ký vay của người dùng
+     * Lấy danh sách đơn đăng ký vay của người dùng với phân trang
+     * @param page Số trang, mặc định là 0
+     * @param size Số lượng phần tử mỗi trang, mặc định là 10
+     * @param sort Thuộc tính và hướng sắp xếp, mặc định là "createdAt,desc"
+     * @returns Observable chứa danh sách đơn đăng ký vay của người dùng
      */
-    getUserApplications(): Observable<ApiResponse<LoanApplication[]>> {
-        return this.apiService.get<LoanApplication[]>('/loan-applications/my-applications');
+    getUserApplications(page: number = 0, size: number = 10, sort: string = "createdAt,desc"): Observable<ApiResponse<PageableResponse<LoanApplication>>> {
+        return this.apiService.get<PageableResponse<LoanApplication>>(`/loan-applications/user?page=${page}&size=${size}&sort=${sort}`);
     }
 
     /**

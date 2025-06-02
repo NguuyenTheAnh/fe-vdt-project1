@@ -11,6 +11,7 @@ import { NotificationListComponent } from './borrower-portal/notification-list/n
 import { ApprovedLoanDetailComponent } from './borrower-portal/approved-loan-detail/approved-loan-detail.component';
 import { UserProfileComponent } from './borrower-portal/user-profile/user-profile.component';
 import { AuthGuard } from './guards/auth.guard';
+import { ApplicationDetailComponent } from './application-detail/application-detail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -22,6 +23,7 @@ const routes: Routes = [
       { path: 'loan-product-list', component: LoanProductListComponent },
       { path: 'loan-application-form', component: LoanApplicationFormComponent },
       { path: 'application-list', component: ApplicationListComponent },
+      { path: 'application-list/:id', component: ApplicationDetailComponent },
       { path: 'notification-list', component: NotificationListComponent },
       { path: 'approved-loan-detail', component: ApprovedLoanDetailComponent },
       { path: 'user-profile', component: UserProfileComponent }]

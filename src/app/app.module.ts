@@ -37,12 +37,15 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzMessageModule } from 'ng-zorro-antd/message';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { HomePageComponent } from './borrower-portal/home-page/home-page.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
+import { ApplicationDetailComponent } from './application-detail/application-detail.component';
 registerLocaleData(vi);
 
 @NgModule({
@@ -53,7 +56,8 @@ registerLocaleData(vi);
     HomePageComponent,
     PageNotFoundComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    ApplicationDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -88,7 +92,9 @@ registerLocaleData(vi);
     NzDividerModule,
     NzStepsModule,
     NzPopoverModule,
-    NzAvatarModule
+    NzAvatarModule,
+    NzUploadModule,
+    NzMessageModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: vi_VN },

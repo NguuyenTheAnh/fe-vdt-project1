@@ -1,0 +1,388 @@
+/* Application Detail Component Styles */
+
+/* Animation for loading spinner */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Status badge colors */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+}
+
+/* Card hover effects */
+.info-card {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: #E74C3C;
+}
+
+/* Document card hover effects */
+.document-card {
+    transition: all 0.3s ease;
+}
+
+.document-card:hover {
+    background-color: #f8f9fa;
+    border-left: 3px solid #E74C3C;
+}
+
+/* Custom button styles */
+.btn-primary {
+    background-color: #E74C3C;
+    color: white;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #C0392B;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Add some basic styling to the ng-zorro modal */
+:host ::ng-deep .ant-modal-confirm-title {
+    color: #E74C3C !important;
+    font-size: 1.5rem !important;
+}
+
+:host ::ng-deep .ant-btn-primary {
+    background-color: #E74C3C !important;
+    border-color: #E74C3C !important;
+}
+
+:host ::ng-deep .ant-btn-primary:hover {
+    background-color: #C0392B !important;
+    border-color: #C0392B !important;
+}
+
+:host ::ng-deep .ant-modal-confirm-content {
+    font-size: 1rem !important;
+}
+
+.btn-secondary {
+    background-color: #ECF0F1;
+    color: #34495E;
+    border: 1px solid #BDC3C7;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-secondary:hover {
+    background-color: #D6DBDF;
+}
+
+/* Section headers with enhanced design */
+.section-header {
+    position: relative;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.section-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 40px;
+    background-color: #E74C3C;
+    border-radius: 3px;
+}
+
+/* Document upload item styles */
+.document-item {
+    transition: all 0.2s ease-in-out;
+    border-radius: 8px;
+}
+
+.document-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Upload button animation */
+.upload-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-btn:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.upload-btn:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 1;
+    }
+
+    20% {
+        transform: scale(25, 25);
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(40, 40);
+    }
+}
+
+/* Custom scrollbar for overflowing content */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Custom Confirmation Modal Styles */
+:host ::ng-deep .custom-confirmation-modal .ant-modal-content {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: none;
+}
+
+:host ::ng-deep .custom-confirmation-modal .ant-modal-body {
+    padding: 0;
+}
+
+:host ::ng-deep .custom-confirmation-modal .ant-modal-close {
+    right: 16px;
+    top: 16px;
+}
+
+:host ::ng-deep .custom-confirmation-modal .ant-modal-close-x {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+:host ::ng-deep .custom-confirmation-modal .ant-modal-close:hover .ant-modal-close-x {
+    color: #ffffff;
+}
+
+/* Cancel Modal Internal Styling - Enhanced */
+:host ::ng-deep .cancel-modal {
+    font-family: inherit;
+    color: #333;
+}
+
+:host ::ng-deep .cancel-modal-header {
+    background-color: #E74C3C;
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+}
+
+:host ::ng-deep .modal-icon-wrapper {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+:host ::ng-deep .modal-icon {
+    background-color: rgba(255, 255, 255, 0.2);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+:host ::ng-deep .modal-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+:host ::ng-deep .cancel-modal-body {
+    padding: 28px 24px;
+}
+
+:host ::ng-deep .modal-message {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #4B5563;
+    text-align: center;
+    margin-bottom: 24px;
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+:host ::ng-deep .modal-info {
+    background-color: #F9FAFB;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 28px;
+    border: 1px solid #F3F4F6;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+:host ::ng-deep .info-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -8px;
+    margin-bottom: 8px;
+}
+
+:host ::ng-deep .info-row:last-child {
+    margin-bottom: -8px;
+}
+
+:host ::ng-deep .info-item {
+    flex: 1 1 calc(50% - 16px);
+    margin: 8px;
+    display: flex;
+    align-items: center;
+}
+
+:host ::ng-deep .info-icon {
+    height: 20px;
+    width: 20px;
+    color: #E74C3C;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+:host ::ng-deep .info-label {
+    color: #6B7280;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+:host ::ng-deep .info-value {
+    font-weight: 600;
+    color: #111827;
+    font-size: 15px;
+    display: block;
+}
+
+:host ::ng-deep .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+:host ::ng-deep .button-icon {
+    height: 18px;
+    width: 18px;
+    margin-right: 8px;
+}
+
+:host ::ng-deep .cancel-button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid #E5E7EB;
+    background-color: white;
+    color: #4B5563;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:host ::ng-deep .cancel-button:hover {
+    background-color: #F9FAFB;
+    border-color: #D1D5DB;
+    transform: translateY(-2px);
+}
+
+:host ::ng-deep .confirm-button {
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    background-color: #E74C3C;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(231, 76, 60, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:host ::ng-deep .confirm-button:hover {
+    background-color: #C0392B;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* Add enhanced animation for modal appearance */
+:host ::ng-deep .custom-confirmation-modal {
+    animation: modalFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+::ng-deep .ant-modal .ant-btn {
+    border-radius: 8px !important;
+}
+
+::ng-deep .ant-modal-content {
+    border-radius: 16px !important;
+}

@@ -89,14 +89,34 @@ export class UserService {
      */
     getCurrentUser(): UserData | null {
         return this.currentUserSubject.value;
-    }
-
-    /**
-     * Cập nhật thông tin người dùng
+    }    /**
+     * Cập nhật thông tin người dùng trong local storage và state
      */
     updateCurrentUser(user: UserData): void {
         this.currentUserSubject.next(user);
         this.saveUserToLocalStorage(user);
+    }
+
+    /**
+     * Cập nhật thông tin người dùng thông qua API
+     */
+    updateUserProfile(updateData: any): Observable<any> {
+        return this.apiService.patch<any>('/users', updateData)
+            .pipe(
+                tap(response => {
+                    if (response && response.code === 1000 && response.data) {
+                        // Cập nhật thông tin người dùng hiện tại với dữ liệu mới
+                        const currentUser = this.currentUserSubject.value;
+                        if (currentUser) {
+                            const updatedUser = {
+                                ...currentUser,
+                                ...response.data
+                            };
+                            this.updateCurrentUser(updatedUser);
+                        }
+                    }
+                })
+            );
     }
 
     /**
