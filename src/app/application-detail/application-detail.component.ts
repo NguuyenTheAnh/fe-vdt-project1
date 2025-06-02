@@ -7,6 +7,8 @@ import { environment } from '../../environments/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { DocumentService, Document } from '../services/document.service';
+import { ApiService } from '../services/api.service';
 
 interface DocumentUpload {
   documentType: string;
@@ -49,12 +51,31 @@ export class ApplicationDetailComponent implements OnInit {
     'VEHICLE_REGISTRATION': 'Đăng ký phương tiện',
     'TRAVEL_ITINERARY': 'Lịch trình du lịch',
     'FISHING_LICENSE': 'Giấy phép đánh bắt cá',
-    'IMPORT_CONTRACT': 'Hợp đồng nhập khẩu'
+    'IMPORT_CONTRACT': 'Hợp đồng nhập khẩu',
+    'ADMISSION_LETTER': 'Thư nhập học',
+    'BUSINESS_PLAN': 'Kế hoạch kinh doanh',
+    'DRIVING_LICENSE': 'Giấy phép lái xe',
+    'EQUIPMENT_PURCHASE_CONTRACT': 'Hợp đồng mua thiết bị',
+    'ENVIRONMENTAL_PERMIT': 'Giấy phép môi trường',
+    'EXPORT_CONTRACT': 'Hợp đồng xuất khẩu',
+    'FARMING_PLAN': 'Kế hoạch canh tác',
+    'FINANCIAL_STATEMENT': 'Báo cáo tài chính',
+    'LAND_OWNERSHIP_CERTIFICATE': 'Giấy chứng nhận quyền sử dụng đất',
+    'LAND_USE_RIGHTS': 'Giấy quyền sử dụng đất',
+    'MEDICAL_INVOICE': 'Hóa đơn y tế',
+    'PROPERTY_DOCUMENT': 'Giấy tờ tài sản',
+    'SALARY_STATEMENT': 'Bảng lương',
+    'STUDENT_ID': 'Thẻ sinh viên',
+    'STUDENT_VISA': 'Visa du học',
+    'TUITION_INVOICE': 'Hóa đơn học phí',
+    'VEHICLE_CONTRACT': 'Hợp đồng mua xe',
+    'VEHICLE_PURCHASE_CONTRACT': 'Hợp đồng mua phương tiện'
   };
 
   // Các trạng thái của khoản vay
   statusTranslations: { [key: string]: string } = {
     'NEW': 'Mới',
+    'PENDING': 'Chờ xét duyệt',
     'UNDER_REVIEW': 'Đang xem xét',
     'APPROVED': 'Đã duyệt',
     'REJECTED': 'Từ chối',
@@ -76,7 +97,9 @@ export class ApplicationDetailComponent implements OnInit {
     private notificationService: NotificationService,
     private http: HttpClient,
     private message: NzMessageService,
-    private modal: NzModalService
+    private modal: NzModalService,
+    private documentService: DocumentService,
+    private apiService: ApiService
   ) { }
 
   ngOnInit(): void {
@@ -110,7 +133,8 @@ export class ApplicationDetailComponent implements OnInit {
             }
           }
 
-          // Khởi tạo danh sách tài liệu yêu cầu
+          // Khởi tạo danh sách tài liệu yêu cầu từ API
+          // Hàm này sẽ tự động lấy thông tin tài liệu đã upload và chưa upload
           this.initRequiredDocuments();
         }
         this.isLoading = false;
@@ -124,29 +148,55 @@ export class ApplicationDetailComponent implements OnInit {
   }
 
   /**
-   * Khởi tạo danh sách tài liệu yêu cầu từ sản phẩm vay
+   * Khởi tạo danh sách tài liệu yêu cầu từ API
    */
   initRequiredDocuments(): void {
-    if (this.application && this.application.loanProduct && this.application.loanProduct.requiredDocuments) {
-      const documents = this.application.loanProduct.requiredDocuments.split(' ');
+    if (this.application && this.application.id) {
+      this.loanService.getRequiredDocuments(this.application.id).subscribe({
+        next: (response) => {
+          if (response && response.code === 1000 && response.data) {
+            // Chuyển đổi từ object sang array để hiển thị trong template
+            const documentData = response.data;
+            this.requiredDocuments = Object.keys(documentData).map(type => {
+              return {
+                documentType: type,
+                fileName: documentData[type], // Nếu đã upload sẽ có tên file, ngược lại là null
+                uploading: false,
+                error: null,
+                displayName: this.documentTypeDisplayMap[type] || type
+              };
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Error loading required documents', error);
 
-      this.requiredDocuments = documents.map(type => {
-        return {
-          documentType: type,
-          fileName: null,
-          uploading: false,
-          error: null,
-          displayName: this.documentTypeDisplayMap[type] || type
-        };
+          // Fallback to product documents if API fails
+          if (this.application && this.application.loanProduct && this.application.loanProduct.requiredDocuments) {
+            const documents = this.application.loanProduct.requiredDocuments.split(' ');
+            this.requiredDocuments = documents.map(type => {
+              return {
+                documentType: type,
+                fileName: null,
+                uploading: false,
+                error: null,
+                displayName: this.documentTypeDisplayMap[type] || type
+              };
+            });
+          }
+        }
       });
     }
   }
+
+  // Đã xóa phương thức loadApplicationDocuments vì phương thức initRequiredDocuments
+  // hiện đã lấy trực tiếp tất cả thông tin tài liệu từ API endpoint mới
 
   /**
    * Format amount to Vietnamese currency
    */
   formatAmount(amount: number | null): string {
-    if (amount === null) return 'N/A';
+    if (amount === null || amount === undefined) return 'N/A';
     return this.formatter.format(amount);
   }
 
@@ -175,33 +225,61 @@ export class ApplicationDetailComponent implements OnInit {
       this.requiredDocuments[docIndex].uploading = true;
       this.requiredDocuments[docIndex].error = null;
 
-      // Tạo form data để upload
-      const formData = new FormData();
-      formData.append('file', file as any);
+      if (!this.applicationId) {
+        console.error('Application ID not found');
+        this.requiredDocuments[docIndex].uploading = false;
+        return false;
+      }
 
-      // Gọi API upload file
-      this.http.post(`${environment.apiUrl}/files/upload`, formData)
+      // Kiểm tra xem đây là thao tác tạo mới hay cập nhật
+      const isUpdate = this.requiredDocuments[docIndex].fileName !== null;
+
+      // Sử dụng DocumentService để tải file lên
+      this.documentService.uploadDocument(this.applicationId, documentType, file)
         .subscribe({
           next: (response: any) => {
-            if (response && response.data && response.data.fileName) {
-              // Upload thành công, lưu tên file và báo thành công
-              this.requiredDocuments[docIndex].fileName = response.data.fileName;
-              this.requiredDocuments[docIndex].uploading = false;
+            if (response && response.code === 1000 && response.data && response.data.fileName) {
+              const fileName = response.data.fileName;
 
-              // Thông báo thành công
-              this.message.success(`Đã tải lên ${this.requiredDocuments[docIndex].displayName} thành công`);
+              // Dựa vào trạng thái hiện tại để quyết định tạo mới hay cập nhật
+              const documentAction = isUpdate
+                ? this.documentService.updateDocument(this.applicationId, documentType, fileName)
+                : this.documentService.saveDocument(this.applicationId, documentType, fileName);
 
-              // Lưu thông tin document vào database
-              this.saveDocumentToDatabase(documentType, response.data.fileName);
+              // Thực hiện lưu hoặc cập nhật thông tin document
+              documentAction.subscribe({
+                next: (saveResponse: any) => {
+                  if (saveResponse && saveResponse.code === 1000) {
+                    // Cập nhật UI tạm thời
+                    this.requiredDocuments[docIndex].fileName = fileName;
+                    this.requiredDocuments[docIndex].uploading = false;
+
+                    // Thông báo thành công
+                    const action = isUpdate ? 'cập nhật' : 'tải lên';
+                    this.notificationService.success(
+                      'Thành công',
+                      `Đã ${action} ${this.requiredDocuments[docIndex].displayName} thành công`
+                    );
+
+                    // Gọi API để lấy lại danh sách tài liệu yêu cầu mới nhất
+                    // Điều này sẽ đảm bảo trạng thái chính xác của tất cả các tài liệu
+                    this.initRequiredDocuments();
+                  } else {
+                    this.handleUploadError(docIndex, `${isUpdate ? 'Cập nhật' : 'Lưu'} thông tin tài liệu thất bại`);
+                  }
+                },
+                error: (err) => {
+                  console.error(`Error ${isUpdate ? 'updating' : 'saving'} document info:`, err);
+                  this.handleUploadError(docIndex, `Không thể ${isUpdate ? 'cập nhật' : 'lưu'} thông tin tài liệu`);
+                }
+              });
+            } else {
+              this.handleUploadError(docIndex, 'Tải file lên thất bại');
             }
           },
           error: (err) => {
             console.error('Error uploading file:', err);
-            this.requiredDocuments[docIndex].uploading = false;
-            this.requiredDocuments[docIndex].error = 'Lỗi khi tải lên tài liệu';
-
-            // Thông báo lỗi
-            this.message.error(`Không thể tải lên ${this.requiredDocuments[docIndex].displayName}`);
+            this.handleUploadError(docIndex, 'Không thể tải lên tài liệu');
           }
         });
     }
@@ -211,10 +289,51 @@ export class ApplicationDetailComponent implements OnInit {
   }
 
   /**
+   * Check if all required documents are uploaded
+   * @returns boolean indicating if all documents are uploaded
+   */
+  areAllDocumentsUploaded(): boolean {
+    // If requiredDocuments array is empty or undefined, return false
+    if (!this.requiredDocuments || this.requiredDocuments.length === 0) {
+      return false;
+    }
+
+    // Check if all documents have a fileName (not null)
+    return this.requiredDocuments.every(doc => doc.fileName !== null);
+  }
+
+  /**
+   * Helper method to handle upload errors
+   */
+  private handleUploadError(docIndex: number, errorMessage: string): void {
+    this.requiredDocuments[docIndex].uploading = false;
+    this.requiredDocuments[docIndex].error = errorMessage;
+    this.notificationService.error(
+      'Lỗi tải lên tài liệu',
+      `Không thể tải lên ${this.requiredDocuments[docIndex].displayName}: ${errorMessage}`
+    );
+  }
+
+  /**
    * Custom function to handle the upload button click
    */
   uploadDocument(doc: DocumentUpload, event: Event): void {
     event.preventDefault();
+
+    // Don't allow document uploads if application is not in NEW status
+    if (this.application && this.application.status !== 'NEW') {
+      this.notificationService.warning(
+        'Không thể cập nhật',
+        'Không thể cập nhật tài liệu sau khi hồ sơ đã được gửi yêu cầu xét duyệt'
+      );
+      return;
+    }
+
+    // Don't proceed if document is already being uploaded
+    if (doc.uploading) {
+      return;
+    }
+
     // Create a file input element
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -234,27 +353,14 @@ export class ApplicationDetailComponent implements OnInit {
   }
 
   /**
-   * Lưu thông tin document vào database
+   * Get appropriate tooltip for document button based on application status and document state
    */
-  saveDocumentToDatabase(documentType: string, fileName: string): void {
-    const documentData = {
-      applicationId: this.applicationId,
-      documentType: documentType,
-      fileName: fileName
-    };
+  getDocumentButtonTooltip(doc: DocumentUpload): string {
+    if (this.application && this.application.status !== 'NEW') {
+      return 'Không thể cập nhật tài liệu sau khi hồ sơ đã được gửi yêu cầu xét duyệt';
+    }
 
-    this.http.post(`${environment.apiUrl}/documents`, documentData)
-      .subscribe({
-        next: (response: any) => {
-          if (response && response.code === 1000) {
-            this.message.success('Đã lưu thông tin tài liệu thành công');
-          }
-        },
-        error: (err) => {
-          console.error('Error saving document info:', err);
-          this.message.error('Không thể lưu thông tin tài liệu');
-        }
-      });
+    return doc.fileName ? 'Cập nhật tài liệu hiện tại' : 'Tải lên tài liệu mới';
   }
 
   /**
@@ -263,6 +369,7 @@ export class ApplicationDetailComponent implements OnInit {
   getStatusClass(status: string): string {
     switch (status) {
       case 'NEW': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'PENDING': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'UNDER_REVIEW': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'APPROVED': return 'bg-green-100 text-green-800 border-green-200';
       case 'REJECTED': return 'bg-red-100 text-red-800 border-red-200';
@@ -301,20 +408,17 @@ export class ApplicationDetailComponent implements OnInit {
           this.loanService.cancelApplication(this.application.id).subscribe({
             next: (response) => {
               if (response && response.code === 1000) {
-                this.message.success('Đã hủy hồ sơ vay thành công');
-
                 // Cập nhật trạng thái trên UI
                 if (this.application) {
                   this.application.status = 'CANCELLED';
                 }
               } else {
-                this.message.error('Có lỗi xảy ra khi hủy hồ sơ vay');
+                console.error('Error response when cancelling application:', response);
               }
               this.isLoading = false;
             },
             error: (err) => {
               console.error('Error cancelling application:', err);
-              this.message.error('Không thể hủy hồ sơ vay. Vui lòng thử lại sau.');
               this.isLoading = false;
             }
           });
@@ -324,9 +428,139 @@ export class ApplicationDetailComponent implements OnInit {
   }
 
   /**
+   * Request application review
+   * This function will:
+   * 1. Send a notification to admin about the review request
+   * 2. Update the application status to "PENDING"
+   * 3. Update the UI accordingly
+   */
+  requestApplicationReview(): void {
+    if (!this.application || !this.application.id) {
+      this.notificationService.error('Lỗi', 'Không thể xác định thông tin hồ sơ');
+      return;
+    }
+
+    // Check if all required documents are uploaded
+    if (!this.areAllDocumentsUploaded()) {
+      this.notificationService.warning(
+        'Chưa đủ điều kiện',
+        'Vui lòng tải lên tất cả các tài liệu yêu cầu trước khi gửi yêu cầu duyệt hồ sơ.'
+      );
+      return;
+    }
+
+    this.isLoading = true;
+
+    // Show confirmation dialog
+    this.modal.confirm({
+      nzTitle: 'Xác nhận yêu cầu duyệt hồ sơ',
+      nzContent: 'Sau khi gửi yêu cầu duyệt, hồ sơ của bạn sẽ được chuyển đến nhân viên xét duyệt. Bạn có chắc chắn muốn tiếp tục?',
+      nzOkText: 'Xác nhận gửi',
+      nzOkType: 'primary',
+      nzCancelText: 'Hủy',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        // 1. Create notification for admin review
+        const notificationPayload = {
+          applicationId: this.applicationId,
+          message: `Cấc tài liệu cần thiết đã được tải lên. Hồ sơ vay của bạn đang chờ xét duyệt.`,
+          notificationType: 'REVIEWING',
+        };
+
+        // Use the API service directly to create a notification
+        this.apiService.post<any>('/notifications', notificationPayload)
+          .subscribe({
+            next: () => {
+              // 2. Update application status to "PENDING"
+              this.loanService.updateApplication(this.application!.id!, {
+                productId: this.application!.loanProduct?.id,
+                requestedAmount: this.application!.requestedAmount,
+                requestedTerm: this.application!.requestedTerm,
+                status: 'PENDING',
+                personalInfo: this.application!.personalInfo,
+              })
+                .subscribe({
+                  next: (response) => {
+                    if (response && response.code === 1000) {
+                      // Update local application object
+                      if (this.application) {
+                        this.application.status = 'PENDING';
+                      }
+
+                      // Show success message
+                      this.notificationService.success(
+                        'Gửi hồ sơ thành công',
+                        'Hồ sơ của bạn đã được gửi cho nhân viên xét duyệt. Chúng tôi sẽ thông báo kết quả sớm nhất.'
+                      );
+
+                      // Create a loading message element
+                      const loadingMessage = document.createElement('div');
+                      loadingMessage.innerHTML = `
+                        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                                    background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; 
+                                    justify-content: center; align-items: center;">
+                          <div style="background-color: white; padding: 30px; border-radius: 10px; 
+                                      text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                            <div class="animate-spin rounded-full h-10 w-10 border-4 border-t-[#E74C3C] mx-auto mb-4"></div>
+                            <p style="font-size: 18px; color: #333; margin: 0;">Đang tải lại trang...</p>
+                          </div>
+                        </div>
+                      `;
+                      document.body.appendChild(loadingMessage);
+
+                      // Set timeout to reload page after 1 second
+                      // This will update the notification counter in the header
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 1000);
+                    } else {
+                      // Show error message
+                      this.notificationService.error(
+                        'Lỗi cập nhật trạng thái',
+                        'Không thể cập nhật trạng thái hồ sơ. Vui lòng thử lại sau.'
+                      );
+                      this.isLoading = false;
+                    }
+                    this.isLoading = false;
+                  },
+                  error: (error: any) => {
+                    console.error('Error updating application status:', error);
+                    this.notificationService.error(
+                      'Lỗi cập nhật trạng thái',
+                      'Đã xảy ra lỗi khi cập nhật trạng thái hồ sơ. Vui lòng thử lại sau.'
+                    );
+                    this.isLoading = false;
+                  }
+                });
+            },
+            error: (error: any) => {
+              console.error('Error creating notification:', error);
+              this.notificationService.error(
+                'Lỗi gửi thông báo',
+                'Đã xảy ra lỗi khi gửi thông báo cho nhân viên xét duyệt. Vui lòng thử lại sau.'
+              );
+              this.isLoading = false;
+            }
+          });
+      },
+      nzOnCancel: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  /**
    * Helper function for template to get keys of an object
    */
   objectKeys(obj: any): string[] {
     return Object.keys(obj);
+  }
+
+  /**
+   * Get document URL for downloading
+   */
+  getDocumentUrl(fileName: string | null): string {
+    if (!fileName) return '';
+    return `${environment.apiUrl}/uploads/${fileName}`;
   }
 }

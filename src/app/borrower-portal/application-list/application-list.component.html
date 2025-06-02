@@ -185,11 +185,13 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
-                <div class="bg-white py-5 flex items-center justify-between border-t border-gray-200 px-6 sm:px-8">
-                    <div class="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <!-- Results Summary and Pagination -->
+                <div class="bg-white py-5 flex flex-col border-t border-gray-200 px-6 sm:px-8">
+                    <!-- Results Summary with Enhanced Styling -->
+                    <div
+                        class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white rounded-lg shadow-sm p-4 border border-gray-100">
                         <div class="flex items-center text-sm text-gray-700 mb-4 sm:mb-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 mr-2" fill="none"
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#E74C3C] mr-2" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -206,69 +208,78 @@
                             </span>
                         </div>
 
-                        <div class="flex justify-center sm:justify-end">
-                            <nav class="relative z-0 inline-flex rounded-md shadow-lg" aria-label="Pagination">
-                                <button [disabled]="!hasPreviousPage()" (click)="changePage(currentPage - 1)"
-                                    class="relative inline-flex items-center px-3 py-2.5 rounded-l-md border border-gray-300 bg-white text-sm font-medium transition-all duration-200"
-                                    [ngClass]="{
-                                        'text-gray-400 hover:bg-gray-50 hover:text-[#E74C3C]': hasPreviousPage(),
-                                        'text-gray-300 cursor-not-allowed': !hasPreviousPage()
-                                    }">
-                                    <span class="sr-only">Previous</span>
-                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fill-rule="evenodd"
-                                            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
+                        <div class="flex items-center bg-gray-50 rounded-lg border border-gray-200 px-3 py-1.5">
+                            <span class="text-gray-700 mr-2 font-medium">Hiển thị:</span>
+                            <select [(ngModel)]="pageSize" (change)="changePage(0)"
+                                class="bg-transparent border-none focus:ring-0 cursor-pointer text-[#E74C3C] font-medium">
+                                <option [value]="4">4</option>
+                                <option [value]="8">8</option>
+                                <option [value]="12">12</option>
+                                <option [value]="16">16</option>
+                            </select>
+                            <span class="text-gray-700 ml-1">hồ sơ</span>
+                        </div>
+                    </div>
 
-                                <ng-container *ngIf="currentPage > 2 && totalPages > 5">
-                                    <button (click)="changePage(0)"
-                                        class="relative inline-flex items-center px-4 py-2.5 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                        1
+                    <!-- Simple Pagination with < 1 2 3 > Style -->
+                    <div *ngIf="totalPages > 0" class="flex justify-center mt-8 mb-6">
+                        <div
+                            class="custom-pagination-simple bg-white rounded-lg shadow-md border border-gray-200 px-4 py-2 flex items-center gap-1">
+                            <!-- Previous Button -->
+                            <button (click)="goToPage(currentPage - 1)" [disabled]="!hasPreviousPage()"
+                                class="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-300"
+                                [ngClass]="!hasPreviousPage() ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'">
+                                &lt;
+                            </button>
+
+                            <!-- Page Numbers -->
+                            <div class="flex items-center mx-2 space-x-2">
+                                <ng-container *ngFor="let page of getPaginationRange(); let i = index">
+                                    <button *ngIf="page !== '...'" (click)="goToPage(+page - 1)"
+                                        class="flex items-center justify-center mx-0.5 w-8 h-8 rounded-md transition-all duration-300 text-base font-medium"
+                                        [ngClass]="currentPage + 1 === +page ? 'bg-[#E74C3C] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 hover:text-[#E74C3C]'">
+                                        {{ page }}
                                     </button>
-                                    <span
-                                        class="relative inline-flex items-center px-4 py-2.5 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-                                        ...
-                                    </span>
-                                </ng-container>
 
-                                <ng-container *ngFor="let pageNum of getPagesArray()">
-                                    <button (click)="changePage(pageNum)"
-                                        class="relative inline-flex items-center px-4 py-2.5 border text-sm font-medium transition-all duration-200"
-                                        [ngClass]="{
-                                            'border-[#E74C3C] bg-[#E74C3C] text-white shadow-md': currentPage === pageNum,
-                                            'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-[#E74C3C]': currentPage !== pageNum
-                                        }">
-                                        {{ pageNum + 1 }}
-                                    </button>
+                                    <!-- Ellipsis -->
+                                    <span *ngIf="page === '...'"
+                                        class="flex items-center justify-center w-8 h-8 text-gray-500">...</span>
                                 </ng-container>
+                            </div>
 
-                                <ng-container *ngIf="currentPage < totalPages - 3 && totalPages > 5">
-                                    <span
-                                        class="relative inline-flex items-center px-4 py-2.5 border border-gray-300 bg-white text-sm font-medium text-gray-700">
-                                        ...
-                                    </span>
-                                    <button (click)="changePage(totalPages - 1)"
-                                        class="relative inline-flex items-center px-4 py-2.5 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                        {{ totalPages }}
-                                    </button>
-                                </ng-container>
+                            <!-- Next Button -->
+                            <button (click)="goToPage(currentPage + 1)" [disabled]="!hasNextPage()"
+                                class="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-300"
+                                [ngClass]="!hasNextPage() ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'">
+                                &gt;
+                            </button>
+                        </div>
+                    </div>
 
-                                <button [disabled]="!hasNextPage()" (click)="changePage(currentPage + 1)"
-                                    class="relative inline-flex items-center px-3 py-2.5 rounded-r-md border border-gray-300 bg-white text-sm font-medium transition-all duration-200"
-                                    [ngClass]="{
-                                        'text-gray-400 hover:bg-gray-50 hover:text-[#E74C3C]': hasNextPage(),
-                                        'text-gray-300 cursor-not-allowed': !hasNextPage()
-                                    }">
-                                    <span class="sr-only">Next</span>
-                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fill-rule="evenodd"
-                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </nav>
+                    <!-- Mobile Pagination -->
+                    <div *ngIf="totalPages > 0" class="flex md:hidden justify-center mt-6">
+                        <div
+                            class="flex items-center bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
+                            <!-- Previous Button -->
+                            <button (click)="goToPage(currentPage - 1)" [disabled]="!hasPreviousPage()"
+                                class="flex items-center justify-center w-12 h-12 transition-all duration-300"
+                                [ngClass]="!hasPreviousPage() ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
+                                &lt;
+                            </button>
+
+                            <!-- Current Page / Total Pages -->
+                            <div class="px-4 py-2 font-medium flex items-center bg-gray-50">
+                                <span class="text-[#E74C3C] text-xl">{{currentPage + 1}}</span>
+                                <span class="mx-1 text-gray-400">/</span>
+                                <span class="text-gray-700">{{totalPages || 1}}</span>
+                            </div>
+
+                            <!-- Next Button -->
+                            <button (click)="goToPage(currentPage + 1)" [disabled]="!hasNextPage()"
+                                class="flex items-center justify-center w-12 h-12 transition-all duration-300"
+                                [ngClass]="!hasNextPage() ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
+                                &gt;
+                            </button>
                         </div>
                     </div>
                 </div>

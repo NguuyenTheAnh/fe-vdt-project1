@@ -3,7 +3,7 @@
         <!-- Back Button -->
         <div class="mb-6">
             <button (click)="goBack()"
-                class="flex items-center bg-white border-none text-lg cursor-pointer text-gray-600 hover:text-[#E74C3C] transition-colors duration-200">
+                class="flex items-center bg-white border-none text-md cursor-pointer text-gray-600 hover:text-[#E74C3C] transition-colors duration-200">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -318,7 +318,12 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M5 13l4 4L19 7" />
                                         </svg>
-                                        File đã tải lên: {{ doc.fileName }}
+                                        File đã tải lên:
+                                        <a [href]="getDocumentUrl(doc.fileName)"
+                                            class="text-[#E74C3C] hover:text-[#C0392B] hover:underline ml-1"
+                                            target="_blank">
+                                            {{ doc.fileName }}
+                                        </a>
                                     </div>
                                     <div *ngIf="doc.error" class="text-sm text-red-500 mt-1 ml-7 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
@@ -338,9 +343,11 @@
                                     </div>
 
                                     <button (click)="uploadDocument(doc, $event)"
-                                        class="btn-primary cursor-pointer border-gray-100 upload-btn bg-[#E74C3C] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200 text-sm font-medium flex items-center shadow-md hover:shadow-lg"
-                                        [disabled]="doc.uploading" nz-tooltip
-                                        [nzTooltipTitle]="doc.fileName ? 'Cập nhật tài liệu hiện tại' : 'Tải lên tài liệu mới'">
+                                        class="btn-primary border-gray-100 upload-btn bg-[#E74C3C] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200 text-sm font-medium flex items-center shadow-md hover:shadow-lg"
+                                        [class.cursor-pointer]="application.status === 'NEW' && !doc.uploading"
+                                        [class.opacity-50]="application.status !== 'NEW' || doc.uploading"
+                                        [disabled]="doc.uploading || application.status !== 'NEW'" nz-tooltip
+                                        [nzTooltipTitle]="getDocumentButtonTooltip(doc)">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -366,6 +373,18 @@
                     </svg>
                     Quay lại
                 </button>
+                <button *ngIf="application.status === 'NEW'" (click)="requestApplicationReview()"
+                    [disabled]="!areAllDocumentsUploaded()"
+                    class="btn-primary cursor-pointer border-gray-100 bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition duration-200 mr-3 flex items-center"
+                    nz-tooltip
+                    [nzTooltipTitle]="areAllDocumentsUploaded() ? 'Gửi yêu cầu xét duyệt hồ sơ' : 'Vui lòng tải lên tất cả tài liệu yêu cầu trước khi gửi'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    Yêu cầu duyệt hồ sơ
+                </button>
                 <button *ngIf="application.status === 'NEW'" (click)="cancelApplication()"
                     class="btn-primary cursor-pointer border-gray-100 bg-[#E74C3C] text-white px-5 py-2 rounded-lg hover:bg-red-700 transition duration-200 flex items-center"
                     nz-tooltip nzTooltipTitle="Hủy hồ sơ vay hiện tại">
@@ -376,18 +395,7 @@
                     </svg>
                     Hủy hồ sơ
                 </button>
-                <button *ngIf="application.status !== 'NEW'"
-                    class="bg-blue-600 cursor-pointer text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center"
-                    nz-tooltip nzTooltipTitle="Xem thông tin chi tiết">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    Xem chi tiết
-                </button>
+                <!-- Removed "Xem chi tiết" button as requested -->
             </div>
         </div>
     </div>

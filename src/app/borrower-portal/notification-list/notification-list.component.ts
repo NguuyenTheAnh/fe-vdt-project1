@@ -37,7 +37,7 @@ export class NotificationListComponent implements OnInit, OnDestroy {
 
   // Pagination properties
   currentPage: number = 0;
-  pageSize: number = 10;
+  pageSize: number = 3;
   totalPages: number = 0;
   totalElements: number = 0;
 
@@ -328,6 +328,7 @@ export class NotificationListComponent implements OnInit, OnDestroy {
   getNotificationTypeLabel(type: string): string {
     const labels: { [key: string]: string } = {
       'DOCUMENT_REQUEST': 'Yêu cầu tài liệu',
+      'REVIEWING': 'Đang xem xét',
       'LOAN_APPROVAL': 'Phê duyệt khoản vay',
       'LOAN_REJECTION': 'Từ chối khoản vay',
       'SYSTEM': 'Thông báo hệ thống'

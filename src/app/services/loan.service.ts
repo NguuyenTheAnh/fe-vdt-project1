@@ -136,9 +136,7 @@ export class LoanService {
      */
     cancelApplication(id: number): Observable<ApiResponse<void>> {
         return this.apiService.delete<void>(`/loan-applications/${id}`);
-    }
-
-    /**
+    }    /**
      * Tính toán kế hoạch trả nợ dự kiến
      */
     calculateRepaymentPlan(amount: number, term: number, productId: number): Observable<ApiResponse<any>> {
@@ -147,5 +145,14 @@ export class LoanService {
             term,
             productId
         });
+    }
+
+    /**
+     * Lấy danh sách tài liệu yêu cầu và trạng thái của chúng
+     * @param loanApplicationId ID của đơn đăng ký vay
+     * @returns Observable chứa map các tài liệu và trạng thái của chúng
+     */
+    getRequiredDocuments(loanApplicationId: number): Observable<ApiResponse<Record<string, string | null>>> {
+        return this.apiService.get<Record<string, string | null>>(`/loan-applications/required-documents/${loanApplicationId}`);
     }
 }

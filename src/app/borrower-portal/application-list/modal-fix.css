@@ -1,0 +1,40 @@
+/* This CSS file contains styles for modal and pagination components */
+
+/* Pagination Styles */
+.custom-pagination-simple {
+    font-family: 'Roboto', sans-serif;
+}
+
+.custom-pagination-simple button {
+    border: none;
+    outline: none;
+}
+
+.custom-pagination-simple button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Ensure responsive pagination for smaller screens */
+@media (max-width: 640px) {
+    .custom-pagination-simple {
+        padding: 0.5rem;
+        gap: 0;
+    }
+
+    .custom-pagination-simple button,
+    .custom-pagination-simple span {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Animation for hover effects */
+.custom-pagination-simple button {
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-pagination-simple button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}

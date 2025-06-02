@@ -7,7 +7,7 @@ import { NotificationService } from '../../services/notification.service';
 @Component({
   selector: 'app-application-list',
   templateUrl: './application-list.component.html',
-  styleUrls: ['./application-list.component.css']
+  styleUrls: ['./application-list.component.css', './modal-fix.css']
 })
 export class ApplicationListComponent implements OnInit {
   applications: LoanApplication[] = [];
@@ -16,7 +16,7 @@ export class ApplicationListComponent implements OnInit {
 
   // Pagination properties
   currentPage: number = 0;
-  pageSize: number = 10;
+  pageSize: number = 4;
   totalPages: number = 0;
   totalElements: number = 0;
 
@@ -131,10 +131,13 @@ export class ApplicationListComponent implements OnInit {
   }
 
   /**
-   * Handle page change
+   * Change page and reload applications
    */
-  changePage(pageNumber: number): void {
-    this.currentPage = pageNumber;
+  changePage(page: number): void {
+    if (page < 0 || page >= this.totalPages) {
+      return;
+    }
+    this.currentPage = page;
     this.loadApplications();
   }
 
@@ -150,6 +153,55 @@ export class ApplicationListComponent implements OnInit {
    */
   hasNextPage(): boolean {
     return this.currentPage < this.totalPages - 1;
+  }
+
+  /**
+   * Tạo mảng các số trang hiển thị cho pagination kiểu "< 1 2 3 >"
+   */
+  getPaginationRange(): (number | string)[] {
+    const result: (number | string)[] = [];
+
+    // Guard clause - nếu không có trang nào thì trả về mảng trống
+    if (!this.totalPages || this.totalPages <= 0) {
+      return [];
+    }
+
+    const currentPage = this.currentPage + 1; // Convert to 1-based for display
+    const totalPages = this.totalPages;
+
+    // Nếu chỉ có 1 trang, chỉ hiện trang đó
+    if (totalPages === 1) {
+      result.push(1);
+      return result;
+    }
+
+    // Luôn hiển thị trang đầu tiên
+    result.push(1);
+
+    // Hiển thị "..." nếu trang hiện tại > 3
+    if (currentPage > 3) {
+      result.push('...');
+    }
+
+    // Hiển thị các trang xung quanh trang hiện tại
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+      // Tránh hiển thị trùng với trang đầu tiên hoặc trang cuối
+      if (i !== 1 && i !== totalPages) {
+        result.push(i);
+      }
+    }
+
+    // Hiển thị "..." nếu trang hiện tại < totalPages - 2
+    if (currentPage < totalPages - 2) {
+      result.push('...');
+    }
+
+    // Luôn hiển thị trang cuối cùng nếu có nhiều hơn 1 trang
+    if (totalPages > 1) {
+      result.push(totalPages);
+    }
+
+    return result;
   }
 
   /**
@@ -189,4 +241,19 @@ export class ApplicationListComponent implements OnInit {
       this.router.navigate(['/borrower-portal/application-list', applicationId]);
     }
   }
+
+  /**
+   * Go to a specific page
+   */
+  goToPage(page: number): void {
+    if (page < 0 || page >= this.totalPages) {
+      return;
+    }
+    this.currentPage = page;
+    this.loadApplications();
+  }
+
+  /**
+   * View application detail
+   */
 }
