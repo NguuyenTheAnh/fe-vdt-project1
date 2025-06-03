@@ -47,9 +47,16 @@ export class LoginPageComponent implements OnInit {
               'Chào mừng bạn quay trở lại!'
             );
 
+            // Đợi quá trình khởi tạo app hoàn tất và thông tin người dùng được tải đầy đủ
+            // Chờ một chút để đảm bảo fetchCurrentUserProfile đã hoàn thành
             setTimeout(() => {
-              this.router.navigate(['/home']);
-            }, 1000);
+              this.authService.getUserService().appInitialized$.subscribe((isInitialized: boolean) => {
+                if (isInitialized) {
+                  console.log('App initialized and user role loaded, navigating to home');
+                  this.router.navigate(['/home']);
+                }
+              });
+            }, 500);
           } else {
             this.notification.error(
               'Đăng nhập thất bại',

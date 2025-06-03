@@ -11,6 +11,10 @@ export class UserService {
     private currentUserSubject = new BehaviorSubject<UserData | null>(null);
     public currentUser$ = this.currentUserSubject.asObservable();
 
+    // BehaviorSubject để theo dõi quá trình khởi tạo
+    private appInitializedSubject = new BehaviorSubject<boolean>(false);
+    public appInitialized$ = this.appInitializedSubject.asObservable();
+
     constructor(private apiService: ApiService) { }    /**
      * Lấy thông tin profile của người dùng đang đăng nhập
      */    fetchCurrentUserProfile(): Observable<UserData | null> {
@@ -36,7 +40,12 @@ export class UserService {
                         token: token             // Đảm bảo token được lưu cùng thông tin người dùng
                     };
 
-                    console.log('User role:', userData.role ? userData.role.name : 'No role defined');
+                    // Đảm bảo thông tin vai trò được log ra để debug
+                    console.log('User role from profile API:', userData.role ? userData.role.name : 'No role defined');
+
+                    // Check if user is an admin
+                    const isAdmin = !!(userData && userData.role && userData.role.name === 'ADMIN');
+                    console.log('Is admin user:', isAdmin);
 
                     // Cập nhật thông tin người dùng vào BehaviorSubject
                     this.currentUserSubject.next(userData);
@@ -181,5 +190,23 @@ export class UserService {
             this.currentUserSubject.next(tempUser);
             // fetchCurrentUserProfile sẽ được gọi từ AppComponent để lấy đầy đủ thông tin
         }
+
+        // Đánh dấu quá trình khởi tạo hoàn tất
+        this.appInitializedSubject.next(true);
+    }
+
+    /**
+     * Cập nhật trạng thái khởi tạo của ứng dụng
+     */
+    setAppInitialized(value: boolean): void {
+        console.log('App initialization status set to:', value);
+        this.appInitializedSubject.next(value);
+    }
+
+    /**
+     * Kiểm tra xem ứng dụng đã hoàn tất khởi tạo chưa
+     */
+    isAppInitialized(): boolean {
+        return this.appInitializedSubject.value;
     }
 }

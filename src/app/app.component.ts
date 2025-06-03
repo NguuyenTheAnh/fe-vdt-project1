@@ -19,6 +19,9 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     console.log('App initializing...');
 
+    // Đánh dấu trạng thái đang khởi tạo
+    this.userService.setAppInitialized(false);
+
     // Khởi tạo thông tin người dùng từ localStorage trước
     this.userService.initializeFromLocalStorage();
 
@@ -59,6 +62,9 @@ export class AppComponent implements OnInit {
               localStorage.removeItem('authToken');
             }
           }
+
+          // Đánh dấu quá trình khởi tạo đã hoàn tất
+          this.userService.setAppInitialized(true);
         },
         error: (err) => {
           console.error('Error fetching user profile:', err);
@@ -74,8 +80,14 @@ export class AppComponent implements OnInit {
               this.router.navigate(['/login']);
             }
           }
+
+          // Đánh dấu quá trình khởi tạo đã hoàn tất ngay cả khi có lỗi
+          this.userService.setAppInitialized(true);
         }
       });
+    } else {
+      // Nếu không có token, đánh dấu khởi tạo đã hoàn tất ngay
+      this.userService.setAppInitialized(true);
     }
   }
 

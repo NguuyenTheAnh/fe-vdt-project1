@@ -35,6 +35,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
             // Check if user is an admin
             this.isAdmin = !!(user && user.role && user.role.name === 'ADMIN');
 
+            // Log để debug
+            console.log('Header updated - User:', user?.fullName);
+            console.log('Header updated - User role:', user?.role?.name);
+            console.log('Header updated - isAdmin:', this.isAdmin);
+
             // Only subscribe to notifications when user is logged in
             if (user) {
                 // Get initial unread count

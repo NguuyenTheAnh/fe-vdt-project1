@@ -86,6 +86,17 @@ export class AuthService {
             // Lưu thông tin người dùng từ response đăng nhập
             this.userService.updateCurrentUser(userData);
 
+            // Gọi API để lấy thông tin profile đầy đủ ngay lập tức sau khi đăng nhập
+            // Điều này đảm bảo chúng ta có thông tin role đầy đủ
+            this.userService.fetchCurrentUserProfile().subscribe({
+              next: (fullUserData) => {
+                console.log('Full user profile loaded after login:', fullUserData);
+              },
+              error: (err) => {
+                console.error('Error fetching full profile after login:', err);
+              }
+            });
+
             console.log('User authenticated and saved to localStorage');
           }
         })
@@ -99,7 +110,12 @@ export class AuthService {
 
   // Check if user is logged in
   isLoggedIn(): boolean {
-    return this.userService.isLoggedIn();
+    return !!this.userService.getCurrentUser();
+  }
+
+  // Lấy UserService instance
+  getUserService(): UserService {
+    return this.userService;
   }
 
   // Get authentication token
