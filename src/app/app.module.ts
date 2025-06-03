@@ -45,7 +45,6 @@ import { HomePageComponent } from './borrower-portal/home-page/home-page.compone
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
-import { ApplicationDetailComponent } from './application-detail/application-detail.component';
 registerLocaleData(vi);
 
 @NgModule({
@@ -56,8 +55,7 @@ registerLocaleData(vi);
     HomePageComponent,
     PageNotFoundComponent,
     HeaderComponent,
-    FooterComponent,
-    ApplicationDetailComponent
+    FooterComponent
   ],
   imports: [
     BrowserModule,

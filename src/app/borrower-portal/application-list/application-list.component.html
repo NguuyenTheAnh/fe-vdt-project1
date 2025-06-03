@@ -227,7 +227,7 @@
                             class="custom-pagination-simple bg-white rounded-lg shadow-md border border-gray-200 px-4 py-2 flex items-center gap-1">
                             <!-- Previous Button -->
                             <button (click)="goToPage(currentPage - 1)" [disabled]="!hasPreviousPage()"
-                                class="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-300"
+                                class="flex border-none items-center justify-center w-8 h-8 rounded-md transition-all duration-300"
                                 [ngClass]="!hasPreviousPage() ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'">
                                 &lt;
                             </button>
@@ -236,7 +236,7 @@
                             <div class="flex items-center mx-2 space-x-2">
                                 <ng-container *ngFor="let page of getPaginationRange(); let i = index">
                                     <button *ngIf="page !== '...'" (click)="goToPage(+page - 1)"
-                                        class="flex items-center justify-center mx-0.5 w-8 h-8 rounded-md transition-all duration-300 text-base font-medium"
+                                        class="flex border-none items-center justify-center mx-0.5 w-8 h-8 rounded-md transition-all duration-300 text-base font-medium"
                                         [ngClass]="currentPage + 1 === +page ? 'bg-[#E74C3C] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100 hover:text-[#E74C3C]'">
                                         {{ page }}
                                     </button>
@@ -249,7 +249,7 @@
 
                             <!-- Next Button -->
                             <button (click)="goToPage(currentPage + 1)" [disabled]="!hasNextPage()"
-                                class="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-300"
+                                class="flex items-center border-none justify-center w-8 h-8 rounded-md transition-all duration-300"
                                 [ngClass]="!hasNextPage() ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'">
                                 &gt;
                             </button>
@@ -262,7 +262,7 @@
                             class="flex items-center bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
                             <!-- Previous Button -->
                             <button (click)="goToPage(currentPage - 1)" [disabled]="!hasPreviousPage()"
-                                class="flex items-center justify-center w-12 h-12 transition-all duration-300"
+                                class="flex border-none items-center justify-center w-12 h-12 transition-all duration-300"
                                 [ngClass]="!hasPreviousPage() ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
                                 &lt;
                             </button>
@@ -276,7 +276,7 @@
 
                             <!-- Next Button -->
                             <button (click)="goToPage(currentPage + 1)" [disabled]="!hasNextPage()"
-                                class="flex items-center justify-center w-12 h-12 transition-all duration-300"
+                                class="flex border-none items-center justify-center w-12 h-12 transition-all duration-300"
                                 [ngClass]="!hasNextPage() ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-50 hover:text-[#E74C3C]'">
                                 &gt;
                             </button>

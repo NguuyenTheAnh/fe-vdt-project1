@@ -9,6 +9,7 @@ import { ApplicationListComponent } from './application-list/application-list.co
 import { NotificationListComponent } from './notification-list/notification-list.component';
 import { ApprovedLoanDetailComponent } from './approved-loan-detail/approved-loan-detail.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { ApplicationDetailComponent } from './application-detail/application-detail.component';
 
 // Import NG-ZORRO modules if needed by borrower components
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -23,6 +24,10 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
+import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
 
 @NgModule({
     declarations: [
@@ -31,9 +36,9 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
         ApplicationListComponent,
         NotificationListComponent,
         ApprovedLoanDetailComponent,
-        UserProfileComponent
-    ],
-    imports: [
+        UserProfileComponent,
+        ApplicationDetailComponent
+    ], imports: [
         CommonModule,
         RouterModule,
         FormsModule,
@@ -42,21 +47,26 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
         NzButtonModule,
         NzFormModule,
         NzInputModule,
-        NzSelectModule, NzCardModule,
+        NzSelectModule,
+        NzCardModule,
         NzModalModule,
         NzSpinModule,
         NzAlertModule,
         NzPaginationModule,
         NzIconModule,
         NzDropDownModule,
-        NzSliderModule
-    ], exports: [
-        LoanProductListComponent,
-        LoanApplicationFormComponent,
-        ApplicationListComponent,
-        NotificationListComponent,
-        ApprovedLoanDetailComponent,
-        UserProfileComponent
-    ]
+        NzSliderModule,
+        NzMessageModule,
+        NzUploadModule,
+        NzToolTipModule,
+        NzBadgeModule], exports: [
+            LoanProductListComponent,
+            LoanApplicationFormComponent,
+            ApplicationListComponent,
+            NotificationListComponent,
+            ApprovedLoanDetailComponent,
+            UserProfileComponent,
+            ApplicationDetailComponent
+        ]
 })
 export class BorrowerPortalModule { }
