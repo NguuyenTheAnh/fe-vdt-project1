@@ -206,11 +206,12 @@ export class LoanProductListDashboardComponent implements OnInit {
       maximumFractionDigits: 0
     }).format(amount);
   }
-
   // Format required documents from string to HTML list
   formatRequiredDocuments(documents: string): string {
+    if (!documents) return '';
+
     try {
-      // Try to parse as JSON array
+      // Bước 1: Thử phân tích dưới dạng mảng JSON
       const docArray = JSON.parse(documents);
       if (Array.isArray(docArray)) {
         return docArray.map(doc => {
@@ -219,22 +220,22 @@ export class LoanProductListDashboardComponent implements OnInit {
           return `<div class="mb-1">• ${displayName}</div>`;
         }).join('');
       }
-      // Nếu không phải JSON array, tách theo dòng mới hoặc dấu phẩy
-      return documents.split(/[\n,]+/).map(doc => {
-        const trimmedDoc = doc.trim();
-        // Chuyển đổi mã tài liệu sang tên hiển thị tiếng Việt
-        const displayName = this.documentTypeDisplayMap[trimmedDoc] || trimmedDoc;
-        return `<div class="mb-1">• ${displayName}</div>`;
-      }).join('');
-    } catch {
-      // Nếu không thể parse như JSON, tách theo dòng mới hoặc dấu phẩy
-      return documents.split(/[\n,]+/).map(doc => {
-        const trimmedDoc = doc.trim();
-        // Chuyển đổi mã tài liệu sang tên hiển thị tiếng Việt
-        const displayName = this.documentTypeDisplayMap[trimmedDoc] || trimmedDoc;
-        return `<div class="mb-1">• ${displayName}</div>`;
-      }).join('');
-    }
+      // Nếu là một chuỗi JSON, tiếp tục xử lý như một chuỗi thông thường
+    } catch { }
+
+    // Bước 2: Tách chuỗi theo nhiều dấu phân cách có thể (khoảng trắng, dòng mới, dấu phẩy)
+    // Xử lý trường hợp như "ID_CARD FISHING_LICENSE"
+    const docCodes = documents.split(/[\s,]+/);
+
+    // Bước 3: Xử lý từng mã tài liệu và chuyển đổi sang tên hiển thị tiếng Việt
+    return docCodes.map(code => {
+      const trimmedCode = code.trim();
+      if (!trimmedCode) return '';
+
+      // Chuyển đổi mã tài liệu sang tên hiển thị tiếng Việt
+      const displayName = this.documentTypeDisplayMap[trimmedCode] || trimmedCode;
+      return `<div class="mb-1">• ${displayName}</div>`;
+    }).filter(item => item).join('');
   }
 
   // Display name for status filter
