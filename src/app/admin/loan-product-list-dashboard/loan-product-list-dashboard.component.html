@@ -1,8 +1,16 @@
 <div class="container mx-auto p-4 py-8">
     <!-- Page Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-semibold mb-3 text-gray-800">Quản lý sản phẩm vay</h1>
-        <p class="text-gray-600">Quản lý và cấu hình các sản phẩm vay cho người dùng</p>
+    <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-start">
+        <div>
+            <h1 class="text-3xl font-semibold mb-3 text-gray-800">Quản lý sản phẩm vay</h1>
+            <p class="text-gray-600">Quản lý và cấu hình các sản phẩm vay cho người dùng</p>
+        </div>
+        <button
+            class="px-5 py-3 bg-[#E74C3C] text-white border-2 border-[#E74C3C] rounded-lg hover:bg-[#C0392B] flex items-center shadow-sm hover:shadow-md transition-all duration-300 mt-4 md:mt-0"
+            (click)="createNewProduct()">
+            <i nz-icon nzType="plus" nzTheme="outline" class="mr-2 text-lg"></i>
+            Thêm sản phẩm vay
+        </button>
     </div>
 
     <!-- Search and Filters Section -->
@@ -45,15 +53,13 @@
                     (click)="sortProducts('interestRate')">
                     <i nz-icon nzType="sort-ascending" nzTheme="outline" class="mr-2 text-lg"></i>
                     Sắp xếp theo lãi suất
-                </button>
-
-                <button
+                </button> <button
                     class="px-5 py-3 bg-[#E74C3C] text-white border-2 border-[#E74C3C] rounded-lg hover:bg-[#C0392B] flex items-center shadow-sm hover:shadow-md transition-all duration-300"
-                    (click)="createNewProduct()">
-                    <i nz-icon nzType="plus" nzTheme="outline" class="mr-2 text-lg"></i>
-                    Thêm sản phẩm vay
+                    (click)="onSearch()">
+                    Tìm kiếm
                 </button>
-            </div> <!-- Advanced Filter Dropdown Menu -->
+            </div>
+            <!-- Advanced Filter Dropdown Menu -->
             <nz-dropdown-menu #filterMenu="nzDropdownMenu">
                 <div class="bg-white rounded-xl shadow-xl p-6 w-80 border border-gray-100">
                     <h4 class="font-medium text-gray-800 mb-4">Lãi suất (%)</h4>
@@ -145,7 +151,8 @@
                 <span class="mr-1 text-gray-700">Từ khóa: <span class="font-medium">{{searchTerm}}</span></span>
                 <button class="text-gray-400 border-none bg-gray hover:text-[#E74C3C] ml-2 flex items-center"
                     (click)="searchTerm = ''; onSearch()">
-                    <i nz-icon nzType="close" nzTheme="outline"></i>
+                    <i nz-icon nzType="close" nzTheme="outline" class="border-none"></i>
+
                 </button>
             </div>
 
@@ -155,7 +162,8 @@
                         class="font-medium">{{getStatusDisplayName(statusFilter)}}</span></span>
                 <button class="text-gray-400 hover:text-[#E74C3C] ml-2 flex items-center"
                     (click)="statusFilter = 'ALL'; onSearch()">
-                    <i nz-icon nzType="close" nzTheme="outline"></i>
+                    <i nz-icon nzType="close" nzTheme="outline" class="border-none"></i>
+
                 </button>
             </div>
 
@@ -165,7 +173,8 @@
                         {{interestRateRange[1]}}%</span></span>
                 <button class="text-gray-400 hover:text-[#E74C3C] ml-2 flex items-center"
                     (click)="interestRateRange = [0, 30]; onSearch()">
-                    <i nz-icon nzType="close" nzTheme="outline"></i>
+                    <i nz-icon nzType="close" nzTheme="outline" class="border-none"></i>
+
                 </button>
             </div>
 
@@ -175,7 +184,8 @@
                         {{formatCurrency(amountRange[1])}}</span></span>
                 <button class="text-gray-400 hover:text-[#E74C3C] ml-2 flex items-center"
                     (click)="amountRange = [0, 1000000000]; onSearch()">
-                    <i nz-icon nzType="close" nzTheme="outline"></i>
+                    <i nz-icon nzType="close" nzTheme="outline" class="border-none"></i>
+
                 </button>
             </div>
 
@@ -185,7 +195,8 @@
                         tháng</span></span>
                 <button class="text-gray-400 hover:text-[#E74C3C] ml-2 flex items-center"
                     (click)="termRange = [1, 60]; onSearch()">
-                    <i nz-icon nzType="close" nzTheme="outline"></i>
+                    <i nz-icon nzType="close" nzTheme="outline" class="border-none"></i>
+
                 </button>
             </div>
 
@@ -278,11 +289,11 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <button (click)="openProductDetails(product)" nz-tooltip nzTooltipTitle="Xem chi tiết"
-                                class="text-indigo-600 hover:text-indigo-900 mr-4 text-lg">
+                                class="text-[#E74C3C] border-none rounded-md bg-gray-50 hover:text-[#C0392B] mr-4 text-lg">
                                 <i nz-icon nzType="eye" nzTheme="outline"></i>
                             </button>
                             <button (click)="editProduct(product)" nz-tooltip nzTooltipTitle="Chỉnh sửa"
-                                class="text-blue-600 hover:text-blue-900 text-lg">
+                                class="text-blue-600 border-none rounded-md bg-gray-50 hover:text-blue-900 text-lg">
                                 <i nz-icon nzType="edit" nzTheme="outline"></i>
                             </button>
                         </td>
@@ -331,7 +342,7 @@
             class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white rounded-lg shadow-sm p-4 border border-gray-100">
             <p class="text-gray-700 mb-3 md:mb-0 flex items-center">
                 <i nz-icon nzType="info-circle" nzTheme="fill" class="text-[#E74C3C] mr-2"></i>
-                Hiển thị <span class="font-semibold mx-1">{{filteredProducts.length}}</span> sản phẩm vay
+                Hiển thị <span class="font-semibold mx-1 text-[#E74C3C]">{{filteredProducts.length}}</span> sản phẩm vay
                 <span *ngIf="loanProducts.length !== filteredProducts.length" class="ml-1">
                     (trong tổng số <span class="font-semibold">{{loanProducts.length}}</span> sản phẩm)
                 </span>
@@ -340,7 +351,7 @@
             <div class="flex items-center bg-gray-50 rounded-lg border border-gray-200 px-3 py-1.5">
                 <span class="text-gray-700 mr-2 font-medium">Hiển thị:</span>
                 <select [(ngModel)]="pageSize" (change)="onPageSizeChange(pageSize)"
-                    class="bg-transparent text-gray-700 font-medium border-0 focus:outline-none focus:ring-0">
+                    class="bg-transparent text-[#E74C3C] font-medium border-0 focus:outline-none focus:ring-0">
                     <option [ngValue]="10">10</option>
                     <option [ngValue]="20">20</option>
                     <option [ngValue]="50">50</option>
@@ -354,31 +365,50 @@
         <div *ngIf="totalPages > 0" class="flex justify-center mt-8 mb-6">
             <div
                 class="custom-pagination-simple bg-white rounded-lg shadow-md border border-gray-200 px-4 py-2 flex items-center gap-1">
+
                 <!-- Previous Button -->
                 <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0"
-                    [ngClass]="{'text-gray-400 cursor-not-allowed': currentPage === 0, 'text-gray-800 hover:text-[#E74C3C]': currentPage !== 0}"
-                    class="px-3 py-1 rounded-md flex items-center transition-colors duration-200">
-                    <i nz-icon nzType="left" nzTheme="outline"></i>
-                </button> <!-- Page Numbers -->
+                    class="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-300 border-none"
+                    [ngClass]="
+        currentPage === 0 
+          ? 'text-gray-300 cursor-not-allowed' 
+          : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'
+      ">
+                    &lt;
+                </button>
+
+                <!-- Page Numbers -->
                 <div class="flex items-center mx-2 space-x-2">
-                    <ng-container *ngFor="let page of getPaginationRange()">
+                    <ng-container *ngFor="let page of getPaginationRange(); let i = index">
                         <button *ngIf="page !== '...'" (click)="goToPage(+page - 1)"
-                            [ngClass]="{'bg-[#E74C3C] text-white': currentPage === +page - 1, 'bg-white text-gray-700 hover:bg-gray-100': currentPage !== +page - 1}"
-                            class="px-3 py-1 rounded-md min-w-[32px] transition-colors duration-200">
+                            class="flex items-center justify-center mx-0.5 w-8 h-8 rounded-md transition-all duration-300 text-base font-medium border-none"
+                            [ngClass]="
+            currentPage + 1 === +page 
+              ? 'bg-[#E74C3C] text-white shadow-md' 
+              : 'text-gray-700 hover:bg-gray-100 hover:text-[#E74C3C]'
+          ">
                             {{ page }}
                         </button>
-                        <span *ngIf="page === '...'" class="px-2 text-gray-500">...</span>
+
+                        <!-- Ellipsis -->
+                        <span *ngIf="page === '...'"
+                            class="flex items-center justify-center w-8 h-8 text-gray-500">...</span>
                     </ng-container>
                 </div>
 
                 <!-- Next Button -->
                 <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1"
-                    [ngClass]="{'text-gray-400 cursor-not-allowed': currentPage === totalPages - 1, 'text-gray-800 hover:text-[#E74C3C]': currentPage !== totalPages - 1}"
-                    class="px-3 py-1 rounded-md flex items-center transition-colors duration-200">
-                    <i nz-icon nzType="right" nzTheme="outline"></i>
+                    class="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-300 border-none"
+                    [ngClass]="
+        currentPage === totalPages - 1 
+          ? 'text-gray-300 cursor-not-allowed' 
+          : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'
+      ">
+                    &gt;
                 </button>
             </div>
         </div>
+
 
         <!-- Mobile Pagination -->
         <div *ngIf="totalPages > 0" class="flex md:hidden justify-center mt-6">
@@ -403,7 +433,8 @@
                 </button>
             </div>
         </div>
-    </div> <!-- Product Details Modal -->
+    </div>
+    <!-- Product Details Modal -->
     <div *ngIf="selectedProduct && isModalOpen"
         class="fixed inset-0 bg-black bg-opacity-50 z-[9000] flex items-center justify-center p-4 modal-overlay">
         <!-- The stopPropagation prevents the modal from closing when clicking inside it -->
@@ -414,9 +445,7 @@
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50">
                 <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-[#E74C3C]/10 flex items-center justify-center mr-3">
-                        <i nz-icon nzType="fund" nzTheme="outline" class="text-xl text-[#E74C3C]"></i>
-                    </div>
+
                     <h2 class="text-2xl font-bold text-gray-800">{{ selectedProduct.name }}</h2>
                     <span
                         [ngClass]="{'bg-green-100 text-green-800': selectedProduct.status === 'ACTIVE', 'bg-gray-100 text-gray-800': selectedProduct.status === 'INACTIVE'}"
@@ -425,8 +454,12 @@
                     </span>
                 </div>
                 <button (click)="closeModal()"
-                    class="text-gray-500 hover:text-[#E74C3C] focus:outline-none transition-colors duration-200">
-                    <i nz-icon nzType="close-circle" nzTheme="outline" class="text-xl"></i>
+                    class="text-gray-500 border-gray-100 hover:text-gray-700 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
 
@@ -553,12 +586,11 @@
             <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
                 <button (click)="closeModal()"
                     class="px-5 py-2.5 bg-white text-gray-700 rounded-lg hover:bg-gray-100 border border-gray-200 mr-3 transition-colors duration-200 flex items-center">
-                    <i nz-icon nzType="close-circle" nzTheme="outline" class="mr-1"></i>
                     Đóng
                 </button>
                 <button (click)="editProduct(selectedProduct)"
-                    class="px-5 py-2.5 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200 flex items-center">
-                    <i nz-icon nzType="edit" nzTheme="outline" class="mr-1"></i>
+                    class="px-5 py-2.5 bg-[#E74C3C] border-gray-100 text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200 flex items-center">
+
                     Chỉnh sửa
                 </button>
             </div>

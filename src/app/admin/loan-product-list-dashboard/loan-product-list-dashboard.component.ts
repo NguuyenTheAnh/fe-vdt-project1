@@ -26,6 +26,45 @@ export class LoanProductListDashboardComponent implements OnInit {
   error: string | null = null;
   selectedProduct: LoanProduct | null = null;
   isModalOpen: boolean = false;
+
+  // Map các mã tài liệu sang tên hiển thị tiếng Việt
+  documentTypeDisplayMap: { [key: string]: string } = {
+    'ID_CARD': 'CMND/CCCD',
+    'PROOF_OF_INCOME': 'Chứng minh thu nhập',
+    'PROOF_OF_ADDRESS': 'Chứng minh địa chỉ',
+    'EMPLOYMENT_VERIFICATION': 'Xác nhận việc làm',
+    'BANK_STATEMENT': 'Sao kê ngân hàng',
+    'COLLATERAL_DOCUMENT': 'Tài liệu tài sản đảm bảo',
+    'BUSINESS_LICENSE': 'Giấy phép kinh doanh',
+    'TAX_RETURN': 'Tờ khai thuế',
+    'INSURANCE_POLICY': 'Hợp đồng bảo hiểm',
+    'PROPERTY_OWNERSHIP': 'Giấy tờ sở hữu tài sản',
+    'MARRIAGE_CERTIFICATE': 'Giấy chứng nhận kết hôn',
+    'BIRTH_CERTIFICATE': 'Giấy khai sinh',
+    'UTILITY_BILL': 'Hóa đơn tiện ích',
+    'VEHICLE_REGISTRATION': 'Đăng ký phương tiện',
+    'TRAVEL_ITINERARY': 'Lịch trình du lịch',
+    'FISHING_LICENSE': 'Giấy phép đánh bắt cá',
+    'IMPORT_CONTRACT': 'Hợp đồng nhập khẩu',
+    'ADMISSION_LETTER': 'Thư nhập học',
+    'BUSINESS_PLAN': 'Kế hoạch kinh doanh',
+    'DRIVING_LICENSE': 'Giấy phép lái xe',
+    'EQUIPMENT_PURCHASE_CONTRACT': 'Hợp đồng mua thiết bị',
+    'ENVIRONMENTAL_PERMIT': 'Giấy phép môi trường',
+    'EXPORT_CONTRACT': 'Hợp đồng xuất khẩu',
+    'FARMING_PLAN': 'Kế hoạch canh tác',
+    'FINANCIAL_STATEMENT': 'Báo cáo tài chính',
+    'LAND_OWNERSHIP_CERTIFICATE': 'Giấy chứng nhận quyền sử dụng đất',
+    'LAND_USE_RIGHTS': 'Giấy quyền sử dụng đất',
+    'MEDICAL_INVOICE': 'Hóa đơn y tế',
+    'PROPERTY_DOCUMENT': 'Giấy tờ tài sản',
+    'SALARY_STATEMENT': 'Bảng lương',
+    'STUDENT_ID': 'Thẻ sinh viên',
+    'STUDENT_VISA': 'Visa du học',
+    'TUITION_INVOICE': 'Hóa đơn học phí',
+    'VEHICLE_CONTRACT': 'Hợp đồng mua xe',
+    'VEHICLE_PURCHASE_CONTRACT': 'Hợp đồng mua phương tiện'
+  };
   // Search and filter properties
   searchTerm: string = '';
   statusFilter: string = 'ALL';
@@ -174,17 +213,27 @@ export class LoanProductListDashboardComponent implements OnInit {
       // Try to parse as JSON array
       const docArray = JSON.parse(documents);
       if (Array.isArray(docArray)) {
-        return docArray.map(doc => `<div class="mb-1">• ${doc}</div>`).join('');
+        return docArray.map(doc => {
+          // Chuyển đổi mã tài liệu sang tên hiển thị tiếng Việt
+          const displayName = this.documentTypeDisplayMap[doc] || doc;
+          return `<div class="mb-1">• ${displayName}</div>`;
+        }).join('');
       }
-      // If not JSON array, split by newlines or commas
-      return documents.split(/[\n,]+/).map(doc =>
-        `<div class="mb-1">• ${doc.trim()}</div>`
-      ).join('');
+      // Nếu không phải JSON array, tách theo dòng mới hoặc dấu phẩy
+      return documents.split(/[\n,]+/).map(doc => {
+        const trimmedDoc = doc.trim();
+        // Chuyển đổi mã tài liệu sang tên hiển thị tiếng Việt
+        const displayName = this.documentTypeDisplayMap[trimmedDoc] || trimmedDoc;
+        return `<div class="mb-1">• ${displayName}</div>`;
+      }).join('');
     } catch {
-      // If can't parse as JSON, split by newlines or commas
-      return documents.split(/[\n,]+/).map(doc =>
-        `<div class="mb-1">• ${doc.trim()}</div>`
-      ).join('');
+      // Nếu không thể parse như JSON, tách theo dòng mới hoặc dấu phẩy
+      return documents.split(/[\n,]+/).map(doc => {
+        const trimmedDoc = doc.trim();
+        // Chuyển đổi mã tài liệu sang tên hiển thị tiếng Việt
+        const displayName = this.documentTypeDisplayMap[trimmedDoc] || trimmedDoc;
+        return `<div class="mb-1">• ${displayName}</div>`;
+      }).join('');
     }
   }
 
