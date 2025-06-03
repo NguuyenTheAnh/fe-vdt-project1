@@ -92,8 +92,19 @@
                             </svg>
                         </button> <!-- Dropdown Menu -->
                         <div *ngIf="showUserDropdown"
-                            class="user-dropdown absolute right-0 mt-2 w-48 bg-white py-2 z-10"><a
-                                routerLink="/borrower-portal/user-profile" (click)="closeUserDropdown()"
+                            class="user-dropdown absolute right-0 mt-2 w-48 bg-white py-2 z-10">
+                            <a *ngIf="isAdmin" routerLink="/admin/main-dashboard" (click)="closeUserDropdown()"
+                                class="dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#E74C3C]">
+                                <span class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Quản trị hệ thống
+                                </span>
+                            </a>
+                            <a routerLink="/borrower-portal/user-profile" (click)="closeUserDropdown()"
                                 class="dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#E74C3C]">
                                 <span class="flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none"
@@ -146,8 +157,18 @@
 
     <!-- Mobile Menu -->
     <div *ngIf="showMobileMenu" class="md:hidden bg-white border-t border-gray-200 py-3 px-4 shadow-inner">
-        <nav class="flex flex-col space-y-3"> <a routerLink="/home" routerLinkActive="text-[#E74C3C]"
+        <nav class="flex flex-col space-y-3">
+            <a *ngIf="isAdmin" routerLink="/admin/main-dashboard" routerLinkActive="text-[#E74C3C]"
                 (click)="closeMobileMenu()"
+                class="text-gray-700 hover:text-[#E74C3C] transition-colors duration-300 text-sm font-medium py-2 px-3 rounded-md flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Quản trị hệ thống
+            </a>
+            <a routerLink="/home" routerLinkActive="text-[#E74C3C]" (click)="closeMobileMenu()"
                 class="text-gray-700 hover:text-[#E74C3C] transition-colors duration-300 text-sm font-medium py-2 px-3 rounded-md flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">

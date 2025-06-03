@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 export class HeaderComponent implements OnInit, OnDestroy {
     currentUser: UserData | null = null;
     isLoggedIn = false;
+    isAdmin = false;
     showMobileMenu = false;
     showUserDropdown = false;
     isScrolled = false;
@@ -30,6 +31,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         const userSubscription = this.userService.currentUser$.subscribe(user => {
             this.currentUser = user;
             this.isLoggedIn = !!user;
+
+            // Check if user is an admin
+            this.isAdmin = !!(user && user.role && user.role.name === 'ADMIN');
 
             // Only subscribe to notifications when user is logged in
             if (user) {

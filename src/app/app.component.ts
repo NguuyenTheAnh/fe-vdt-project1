@@ -26,7 +26,8 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      // Logic xử lý khi route thay đổi có thể được thêm vào đây nếu cần
+      // Kiểm tra quyền truy cập admin route khi route thay đổi
+      this.checkAdminAccess();
     });
 
     // Sau đó gọi API lấy thông tin profile mới nhất nếu có token
@@ -46,6 +47,9 @@ export class AppComponent implements OnInit {
         next: (userData) => {
           if (userData) {
             console.log('Authentication validated successfully');
+
+            // Kiểm tra quyền truy cập admin route
+            this.checkAdminAccess();
           } else {
             console.warn('Could not validate authentication, user data is null');
 
@@ -72,6 +76,22 @@ export class AppComponent implements OnInit {
           }
         }
       });
+    }
+  }
+
+  /**
+   * Kiểm tra quyền truy cập vào các trang admin
+   */
+  private checkAdminAccess(): void {
+    // Kiểm tra nếu đang ở route admin
+    if (this.router.url.includes('/admin')) {
+      const currentUser = this.userService.getCurrentUser();
+
+      // Kiểm tra nếu người dùng không có quyền ADMIN
+      if (!currentUser || !currentUser.role || currentUser.role.name !== 'ADMIN') {
+        console.warn('Unauthorized access to admin area, redirecting to 404');
+        this.router.navigate(['/404']);
+      }
     }
   }
 }

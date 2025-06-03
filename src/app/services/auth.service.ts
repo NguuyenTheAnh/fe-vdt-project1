@@ -31,7 +31,18 @@ export interface UserData {
   fullName?: string;
   phoneNumber?: string;
   address?: string;
-  token?: String
+  token?: String;
+  accountStatus?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  role?: {
+    name: string;
+    description?: string;
+    permissions?: Array<{
+      name: string;
+      description?: string;
+    }>;
+  };
   // Add other user properties as needed
 }
 

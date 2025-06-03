@@ -1,47 +1,111 @@
-<div class="admin-sidebar bg-gray-800 text-white h-screen w-64 fixed">
-    <div class="p-4">
-        <h2 class="text-xl font-bold mb-4">Admin Dashboard</h2>
-        <ul class="space-y-2">
+<div class="admin-sidebar bg-white text-gray-900 h-screen w-64 fixed shadow-lg border-r border-gray-200">
+    <div class="p-6">
+        <!-- Logo và Title -->
+        <div class="flex flex-col items-center justify-center mb-4 space-y-4">
+            <!-- Logo trên dòng đầu -->
+            <div class="flex items-center">
+                <a routerLink="/" class="flex items-center">
+                    <div class="px-4 py-2 bg-[#E74C3C] rounded-lg shadow-sm">
+                        <h1 class="text-2xl text-white">
+                            <span class="font-bold">Loan</span><span class="font-light">Conv</span>
+                        </h1>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Title trên dòng thứ hai -->
+            <div class="flex items-center">
+                <h2 class="text-xl font-bold text-gray-900">Quản trị viên</h2>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <ul class="space-y-2 list-none">
             <li>
-                <a routerLink="/admin/main-dashboard" routerLinkActive="bg-gray-700"
-                    class="block px-4 py-2 rounded hover:bg-gray-700">
-                    Dashboard
+                <a routerLink="/admin/main-dashboard" routerLinkActive="active"
+                    class="nav-link group flex items-center justify-start px-4 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-red-500 transition-colors duration-200"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                    </svg>
+                    <span class="font-medium">Trang chủ</span>
                 </a>
             </li>
             <li>
-                <a routerLink="/admin/user-list" routerLinkActive="bg-gray-700"
-                    class="block px-4 py-2 rounded hover:bg-gray-700">
-                    Users
+                <a routerLink="/admin/user-list" routerLinkActive="active"
+                    class="nav-link group flex items-center justify-start px-4 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-red-500 transition-colors duration-200"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
+                        </path>
+                    </svg>
+                    <span class="font-medium">Người dùng</span>
                 </a>
             </li>
             <li>
-                <a routerLink="/admin/loan-product-list" routerLinkActive="bg-gray-700"
-                    class="block px-4 py-2 rounded hover:bg-gray-700">
-                    Loan Products
+                <a routerLink="/admin/loan-product-list" routerLinkActive="active"
+                    class="nav-link group flex items-center justify-start px-4 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-red-500 transition-colors duration-200"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                        </path>
+                    </svg>
+                    <span class="font-medium">Sản phẩm vay</span>
                 </a>
             </li>
             <li>
-                <a routerLink="/admin/loan-application-list" routerLinkActive="bg-gray-700"
-                    class="block px-4 py-2 rounded hover:bg-gray-700">
-                    Loan Applications
+                <a routerLink="/admin/loan-application-list" routerLinkActive="active"
+                    class="nav-link group flex items-center justify-start px-4 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-red-500 transition-colors duration-200"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    <span class="font-medium">Đơn vay</span>
                 </a>
             </li>
             <li>
-                <a routerLink="/admin/disbursement" routerLinkActive="bg-gray-700"
-                    class="block px-4 py-2 rounded hover:bg-gray-700">
-                    Disbursements
+                <a routerLink="/admin/disbursement" routerLinkActive="active"
+                    class="nav-link group flex items-center justify-start px-4 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-red-500 transition-colors duration-200"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    <span class="font-medium">Giải ngân</span>
                 </a>
             </li>
             <li>
-                <a routerLink="/admin/report" routerLinkActive="bg-gray-700"
-                    class="block px-4 py-2 rounded hover:bg-gray-700">
-                    Reports
+                <a routerLink="/admin/report" routerLinkActive="active"
+                    class="nav-link group flex items-center justify-start px-4 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-red-500 transition-colors duration-200"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    <span class="font-medium">Báo cáo</span>
                 </a>
             </li>
             <li>
-                <a routerLink="/admin/system-config" routerLinkActive="bg-gray-700"
-                    class="block px-4 py-2 rounded hover:bg-gray-700">
-                    System Configuration
+                <a routerLink="/admin/system-config" routerLinkActive="active"
+                    class="nav-link group flex items-center justify-start px-4 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-red-500 transition-colors duration-200"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span class="font-medium">Cấu hình hệ thống</span>
                 </a>
             </li>
         </ul>

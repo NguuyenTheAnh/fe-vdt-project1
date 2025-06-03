@@ -1,13 +1,220 @@
 .admin-sidebar {
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    font-family: 'Roboto', 'Open Sans', sans-serif;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 40;
 }
 
-.admin-sidebar a {
-    transition: background-color 0.2s ease;
+.admin-sidebar .p-6 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
-.admin-sidebar a.active {
-    background-color: rgba(255, 255, 255, 0.1);
-    font-weight: bold;
+.user-avatar {
+    background-color: #E74C3C;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
+    transition: all 0.2s ease;
+}
+
+.user-avatar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+ul.list-none {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+ul.list-none li {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link {
+    color: #374151;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent;
+    width: 100%;
+    max-width: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.nav-link:hover {
+    background-color: #F5F5F5;
+    transform: translateX(4px);
+    border-color: rgba(231, 76, 60, 0.1);
+}
+
+.nav-link:hover svg {
+    color: #E74C3C !important;
+    transform: scale(1.1);
+}
+
+.nav-link:hover span {
+    color: #1F2937;
+    font-weight: 600;
+}
+
+.nav-link.active {
+    background: linear-gradient(90deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%);
+    border-left: 4px solid #E74C3C;
+    color: #E74C3C;
+    font-weight: 600;
+    transform: translateX(4px);
+}
+
+.nav-link.active svg {
+    color: #E74C3C !important;
+    transform: scale(1.1);
+}
+
+.nav-link.active span {
+    color: #E74C3C;
+    font-weight: 600;
+}
+
+.nav-link svg {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.nav-link span {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(231, 76, 60, 0.05), transparent);
+    transition: left 0.5s ease;
+}
+
+.nav-link:hover::before {
+    left: 100%;
+}
+
+.nav-link:focus {
+    outline: 2px solid #E74C3C;
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+.admin-sidebar .flex.items-center.justify-center {
+    width: 100%;
+    text-align: center;
+}
+
+h2 {
+    color: #1F2937;
+    font-weight: 700;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .admin-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .nav-link {
+        max-width: 200px;
+    }
+}
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+    background: #F5F5F5;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: #D3D3D3;
+    border-radius: 2px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #E74C3C;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.nav-link {
+    animation: slideInLeft 0.3s ease forwards;
+}
+
+li:nth-child(1) .nav-link {
+    animation-delay: 0.1s;
+}
+
+li:nth-child(2) .nav-link {
+    animation-delay: 0.15s;
+}
+
+li:nth-child(3) .nav-link {
+    animation-delay: 0.2s;
+}
+
+li:nth-child(4) .nav-link {
+    animation-delay: 0.25s;
+}
+
+li:nth-child(5) .nav-link {
+    animation-delay: 0.3s;
+}
+
+li:nth-child(6) .nav-link {
+    animation-delay: 0.35s;
+}
+
+li:nth-child(7) .nav-link {
+    animation-delay: 0.4s;
+}
+
+* {
+    transition: all 0.2s ease;
+}
+
+.space-y-2>*+* {
+    margin-top: 0.5rem;
 }

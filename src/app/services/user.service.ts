@@ -36,6 +36,8 @@ export class UserService {
                         token: token             // Đảm bảo token được lưu cùng thông tin người dùng
                     };
 
+                    console.log('User role:', userData.role ? userData.role.name : 'No role defined');
+
                     // Cập nhật thông tin người dùng vào BehaviorSubject
                     this.currentUserSubject.next(userData);
 

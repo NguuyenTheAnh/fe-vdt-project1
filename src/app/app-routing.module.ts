@@ -11,6 +11,7 @@ import { NotificationListComponent } from './borrower-portal/notification-list/n
 import { ApprovedLoanDetailComponent } from './borrower-portal/approved-loan-detail/approved-loan-detail.component';
 import { UserProfileComponent } from './borrower-portal/user-profile/user-profile.component';
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
 import { ApplicationDetailComponent } from './borrower-portal/application-detail/application-detail.component';
 import { MainDashboardComponent } from './admin/main-dashboard/main-dashboard.component';
 import { UserListDashboardComponent } from './admin/user-list-dashboard/user-list-dashboard.component';
@@ -34,9 +35,8 @@ const routes: Routes = [
       { path: 'notification-list', component: NotificationListComponent },
       { path: 'approved-loan-detail', component: ApprovedLoanDetailComponent },
       { path: 'user-profile', component: UserProfileComponent }]
-  },
-  {
-    path: 'admin', canActivate: [AuthGuard], children: [
+  }, {
+    path: 'admin', canActivate: [AuthGuard, AdminGuard], children: [
       { path: 'main-dashboard', component: MainDashboardComponent },
       { path: 'user-list', component: UserListDashboardComponent },
       { path: 'loan-product-list', component: LoanProductListDashboardComponent },
