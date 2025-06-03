@@ -6,12 +6,15 @@
     <!-- Content -->
     <main class="flex-grow"
         [ngClass]="{'pt-16': router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404') && !router.url.startsWith('/admin')}">
-        <!-- Admin layout with sidebar -->
-        <div *ngIf="router.url.startsWith('/admin')">
+        <!-- Admin layout with sidebar and header inside main content -->
+        <div *ngIf="router.url.startsWith('/admin')" class="flex h-screen">
             <app-admin-sidebar></app-admin-sidebar>
-            <div class="pl-64"> <!-- Match the width of sidebar (w-64) -->
-                <div class="p-6">
-                    <router-outlet></router-outlet>
+            <div class="flex-grow pl-64"> <!-- Match the width of sidebar (w-64) -->
+                <div class="flex flex-col h-full">
+                    <app-admin-header></app-admin-header>
+                    <div class="p-6">
+                        <router-outlet></router-outlet>
+                    </div>
                 </div>
             </div>
         </div>
