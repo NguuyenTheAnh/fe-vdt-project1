@@ -144,7 +144,18 @@ export class LoanService {
      */
     updateLoanProduct(id: number, data: Partial<LoanProduct>): Observable<ApiResponse<LoanProduct>> {
         return this.apiService.put<LoanProduct>(`/loan-products/${id}`, data);
-    }    /**
+    }
+
+    /**
+     * Tạo mới một sản phẩm vay
+     * @param productData Dữ liệu của sản phẩm vay mới
+     * @returns Observable chứa sản phẩm vay đã được tạo
+     */
+    createLoanProduct(productData: Partial<LoanProduct>): Observable<ApiResponse<LoanProduct>> {
+        return this.apiService.post<LoanProduct>('/loan-products', productData);
+    }
+
+    /**
      * Tính toán kế hoạch trả nợ dự kiến
      */
     calculateRepaymentPlan(amount: number, term: number, productId: number): Observable<ApiResponse<any>> {

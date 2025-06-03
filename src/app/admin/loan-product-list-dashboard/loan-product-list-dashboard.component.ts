@@ -2,6 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoanService, LoanProduct, PageableResponse } from '../../services/loan.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-loan-product-list-dashboard',
@@ -24,13 +25,16 @@ export class LoanProductListDashboardComponent implements OnInit {
   filteredProducts: LoanProduct[] = []; // For search/filter results
   isLoading: boolean = true;
   error: string | null = null;
-  selectedProduct: LoanProduct | null = null;
-  isModalOpen: boolean = false;
-  isEditMode: boolean = false; // Chế độ chỉnh sửa
+  selectedProduct: LoanProduct | null = null; isModalOpen: boolean = false; isEditMode: boolean = false; // Chế độ chỉnh sửa
+  isCreatingNew: boolean = false; // Chế độ tạo mới sản phẩm
   isSaving: boolean = false; // Trạng thái đang lưu
   editingProduct: any = {}; // Bản nháp để chỉnh sửa
   selectedDocuments: string[] = []; // Danh sách tài liệu đã chọn
   showDocumentSelector: boolean = false; // Hiển thị selector tài liệu
+
+  // Document selector search
+  documentSearchTerm: string = '';
+  filteredDocumentTypes: { key: string; value: string }[] = [];
 
   // Map các mã tài liệu sang tên hiển thị tiếng Việt
   documentTypeDisplayMap: { [key: string]: string } = {
@@ -86,10 +90,10 @@ export class LoanProductListDashboardComponent implements OnInit {
   // Sorting
   sortField: string = 'id';
   sortDirection: string = 'desc';
-
   constructor(
     private loanService: LoanService,
-    private router: Router
+    private router: Router,
+    private notification: NzNotificationService
   ) { }
 
   ngOnInit(): void {
@@ -120,11 +124,17 @@ export class LoanProductListDashboardComponent implements OnInit {
           this.totalPages = 0;
         }
         this.isLoading = false;
-      },
-      error: (err) => {
+      }, error: (err) => {
         this.error = 'Không thể tải danh sách sản phẩm vay. Vui lòng thử lại sau.';
         this.isLoading = false;
         console.error('Error loading loan products:', err);
+
+        // Hiển thị thông báo lỗi
+        this.notification.error(
+          'Lỗi',
+          'Không thể tải danh sách sản phẩm vay. Vui lòng thử lại sau.',
+          { nzDuration: 3000 }
+        );
       }
     });
   }
@@ -354,18 +364,29 @@ export class LoanProductListDashboardComponent implements OnInit {
           // Update with complete data
           this.selectedProduct = response.data;
         }
-      },
-      error: (err) => {
+      }, error: (err) => {
         console.error('Error loading loan product details:', err);
+
+        // Hiển thị thông báo lỗi
+        this.notification.error(
+          'Lỗi',
+          'Không thể tải chi tiết sản phẩm vay. Vui lòng thử lại sau.',
+          { nzDuration: 3000 }
+        );
       }
     });
   }
-
   // Close modal
   closeModal(): void {
     this.isModalOpen = false;
     // Re-enable body scrolling
     document.body.style.overflow = 'auto';
+
+    // Reset creation/edit mode
+    if (this.isEditMode) {
+      this.cancelEdit();
+    }
+
     // Add a small delay before clearing the selected product
     setTimeout(() => {
       if (!this.isModalOpen) {
@@ -374,12 +395,31 @@ export class LoanProductListDashboardComponent implements OnInit {
       }
     }, 200); // Match the animation out duration
   }
-
-  // Create new product - navigate to product creation page or open form
+  // Create new product - opens the create product modal
   createNewProduct(): void {
-    // Implementation pending - could navigate to a create form or open a modal
-    // this.router.navigate(['/admin/loan-products/create']);
-    alert('Chức năng tạo sản phẩm vay mới đang được phát triển');
+    // Initialize a new empty product
+    this.editingProduct = {
+      name: '',
+      description: '',
+      interestRate: 0,
+      minAmount: 0,
+      maxAmount: 0,
+      minTerm: 1,
+      maxTerm: 12,
+      status: 'ACTIVE',
+      requiredDocuments: ''
+    };
+
+    // Clear selected documents
+    this.selectedDocuments = [];
+
+    // Set creating new mode
+    this.isCreatingNew = true;
+    this.isEditMode = true;
+
+    // Open the modal
+    this.isModalOpen = true;
+    document.body.style.overflow = 'hidden';
   }
   // Bắt đầu chế độ chỉnh sửa sản phẩm
   editProduct(product: LoanProduct): void {
@@ -451,78 +491,138 @@ export class LoanProductListDashboardComponent implements OnInit {
   updateRequiredDocumentsString(): void {
     this.editingProduct.requiredDocuments = this.selectedDocuments.join(' ');
   }
-
   // Lưu thay đổi
   saveChanges(): void {
-    if (!this.editingProduct || !this.selectedProduct) return;
+    if (!this.editingProduct) return;
 
     this.isSaving = true;
 
     // Đảm bảo requiredDocuments được cập nhật từ selectedDocuments
     this.updateRequiredDocumentsString();
 
-    // Gọi API để cập nhật sản phẩm
-    this.loanService.updateLoanProduct(this.selectedProduct.id, this.editingProduct).subscribe({
-      next: (response) => {
-        if (response && response.data) {
-          // Cập nhật sản phẩm hiện tại
-          this.selectedProduct = response.data;
+    if (this.isCreatingNew) {
+      this.loanService.createLoanProduct(this.editingProduct).subscribe({
+        next: (response) => {
+          if (response && response.data) {
+            // Thêm sản phẩm mới vào danh sách
+            this.loanProducts.unshift(response.data);
 
-          // Cập nhật sản phẩm trong danh sách
-          const index = this.loanProducts.findIndex(p => p.id === this.selectedProduct!.id);
-          if (index > -1) {
-            this.loanProducts[index] = this.selectedProduct;
             // Cập nhật danh sách đã lọc
             this.applyFilters();
+
+            // Hiển thị thông báo thành công
+            this.notification.success(
+              'Thành công',
+              'Tạo sản phẩm vay mới thành công!',
+              { nzDuration: 3000 }
+            );
+
+            // Tắt chế độ chỉnh sửa và đóng modal
+            this.cancelEdit();
+            this.closeModal();
           }
-
-          // Hiển thị thông báo thành công
-          const message = document.createElement('div');
-          message.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[9999] flex items-center';
-          message.innerHTML = `
-            <i nz-icon nzType="check-circle" nzTheme="outline" class="text-xl mr-2"></i>
-            <span>Cập nhật sản phẩm vay thành công!</span>
-          `;
-          document.body.appendChild(message);
-
-          // Tự động ẩn thông báo sau 3 giây
-          setTimeout(() => {
-            document.body.removeChild(message);
-          }, 3000);
-
-          // Tắt chế độ chỉnh sửa
-          this.cancelEdit();
+          this.isSaving = false;
+        },
+        error: (error) => {
+          console.error('Lỗi khi tạo sản phẩm vay:', error);
+          // Hiển thị thông báo lỗi
+          this.notification.error(
+            'Lỗi',
+            'Đã xảy ra lỗi khi tạo sản phẩm vay. Chi tiết: ' + (error?.error?.message || error?.message || 'Không rõ lỗi'),
+            { nzDuration: 5000 }
+          );
+          this.isSaving = false;
         }
-        this.isSaving = false;
-      },
-      error: (error) => {
-        console.error('Lỗi khi cập nhật sản phẩm vay:', error);
+      });
+    } else {
+      // Chế độ chỉnh sửa sản phẩm hiện có
+      if (!this.selectedProduct) return;
 
-        // Hiển thị thông báo lỗi
-        const message = document.createElement('div');
-        message.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-[9999] flex items-center';
-        message.innerHTML = `
-          <i nz-icon nzType="warning" nzTheme="outline" class="text-xl mr-2"></i>
-          <span>Đã xảy ra lỗi khi cập nhật sản phẩm vay!</span>
-        `;
-        document.body.appendChild(message);
+      // Gọi API để cập nhật sản phẩm
+      this.loanService.updateLoanProduct(this.selectedProduct.id, this.editingProduct).subscribe({
+        next: (response) => {
+          if (response && response.data) {
+            // Cập nhật sản phẩm hiện tại
+            this.selectedProduct = response.data;
 
-        // Tự động ẩn thông báo sau 3 giây
-        setTimeout(() => {
-          document.body.removeChild(message);
-        }, 3000);
+            // Cập nhật sản phẩm trong danh sách
+            const index = this.loanProducts.findIndex(p => p.id === this.selectedProduct!.id);
+            if (index > -1) {
+              this.loanProducts[index] = this.selectedProduct;
+              // Cập nhật danh sách đã lọc
+              this.applyFilters();
+            }
 
-        this.isSaving = false;
-      }
-    });
+            // Hiển thị thông báo thành công sử dụng NzNotificationService
+            this.notification.success(
+              'Thành công',
+              'Cập nhật sản phẩm vay thành công!',
+              { nzDuration: 3000 }
+            );
+
+            // Tắt chế độ chỉnh sửa
+            this.cancelEdit();
+          }
+          this.isSaving = false;
+        },
+        error: (error) => {
+          console.error('Lỗi khi cập nhật sản phẩm vay:', error);
+          // Hiển thị thông báo lỗi sử dụng NzNotificationService
+          this.notification.error(
+            'Lỗi',
+            'Đã xảy ra lỗi khi cập nhật sản phẩm vay!',
+            { nzDuration: 3000 }
+          );
+
+          this.isSaving = false;
+        }
+      });
+    }
   }
 
   // Hủy chỉnh sửa
   cancelEdit(): void {
     this.isEditMode = false;
+    this.isCreatingNew = false;
     this.editingProduct = {};
     this.selectedDocuments = [];
     this.showDocumentSelector = false;
+
+    // Nếu đang tạo mới sản phẩm, đóng modal khi hủy
+    if (this.isCreatingNew && this.isModalOpen) {
+      this.closeModal();
+    }
+  }
+
+  // Lọc danh sách tài liệu theo từ khóa tìm kiếm
+  filterDocuments(searchTerm: string = ''): { key: string; value: string }[] {
+    const term = searchTerm.toLowerCase().trim();
+
+    // Chuyển đổi documentTypeDisplayMap thành mảng các cặp key-value
+    const documents = Object.entries(this.documentTypeDisplayMap)
+      .map(([key, value]) => ({ key, value }));
+
+    if (!term) {
+      return documents;
+    }
+
+    // Tìm kiếm theo mã hoặc tên hiển thị
+    return documents.filter(doc =>
+      doc.key.toLowerCase().includes(term) ||
+      doc.value.toLowerCase().includes(term)
+    );
+  }
+
+  // Xử lý tìm kiếm tài liệu khi gõ
+  onDocumentSearchChange(): void {
+    this.filteredDocumentTypes = this.filterDocuments(this.documentSearchTerm);
+  }
+
+  // Mở document selector và khởi tạo danh sách
+  openDocumentSelector(): void {
+    this.documentSearchTerm = '';
+    this.filteredDocumentTypes = this.filterDocuments();
+    this.showDocumentSelector = true;
   }
 
   // Close modal when clicking outside or pressing Escape key
