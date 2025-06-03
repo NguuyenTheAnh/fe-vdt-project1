@@ -26,6 +26,11 @@ export class LoanProductListDashboardComponent implements OnInit {
   error: string | null = null;
   selectedProduct: LoanProduct | null = null;
   isModalOpen: boolean = false;
+  isEditMode: boolean = false; // Chế độ chỉnh sửa
+  isSaving: boolean = false; // Trạng thái đang lưu
+  editingProduct: any = {}; // Bản nháp để chỉnh sửa
+  selectedDocuments: string[] = []; // Danh sách tài liệu đã chọn
+  showDocumentSelector: boolean = false; // Hiển thị selector tài liệu
 
   // Map các mã tài liệu sang tên hiển thị tiếng Việt
   documentTypeDisplayMap: { [key: string]: string } = {
@@ -376,12 +381,148 @@ export class LoanProductListDashboardComponent implements OnInit {
     // this.router.navigate(['/admin/loan-products/create']);
     alert('Chức năng tạo sản phẩm vay mới đang được phát triển');
   }
-
-  // Edit product - navigate to edit page or open form
+  // Bắt đầu chế độ chỉnh sửa sản phẩm
   editProduct(product: LoanProduct): void {
-    // Implementation pending - could navigate to an edit form with the product ID
-    // this.router.navigate([`/admin/loan-products/edit/${product.id}`]);
-    alert(`Chức năng chỉnh sửa sản phẩm vay đang được phát triển. ID: ${product.id}`);
+    if (!this.selectedProduct && product) {
+      // Nếu được gọi từ danh sách, mở modal chi tiết trước
+      this.openProductDetails(product);
+      // Đặt hẹn giờ để đảm bảo modal đã mở và dữ liệu đã được tải đầy đủ
+      setTimeout(() => {
+        this.startEditMode();
+      }, 500);
+    } else {
+      // Nếu đã đang ở trong modal, chuyển sang chế độ chỉnh sửa ngay lập tức
+      this.startEditMode();
+    }
+  }
+
+  // Bắt đầu chế độ chỉnh sửa
+  startEditMode(): void {
+    if (!this.selectedProduct) return;
+
+    // Sao chép dữ liệu sản phẩm hiện tại để chỉnh sửa
+    this.editingProduct = { ...this.selectedProduct };
+
+    // Phân tích tài liệu yêu cầu thành mảng
+    if (this.editingProduct.requiredDocuments) {
+      try {
+        // Thử phân tích như JSON
+        let docs = this.editingProduct.requiredDocuments;
+        try {
+          const parsedDocs = JSON.parse(docs);
+          if (Array.isArray(parsedDocs)) {
+            this.selectedDocuments = [...parsedDocs];
+          } else {
+            // Nếu không phải mảng, phân tách theo khoảng trắng/dấu phẩy
+            this.selectedDocuments = docs.split(/[\s,]+/).filter((doc: string) => doc.trim());
+          }
+        } catch {
+          // Nếu không phải JSON, phân tách theo khoảng trắng/dấu phẩy
+          this.selectedDocuments = docs.split(/[\s,]+/).filter((doc: string) => doc.trim());
+        }
+      } catch (error) {
+        console.error("Lỗi khi phân tích tài liệu:", error);
+        this.selectedDocuments = [];
+      }
+    } else {
+      this.selectedDocuments = [];
+    }
+
+    // Bật chế độ chỉnh sửa
+    this.isEditMode = true;
+  }
+
+  // Thêm tài liệu yêu cầu mới
+  addDocument(document: string): void {
+    if (!this.selectedDocuments.includes(document)) {
+      this.selectedDocuments.push(document);
+      this.updateRequiredDocumentsString();
+    }
+    this.showDocumentSelector = false;
+  }
+
+  // Xóa tài liệu khỏi danh sách
+  removeDocument(document: string): void {
+    this.selectedDocuments = this.selectedDocuments.filter(doc => doc !== document);
+    this.updateRequiredDocumentsString();
+  }
+
+  // Cập nhật chuỗi tài liệu từ mảng đã chọn
+  updateRequiredDocumentsString(): void {
+    this.editingProduct.requiredDocuments = this.selectedDocuments.join(' ');
+  }
+
+  // Lưu thay đổi
+  saveChanges(): void {
+    if (!this.editingProduct || !this.selectedProduct) return;
+
+    this.isSaving = true;
+
+    // Đảm bảo requiredDocuments được cập nhật từ selectedDocuments
+    this.updateRequiredDocumentsString();
+
+    // Gọi API để cập nhật sản phẩm
+    this.loanService.updateLoanProduct(this.selectedProduct.id, this.editingProduct).subscribe({
+      next: (response) => {
+        if (response && response.data) {
+          // Cập nhật sản phẩm hiện tại
+          this.selectedProduct = response.data;
+
+          // Cập nhật sản phẩm trong danh sách
+          const index = this.loanProducts.findIndex(p => p.id === this.selectedProduct!.id);
+          if (index > -1) {
+            this.loanProducts[index] = this.selectedProduct;
+            // Cập nhật danh sách đã lọc
+            this.applyFilters();
+          }
+
+          // Hiển thị thông báo thành công
+          const message = document.createElement('div');
+          message.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[9999] flex items-center';
+          message.innerHTML = `
+            <i nz-icon nzType="check-circle" nzTheme="outline" class="text-xl mr-2"></i>
+            <span>Cập nhật sản phẩm vay thành công!</span>
+          `;
+          document.body.appendChild(message);
+
+          // Tự động ẩn thông báo sau 3 giây
+          setTimeout(() => {
+            document.body.removeChild(message);
+          }, 3000);
+
+          // Tắt chế độ chỉnh sửa
+          this.cancelEdit();
+        }
+        this.isSaving = false;
+      },
+      error: (error) => {
+        console.error('Lỗi khi cập nhật sản phẩm vay:', error);
+
+        // Hiển thị thông báo lỗi
+        const message = document.createElement('div');
+        message.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-[9999] flex items-center';
+        message.innerHTML = `
+          <i nz-icon nzType="warning" nzTheme="outline" class="text-xl mr-2"></i>
+          <span>Đã xảy ra lỗi khi cập nhật sản phẩm vay!</span>
+        `;
+        document.body.appendChild(message);
+
+        // Tự động ẩn thông báo sau 3 giây
+        setTimeout(() => {
+          document.body.removeChild(message);
+        }, 3000);
+
+        this.isSaving = false;
+      }
+    });
+  }
+
+  // Hủy chỉnh sửa
+  cancelEdit(): void {
+    this.isEditMode = false;
+    this.editingProduct = {};
+    this.selectedDocuments = [];
+    this.showDocumentSelector = false;
   }
 
   // Close modal when clicking outside or pressing Escape key

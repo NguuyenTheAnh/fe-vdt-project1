@@ -440,58 +440,102 @@
         <!-- The stopPropagation prevents the modal from closing when clicking inside it -->
         <div @modalAnimation
             class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto modal-container relative"
-            style="z-index: 9100;" (click)="$event.stopPropagation()">
-            <!-- Modal Header with Close Button -->
+            style="z-index: 9100;" (click)="$event.stopPropagation()"> <!-- Modal Header with Close Button -->
             <div
                 class="flex justify-between items-center p-6 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50">
                 <div class="flex items-center">
+                    <!-- View Mode -->
+                    <h2 *ngIf="!isEditMode" class="text-2xl font-bold text-gray-800">{{ selectedProduct.name }}</h2>
+                    <!-- Edit Mode -->
+                    <input *ngIf="isEditMode" type="text" [(ngModel)]="editingProduct.name"
+                        placeholder="Tên sản phẩm vay"
+                        class="text-2xl font-bold text-gray-800 border-b-2 border-[#E74C3C] bg-transparent focus:outline-none w-full mr-2">
 
-                    <h2 class="text-2xl font-bold text-gray-800">{{ selectedProduct.name }}</h2>
-                    <span
+                    <!-- Status Badge -->
+                    <span *ngIf="!isEditMode"
                         [ngClass]="{'bg-green-100 text-green-800': selectedProduct.status === 'ACTIVE', 'bg-gray-100 text-gray-800': selectedProduct.status === 'INACTIVE'}"
                         class="px-3 py-1 text-xs leading-5 font-semibold rounded-full ml-3">
                         {{ selectedProduct.status === 'ACTIVE' ? 'Đang hoạt động' : 'Không hoạt động' }}
                     </span>
+                    <!-- Edit Mode Status -->
+                    <select *ngIf="isEditMode" [(ngModel)]="editingProduct.status"
+                        class="ml-3 px-3 py-1 text-xs leading-5 font-semibold rounded-full border border-gray-300 focus:outline-none focus:border-[#E74C3C]">
+                        <option value="ACTIVE">Đang hoạt động</option>
+                        <option value="INACTIVE">Không hoạt động</option>
+                    </select>
                 </div>
-                <button (click)="closeModal()"
-                    class="text-gray-500 border-gray-100 hover:text-gray-700 focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                <div class="flex items-center">
+                    <!-- Edit Mode Indicator -->
+                    <span *ngIf="isEditMode" class="mr-4 text-sm text-[#E74C3C] bg-[#E74C3C]/10 px-3 py-1 rounded-full">
+                        <i nz-icon nzType="edit" nzTheme="outline" class="mr-1"></i>
+                        Đang chỉnh sửa
+                    </span>
+                    <!-- Close Button -->
+                    <button (click)="closeModal()"
+                        class="text-gray-500 border-gray-100 hover:text-gray-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Modal Content -->
-            <div class="p-6">
-                <!-- Loan Description with Icon -->
+            <div class="p-6"> <!-- Loan Description with Icon -->
                 <div class="mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
                     <div class="flex items-start">
                         <div class="w-8 h-8 rounded-full bg-[#E74C3C]/10 flex items-center justify-center mr-3 mt-1">
                             <i nz-icon nzType="info-circle" nzTheme="outline" class="text-[#E74C3C]"></i>
                         </div>
-                        <div>
+                        <div class="w-full">
                             <h3 class="text-lg font-semibold text-gray-700 mb-2">Mô tả</h3>
-                            <p class="text-gray-700">{{ selectedProduct.description }}</p>
+                            <!-- View Mode -->
+                            <p *ngIf="!isEditMode" class="text-gray-700">{{ selectedProduct.description }}</p>
+                            <!-- Edit Mode -->
+                            <textarea *ngIf="isEditMode" [(ngModel)]="editingProduct.description" rows="3"
+                                class="w-full p-2 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E74C3C]/30 focus:border-[#E74C3C]"
+                                placeholder="Mô tả sản phẩm vay..."></textarea>
                         </div>
                     </div>
-                </div>
-
-                <!-- Key Financial Details -->
+                </div> <!-- Key Financial Details -->
                 <div class="bg-white border border-gray-200 rounded-xl shadow-sm mb-6 overflow-hidden">
                     <div class="grid grid-cols-3 text-center">
                         <div class="p-4 border-r border-gray-200">
-                            <div class="text-lg font-bold text-[#E74C3C]">{{selectedProduct.interestRate}}%</div>
+                            <!-- View Mode -->
+                            <div *ngIf="!isEditMode" class="text-lg font-bold text-[#E74C3C]">
+                                {{selectedProduct.interestRate}}%</div>
+                            <!-- Edit Mode -->
+                            <div *ngIf="isEditMode" class="flex items-center justify-center">
+                                <input type="number" [(ngModel)]="editingProduct.interestRate" step="0.1" min="0"
+                                    max="100"
+                                    class="w-20 text-center text-lg font-bold text-[#E74C3C] border-b-2 border-gray-300 focus:border-[#E74C3C] focus:outline-none bg-transparent">
+                                <span class="text-lg font-bold text-[#E74C3C]">%</span>
+                            </div>
                             <div class="text-sm text-gray-600">Lãi suất</div>
                         </div>
                         <div class="p-4 border-r border-gray-200">
-                            <div class="text-lg font-bold text-[#E74C3C]">{{formatCurrency(selectedProduct.maxAmount)}}
+                            <!-- View Mode -->
+                            <div *ngIf="!isEditMode" class="text-lg font-bold text-[#E74C3C]">
+                                {{formatCurrency(selectedProduct.maxAmount)}}</div>
+                            <!-- Edit Mode -->
+                            <div *ngIf="isEditMode" class="flex items-center justify-center">
+                                <input type="number" [(ngModel)]="editingProduct.maxAmount" step="1000000" min="0"
+                                    class="w-32 text-center text-lg font-bold text-[#E74C3C] border-b-2 border-gray-300 focus:border-[#E74C3C] focus:outline-none bg-transparent">
                             </div>
                             <div class="text-sm text-gray-600">Tối đa</div>
                         </div>
                         <div class="p-4">
-                            <div class="text-lg font-bold text-[#E74C3C]">{{selectedProduct.maxTerm}} tháng</div>
+                            <!-- View Mode -->
+                            <div *ngIf="!isEditMode" class="text-lg font-bold text-[#E74C3C]">
+                                {{selectedProduct.maxTerm}} tháng</div>
+                            <!-- Edit Mode -->
+                            <div *ngIf="isEditMode" class="flex items-center justify-center">
+                                <input type="number" [(ngModel)]="editingProduct.maxTerm" step="1" min="1" max="120"
+                                    class="w-16 text-center text-lg font-bold text-[#E74C3C] border-b-2 border-gray-300 focus:border-[#E74C3C] focus:outline-none bg-transparent">
+                                <span class="text-lg font-bold text-[#E74C3C] ml-1">tháng</span>
+                            </div>
                             <div class="text-sm text-gray-600">Kỳ hạn tối đa</div>
                         </div>
                     </div>
@@ -507,17 +551,47 @@
                         <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-sm space-y-3">
                             <div class="flex justify-between border-b border-gray-100 pb-2">
                                 <span class="text-gray-600">Lãi suất:</span>
-                                <span class="font-semibold text-gray-800">{{selectedProduct.interestRate}}%</span>
+                                <!-- View Mode -->
+                                <span *ngIf="!isEditMode"
+                                    class="font-semibold text-gray-800">{{selectedProduct.interestRate}}%</span>
+                                <!-- Edit Mode -->
+                                <div *ngIf="isEditMode" class="flex items-center">
+                                    <input type="number" [(ngModel)]="editingProduct.interestRate" step="0.1" min="0"
+                                        max="100"
+                                        class="w-20 text-right font-semibold text-gray-800 border-b border-gray-300 focus:border-[#E74C3C] focus:outline-none bg-transparent">
+                                    <span class="font-semibold text-gray-800 ml-1">%</span>
+                                </div>
                             </div>
                             <div class="flex justify-between border-b border-gray-100 pb-2">
                                 <span class="text-gray-600">Hạn mức vay:</span>
-                                <span class="font-semibold text-gray-800">{{formatCurrency(selectedProduct.minAmount)}}
+                                <!-- View Mode -->
+                                <span *ngIf="!isEditMode"
+                                    class="font-semibold text-gray-800">{{formatCurrency(selectedProduct.minAmount)}}
                                     - {{formatCurrency(selectedProduct.maxAmount)}}</span>
+                                <!-- Edit Mode -->
+                                <div *ngIf="isEditMode" class="flex items-center">
+                                    <input type="number" [(ngModel)]="editingProduct.minAmount" step="1000000" min="0"
+                                        class="w-28 text-right font-semibold text-gray-800 border-b border-gray-300 focus:border-[#E74C3C] focus:outline-none bg-transparent mr-1">
+                                    <span class="font-semibold text-gray-800 mx-1">-</span>
+                                    <input type="number" [(ngModel)]="editingProduct.maxAmount" step="1000000" min="0"
+                                        class="w-28 text-right font-semibold text-gray-800 border-b border-gray-300 focus:border-[#E74C3C] focus:outline-none bg-transparent">
+                                </div>
                             </div>
                             <div class="flex justify-between border-b border-gray-100 pb-2">
                                 <span class="text-gray-600">Kỳ hạn vay:</span>
-                                <span class="font-semibold text-gray-800">{{selectedProduct.minTerm}} -
+                                <!-- View Mode -->
+                                <span *ngIf="!isEditMode"
+                                    class="font-semibold text-gray-800">{{selectedProduct.minTerm}} -
                                     {{selectedProduct.maxTerm}} tháng</span>
+                                <!-- Edit Mode -->
+                                <div *ngIf="isEditMode" class="flex items-center">
+                                    <input type="number" [(ngModel)]="editingProduct.minTerm" step="1" min="1"
+                                        class="w-16 text-right font-semibold text-gray-800 border-b border-gray-300 focus:border-[#E74C3C] focus:outline-none bg-transparent">
+                                    <span class="font-semibold text-gray-800 mx-1">-</span>
+                                    <input type="number" [(ngModel)]="editingProduct.maxTerm" step="1" min="1"
+                                        class="w-16 text-right font-semibold text-gray-800 border-b border-gray-300 focus:border-[#E74C3C] focus:outline-none bg-transparent">
+                                    <span class="font-semibold text-gray-800 ml-1">tháng</span>
+                                </div>
                             </div>
                             <div class="flex justify-between border-b border-gray-100 pb-2">
                                 <span class="text-gray-600">Trạng thái:</span>
@@ -542,13 +616,19 @@
                             </div>
                         </div>
                     </div>
-
                     <div>
                         <h3 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
                             <i nz-icon nzType="file-text" nzTheme="outline" class="mr-2 text-[#E74C3C]"></i>
                             Yêu cầu tài liệu
+                            <!-- Add Document Button in Edit Mode -->
+                            <button *ngIf="isEditMode" (click)="showDocumentSelector = !showDocumentSelector"
+                                class="ml-auto px-2 py-1 bg-[#E74C3C] text-white text-xs rounded-md hover:bg-[#C0392B] flex items-center transition-all">
+                                <i nz-icon nzType="plus" nzTheme="outline" class="mr-1"></i> Thêm tài liệu
+                            </button>
                         </h3>
-                        <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-sm h-full">
+                        <!-- View Mode -->
+                        <div *ngIf="!isEditMode"
+                            class="bg-white border border-gray-200 p-5 rounded-xl shadow-sm h-full">
                             <div *ngIf="selectedProduct.requiredDocuments" class="text-gray-700">
                                 <div [innerHTML]="formatRequiredDocuments(selectedProduct.requiredDocuments)"
                                     class="space-y-1"></div>
@@ -559,6 +639,55 @@
                                     <i nz-icon nzType="file-unknown" nzTheme="outline"
                                         class="text-3xl text-gray-300 block mb-2"></i>
                                     Không có yêu cầu tài liệu
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit Mode -->
+                        <div *ngIf="isEditMode" class="bg-white border border-gray-200 p-5 rounded-xl shadow-sm">
+                            <!-- Document List with Remove buttons -->
+                            <div *ngIf="selectedDocuments.length > 0">
+                                <div *ngFor="let docCode of selectedDocuments"
+                                    class="flex items-center justify-between py-2 border-b border-gray-100">
+                                    <div class="flex items-center">
+                                        <i nz-icon nzType="file" nzTheme="outline" class="text-[#E74C3C] mr-2"></i>
+                                        <span>{{ documentTypeDisplayMap[docCode] || docCode }}</span>
+                                    </div>
+                                    <button (click)="removeDocument(docCode)"
+                                        class="text-gray-500 hover:text-red-500 transition-colors duration-200 focus:outline-none">
+                                        <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Empty State for Document List -->
+                            <div *ngIf="selectedDocuments.length === 0"
+                                class="text-gray-500 italic flex items-center justify-center py-8">
+                                <div class="text-center">
+                                    <i nz-icon nzType="file-unknown" nzTheme="outline"
+                                        class="text-3xl text-gray-300 block mb-2"></i>
+                                    Không có tài liệu nào được yêu cầu
+                                </div>
+                            </div>
+
+                            <!-- Document Selector Dropdown -->
+                            <div *ngIf="showDocumentSelector"
+                                class="mt-4 p-3 border border-gray-200 rounded-lg bg-gray-50 max-h-64 overflow-y-auto">
+                                <div class="mb-3">
+                                    <input type="text" placeholder="Tìm kiếm tài liệu..."
+                                        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E74C3C]/30 focus:border-[#E74C3C]">
+                                </div>
+                                <div class="space-y-1">
+                                    <div *ngFor="let item of documentTypeDisplayMap | keyvalue"
+                                        [class.text-gray-400]="selectedDocuments.includes(item.key)"
+                                        [class.pointer-events-none]="selectedDocuments.includes(item.key)"
+                                        (click)="!selectedDocuments.includes(item.key) && addDocument(item.key)"
+                                        class="flex items-center p-2 cursor-pointer hover:bg-gray-100 rounded-md transition-colors duration-200">
+                                        <i nz-icon nzType="file-add" nzTheme="outline" class="mr-2 text-[#E74C3C]"></i>
+                                        <span>{{ item.value }}</span>
+                                        <span *ngIf="selectedDocuments.includes(item.key)"
+                                            class="ml-2 text-xs text-gray-500">(Đã thêm)</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -580,19 +709,35 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Modal Footer -->
+            </div> <!-- Modal Footer -->
             <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
-                <button (click)="closeModal()"
-                    class="px-5 py-2.5 bg-white text-gray-700 rounded-lg hover:bg-gray-100 border border-gray-200 mr-3 transition-colors duration-200 flex items-center">
-                    Đóng
-                </button>
-                <button (click)="editProduct(selectedProduct)"
-                    class="px-5 py-2.5 bg-[#E74C3C] border-gray-100 text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200 flex items-center">
+                <!-- View Mode Buttons -->
+                <div *ngIf="!isEditMode" class="flex">
+                    <button (click)="closeModal()"
+                        class="px-5 py-2.5 bg-white text-gray-700 rounded-lg hover:bg-gray-100 border border-gray-200 mr-3 transition-colors duration-200 flex items-center">
+                        Đóng
+                    </button>
+                    <button (click)="editProduct(selectedProduct)"
+                        class="px-5 py-2.5 bg-[#E74C3C] border-gray-100 text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200 flex items-center">
+                        <i nz-icon nzType="edit" nzTheme="outline" class="mr-1"></i>
+                        Chỉnh sửa
+                    </button>
+                </div>
 
-                    Chỉnh sửa
-                </button>
+                <!-- Edit Mode Buttons -->
+                <div *ngIf="isEditMode" class="flex">
+                    <button (click)="cancelEdit()"
+                        class="px-5 py-2.5 bg-white text-gray-700 rounded-lg hover:bg-gray-100 border border-gray-200 mr-3 transition-colors duration-200 flex items-center">
+                        <i nz-icon nzType="close" nzTheme="outline" class="mr-1"></i>
+                        Hủy
+                    </button>
+                    <button (click)="saveChanges()" [disabled]="isSaving"
+                        class="px-5 py-2.5 bg-[#E74C3C] border-gray-100 text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200 flex items-center disabled:opacity-70 disabled:cursor-not-allowed">
+                        <i *ngIf="!isSaving" nz-icon nzType="save" nzTheme="outline" class="mr-1"></i>
+                        <i *ngIf="isSaving" nz-icon nzType="loading" nzTheme="outline" class="mr-1 animate-spin"></i>
+                        {{ isSaving ? 'Đang lưu...' : 'Lưu thay đổi' }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>

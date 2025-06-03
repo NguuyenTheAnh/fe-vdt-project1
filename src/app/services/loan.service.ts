@@ -129,13 +129,21 @@ export class LoanService {
      */
     updateApplication(id: number, data: Partial<LoanApplication>): Observable<ApiResponse<LoanApplication>> {
         return this.apiService.patch<LoanApplication>(`/loan-applications/${id}`, data);
-    }
-
-    /**
+    }    /**
      * Hủy đơn đăng ký vay
      */
     cancelApplication(id: number): Observable<ApiResponse<void>> {
         return this.apiService.delete<void>(`/loan-applications/${id}`);
+    }
+
+    /**
+     * Cập nhật thông tin sản phẩm vay
+     * @param id ID sản phẩm vay cần cập nhật
+     * @param data Dữ liệu cập nhật cho sản phẩm vay
+     * @returns Observable chứa sản phẩm vay đã cập nhật
+     */
+    updateLoanProduct(id: number, data: Partial<LoanProduct>): Observable<ApiResponse<LoanProduct>> {
+        return this.apiService.put<LoanProduct>(`/loan-products/${id}`, data);
     }    /**
      * Tính toán kế hoạch trả nợ dự kiến
      */
