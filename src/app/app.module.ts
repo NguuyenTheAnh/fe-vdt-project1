@@ -45,6 +45,14 @@ import { HomePageComponent } from './borrower-portal/home-page/home-page.compone
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
+import { MainDashboardComponent } from './admin/main-dashboard/main-dashboard.component';
+import { UserListDashboardComponent } from './admin/user-list-dashboard/user-list-dashboard.component';
+import { LoanProductListDashboardComponent } from './admin/loan-product-list-dashboard/loan-product-list-dashboard.component';
+import { LoanApplicationListDashboardComponent } from './admin/loan-application-list-dashboard/loan-application-list-dashboard.component';
+import { DisbursementDashboardComponent } from './admin/disbursement-dashboard/disbursement-dashboard.component';
+import { ReportDashboardComponent } from './admin/report-dashboard/report-dashboard.component';
+import { SystemConfigDashboardComponent } from './admin/system-config-dashboard/system-config-dashboard.component';
+import { AdminSidebarComponent } from './layout/admin-sidebar/admin-sidebar.component';
 registerLocaleData(vi);
 
 @NgModule({
@@ -55,7 +63,15 @@ registerLocaleData(vi);
     HomePageComponent,
     PageNotFoundComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    MainDashboardComponent,
+    UserListDashboardComponent,
+    LoanProductListDashboardComponent,
+    LoanApplicationListDashboardComponent,
+    DisbursementDashboardComponent,
+    ReportDashboardComponent,
+    SystemConfigDashboardComponent,
+    AdminSidebarComponent
   ],
   imports: [
     BrowserModule,

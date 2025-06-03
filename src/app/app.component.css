@@ -1,0 +1,6 @@
+/* Admin layout specific styles */
+.admin-content {
+    margin-left: 16rem;
+    /* 256px = width of sidebar (w-64) */
+    transition: margin-left 0.3s ease;
+}

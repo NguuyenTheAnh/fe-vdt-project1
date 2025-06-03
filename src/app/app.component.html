@@ -1,15 +1,28 @@
 <div class="min-h-screen flex flex-col">
-    <!-- Header hiển thị trên tất cả các trang, ngoại trừ login, register và 404 page -->
+    <!-- Header hiển thị trên tất cả các trang, ngoại trừ login, register, 404 và admin pages -->
     <app-header
-        *ngIf="router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404')"></app-header>
+        *ngIf="router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404') && !router.url.startsWith('/admin')"></app-header>
 
     <!-- Content -->
     <main class="flex-grow"
-        [ngClass]="{'pt-16': router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404')}">
-        <router-outlet></router-outlet>
+        [ngClass]="{'pt-16': router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404') && !router.url.startsWith('/admin')}">
+        <!-- Admin layout with sidebar -->
+        <div *ngIf="router.url.startsWith('/admin')">
+            <app-admin-sidebar></app-admin-sidebar>
+            <div class="pl-64"> <!-- Match the width of sidebar (w-64) -->
+                <div class="p-6">
+                    <router-outlet></router-outlet>
+                </div>
+            </div>
+        </div>
+
+        <!-- Regular layout for non-admin pages -->
+        <div *ngIf="!router.url.startsWith('/admin')">
+            <router-outlet></router-outlet>
+        </div>
     </main>
 
-    <!-- Footer hiển thị trên tất cả các trang, ngoại trừ login, register và 404 page -->
+    <!-- Footer hiển thị trên tất cả các trang, ngoại trừ login, register, 404 và admin pages -->
     <app-footer
-        *ngIf="router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404')"></app-footer>
+        *ngIf="router.url !== '/login' && router.url !== '/register' && !router.url.includes('/404') && !router.url.startsWith('/admin')"></app-footer>
 </div>
