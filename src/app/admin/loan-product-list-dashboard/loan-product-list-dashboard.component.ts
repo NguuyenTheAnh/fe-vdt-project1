@@ -26,11 +26,12 @@ export class LoanProductListDashboardComponent implements OnInit {
   error: string | null = null;
   selectedProduct: LoanProduct | null = null;
   isModalOpen: boolean = false;
-
   // Search and filter properties
   searchTerm: string = '';
   statusFilter: string = 'ALL';
   interestRateRange: [number, number] = [0, 30]; // Default interest rate range
+  amountRange: [number, number] = [0, 1000000000]; // Default amount range in VND
+  termRange: [number, number] = [1, 60]; // Default term range in months
 
   // Pagination properties
   currentPage: number = 0;
@@ -83,7 +84,6 @@ export class LoanProductListDashboardComponent implements OnInit {
       }
     });
   }
-
   // Apply search and filters
   applyFilters(): void {
     if (!this.loanProducts.length) return;
@@ -110,6 +110,16 @@ export class LoanProductListDashboardComponent implements OnInit {
       product.interestRate <= this.interestRateRange[1]
     );
 
+    // Apply amount filter (min amount must be less than or equal to the max filter, or max amount must be greater than or equal to min filter)
+    filtered = filtered.filter(product =>
+      (product.minAmount <= this.amountRange[1] && product.maxAmount >= this.amountRange[0])
+    );
+
+    // Apply term filter
+    filtered = filtered.filter(product =>
+      (product.minTerm <= this.termRange[1] && product.maxTerm >= this.termRange[0])
+    );
+
     this.filteredProducts = filtered;
   }
 
@@ -117,12 +127,13 @@ export class LoanProductListDashboardComponent implements OnInit {
   onSearch(): void {
     this.applyFilters();
   }
-
   // Reset all filters
   resetFilters(): void {
     this.searchTerm = '';
     this.statusFilter = 'ALL';
     this.interestRateRange = [0, 30];
+    this.amountRange = [0, 1000000000];
+    this.termRange = [1, 60];
     this.filteredProducts = [...this.loanProducts];
   }
 

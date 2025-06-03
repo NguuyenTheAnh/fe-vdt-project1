@@ -24,15 +24,20 @@
                 <div class="text-xs text-gray-500 mt-1 pl-2">
                     Nhập từ khóa và nhấn Enter để tìm kiếm
                 </div>
-            </div>
-
-            <!-- Enhanced Filter Buttons -->
+            </div> <!-- Enhanced Filter Buttons -->
             <div class="flex flex-wrap gap-3">
                 <button
                     class="px-5 py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-lg hover:border-[#E74C3C] hover:text-[#E74C3C] flex items-center shadow-sm hover:shadow-md transition-all duration-300"
                     nz-dropdown [nzDropdownMenu]="filterMenu" nzTrigger="click" nzPlacement="bottomRight">
                     <i nz-icon nzType="filter" nzTheme="outline" class="mr-2 text-lg"></i>
                     Bộ lọc nâng cao
+                </button>
+
+                <button
+                    class="px-5 py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-lg hover:border-[#E74C3C] hover:text-[#E74C3C] flex items-center shadow-sm hover:shadow-md transition-all duration-300"
+                    nz-dropdown [nzDropdownMenu]="statusMenu" nzTrigger="click" nzPlacement="bottomRight">
+                    <i nz-icon nzType="appstore" nzTheme="outline" class="mr-2 text-lg"></i>
+                    Trạng thái
                 </button>
 
                 <button
@@ -48,20 +53,9 @@
                     <i nz-icon nzType="plus" nzTheme="outline" class="mr-2 text-lg"></i>
                     Thêm sản phẩm vay
                 </button>
-            </div>
-
-            <!-- Filter Dropdown Menu -->
+            </div> <!-- Advanced Filter Dropdown Menu -->
             <nz-dropdown-menu #filterMenu="nzDropdownMenu">
                 <div class="bg-white rounded-xl shadow-xl p-6 w-80 border border-gray-100">
-                    <h4 class="font-medium text-gray-800 mb-4">Lọc theo trạng thái</h4>
-                    <div class="mb-4">
-                        <nz-radio-group [(ngModel)]="statusFilter">
-                            <label nz-radio nzValue="ALL">Tất cả</label>
-                            <label nz-radio nzValue="ACTIVE">Đang hoạt động</label>
-                            <label nz-radio nzValue="INACTIVE">Không hoạt động</label>
-                        </nz-radio-group>
-                    </div>
-
                     <h4 class="font-medium text-gray-800 mb-4">Lãi suất (%)</h4>
                     <div class="mb-4">
                         <nz-slider nzRange [(ngModel)]="interestRateRange" [nzMin]="0" [nzMax]="30"
@@ -69,6 +63,25 @@
                         <div class="flex justify-between text-sm text-gray-500">
                             <span>{{interestRateRange[0]}}%</span>
                             <span>{{interestRateRange[1]}}%</span>
+                        </div>
+                    </div>
+
+                    <h4 class="font-medium text-gray-800 mb-4">Hạn mức vay</h4>
+                    <div class="mb-4">
+                        <nz-slider nzRange [(ngModel)]="amountRange" [nzMin]="0" [nzMax]="1000000000"
+                            [nzStep]="100000"></nz-slider>
+                        <div class="flex justify-between text-sm text-gray-500">
+                            <span>{{formatCurrency(amountRange[0])}}</span>
+                            <span>{{formatCurrency(amountRange[1])}}</span>
+                        </div>
+                    </div>
+
+                    <h4 class="font-medium text-gray-800 mb-4">Kỳ hạn (tháng)</h4>
+                    <div class="mb-4">
+                        <nz-slider nzRange [(ngModel)]="termRange" [nzMin]="1" [nzMax]="60" [nzStep]="1"></nz-slider>
+                        <div class="flex justify-between text-sm text-gray-500">
+                            <span>{{termRange[0]}} tháng</span>
+                            <span>{{termRange[1]}} tháng</span>
                         </div>
                     </div>
 
@@ -86,10 +99,44 @@
                     </div>
                 </div>
             </nz-dropdown-menu>
-        </div>
 
-        <!-- Active Filters Display -->
-        <div *ngIf="searchTerm || statusFilter !== 'ALL' || interestRateRange[0] > 0 || interestRateRange[1] < 30"
+            <!-- Status Filter Dropdown Menu -->
+            <nz-dropdown-menu #statusMenu="nzDropdownMenu">
+                <div class="bg-white rounded-xl shadow-xl p-6 w-64 border border-gray-100">
+                    <h4 class="font-medium text-gray-800 mb-4">Trạng thái sản phẩm</h4>
+                    <div class="mb-4">
+                        <nz-radio-group [(ngModel)]="statusFilter">
+                            <div class="flex flex-col space-y-3">
+                                <label nz-radio nzValue="ALL" class="flex items-center">
+                                    <span class="ml-2">Tất cả</span>
+                                </label>
+                                <label nz-radio nzValue="ACTIVE" class="flex items-center">
+                                    <span class="flex items-center ml-2">
+                                        <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                                        Đang hoạt động
+                                    </span>
+                                </label>
+                                <label nz-radio nzValue="INACTIVE" class="flex items-center">
+                                    <span class="flex items-center ml-2">
+                                        <span class="w-3 h-3 rounded-full bg-gray-400 mr-2"></span>
+                                        Không hoạt động
+                                    </span>
+                                </label>
+                            </div>
+                        </nz-radio-group>
+                    </div>
+
+                    <div class="flex justify-end mt-6">
+                        <button
+                            class="px-4 py-2 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200"
+                            (click)="onSearch()">
+                            Áp dụng
+                        </button>
+                    </div>
+                </div>
+            </nz-dropdown-menu>
+        </div> <!-- Active Filters Display -->
+        <div *ngIf="searchTerm || statusFilter !== 'ALL' || interestRateRange[0] > 0 || interestRateRange[1] < 30 || amountRange[0] > 0 || amountRange[1] < 1000000000 || termRange[0] > 1 || termRange[1] < 60"
             class="flex flex-wrap items-center mt-4 text-sm">
             <span class="mr-3 text-gray-700 font-medium">Bộ lọc đang áp dụng:</span>
 
@@ -122,8 +169,28 @@
                 </button>
             </div>
 
+            <div *ngIf="amountRange[0] > 0 || amountRange[1] < 1000000000"
+                class="bg-gray-100 rounded-full px-3 py-1.5 mr-2 mb-2 flex items-center hover:bg-gray-200 transition-colors duration-200 border border-gray-200">
+                <span class="text-gray-700">Khoản vay: <span class="font-medium">{{formatCurrency(amountRange[0])}} -
+                        {{formatCurrency(amountRange[1])}}</span></span>
+                <button class="text-gray-400 hover:text-[#E74C3C] ml-2 flex items-center"
+                    (click)="amountRange = [0, 1000000000]; onSearch()">
+                    <i nz-icon nzType="close" nzTheme="outline"></i>
+                </button>
+            </div>
+
+            <div *ngIf="termRange[0] > 1 || termRange[1] < 60"
+                class="bg-gray-100 rounded-full px-3 py-1.5 mr-2 mb-2 flex items-center hover:bg-gray-200 transition-colors duration-200 border border-gray-200">
+                <span class="text-gray-700">Kỳ hạn: <span class="font-medium">{{termRange[0]}} - {{termRange[1]}}
+                        tháng</span></span>
+                <button class="text-gray-400 hover:text-[#E74C3C] ml-2 flex items-center"
+                    (click)="termRange = [1, 60]; onSearch()">
+                    <i nz-icon nzType="close" nzTheme="outline"></i>
+                </button>
+            </div>
+
             <button
-                *ngIf="searchTerm || statusFilter !== 'ALL' || interestRateRange[0] > 0 || interestRateRange[1] < 30"
+                *ngIf="searchTerm || statusFilter !== 'ALL' || interestRateRange[0] > 0 || interestRateRange[1] < 30 || amountRange[0] > 0 || amountRange[1] < 1000000000 || termRange[0] > 1 || termRange[1] < 60"
                 class="text-[#E74C3C] border-none rounded-2xl p-1.5 hover:text-[#C0392B] font-medium flex items-center ml-1 mb-2"
                 (click)="resetFilters(); onSearch()">
                 <i nz-icon nzType="delete" nzTheme="outline" class="mr-1"></i>
@@ -210,14 +277,13 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button (click)="openProductDetails(product)"
-                                class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                <i nz-icon nzType="eye" nzTheme="outline" class="mr-1"></i>
-                                Xem
+                            <button (click)="openProductDetails(product)" nz-tooltip nzTooltipTitle="Xem chi tiết"
+                                class="text-indigo-600 hover:text-indigo-900 mr-4 text-lg">
+                                <i nz-icon nzType="eye" nzTheme="outline"></i>
                             </button>
-                            <button (click)="editProduct(product)" class="text-blue-600 hover:text-blue-900">
-                                <i nz-icon nzType="edit" nzTheme="outline" class="mr-1"></i>
-                                Sửa
+                            <button (click)="editProduct(product)" nz-tooltip nzTooltipTitle="Chỉnh sửa"
+                                class="text-blue-600 hover:text-blue-900 text-lg">
+                                <i nz-icon nzType="edit" nzTheme="outline"></i>
                             </button>
                         </td>
                     </tr>
@@ -337,77 +403,130 @@
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- Product Details Modal -->
+    </div> <!-- Product Details Modal -->
     <div *ngIf="selectedProduct && isModalOpen"
         class="fixed inset-0 bg-black bg-opacity-50 z-[9000] flex items-center justify-center p-4 modal-overlay">
         <!-- The stopPropagation prevents the modal from closing when clicking inside it -->
         <div @modalAnimation
-            class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-container relative"
+            class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto modal-container relative"
             style="z-index: 9100;" (click)="$event.stopPropagation()">
             <!-- Modal Header with Close Button -->
-            <div class="flex justify-between items-center p-6 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-800">{{ selectedProduct.name }}</h2>
-                <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                    <i nz-icon nzType="close" nzTheme="outline" class="text-xl"></i>
+            <div
+                class="flex justify-between items-center p-6 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-[#E74C3C]/10 flex items-center justify-center mr-3">
+                        <i nz-icon nzType="fund" nzTheme="outline" class="text-xl text-[#E74C3C]"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">{{ selectedProduct.name }}</h2>
+                    <span
+                        [ngClass]="{'bg-green-100 text-green-800': selectedProduct.status === 'ACTIVE', 'bg-gray-100 text-gray-800': selectedProduct.status === 'INACTIVE'}"
+                        class="px-3 py-1 text-xs leading-5 font-semibold rounded-full ml-3">
+                        {{ selectedProduct.status === 'ACTIVE' ? 'Đang hoạt động' : 'Không hoạt động' }}
+                    </span>
+                </div>
+                <button (click)="closeModal()"
+                    class="text-gray-500 hover:text-[#E74C3C] focus:outline-none transition-colors duration-200">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" class="text-xl"></i>
                 </button>
             </div>
 
             <!-- Modal Content -->
             <div class="p-6">
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Mô tả</h3>
-                    <p class="text-gray-700">{{ selectedProduct.description }}</p>
+                <!-- Loan Description with Icon -->
+                <div class="mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 rounded-full bg-[#E74C3C]/10 flex items-center justify-center mr-3 mt-1">
+                            <i nz-icon nzType="info-circle" nzTheme="outline" class="text-[#E74C3C]"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Mô tả</h3>
+                            <p class="text-gray-700">{{ selectedProduct.description }}</p>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Key Financial Details -->
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm mb-6 overflow-hidden">
+                    <div class="grid grid-cols-3 text-center">
+                        <div class="p-4 border-r border-gray-200">
+                            <div class="text-lg font-bold text-[#E74C3C]">{{selectedProduct.interestRate}}%</div>
+                            <div class="text-sm text-gray-600">Lãi suất</div>
+                        </div>
+                        <div class="p-4 border-r border-gray-200">
+                            <div class="text-lg font-bold text-[#E74C3C]">{{formatCurrency(selectedProduct.maxAmount)}}
+                            </div>
+                            <div class="text-sm text-gray-600">Tối đa</div>
+                        </div>
+                        <div class="p-4">
+                            <div class="text-lg font-bold text-[#E74C3C]">{{selectedProduct.maxTerm}} tháng</div>
+                            <div class="text-sm text-gray-600">Kỳ hạn tối đa</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Info and Documents -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-2">Thông tin chung</h3>
-                        <div class="bg-gray-50 p-4 rounded-lg space-y-3">
-                            <div class="flex justify-between">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                            <i nz-icon nzType="profile" nzTheme="outline" class="mr-2 text-[#E74C3C]"></i>
+                            Thông tin chi tiết
+                        </h3>
+                        <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-sm space-y-3">
+                            <div class="flex justify-between border-b border-gray-100 pb-2">
                                 <span class="text-gray-600">Lãi suất:</span>
-                                <span class="font-semibold">{{selectedProduct.interestRate}}%</span>
+                                <span class="font-semibold text-gray-800">{{selectedProduct.interestRate}}%</span>
                             </div>
-                            <div class="flex justify-between">
+                            <div class="flex justify-between border-b border-gray-100 pb-2">
                                 <span class="text-gray-600">Hạn mức vay:</span>
-                                <span class="font-semibold">{{formatCurrency(selectedProduct.minAmount)}} -
-                                    {{formatCurrency(selectedProduct.maxAmount)}}</span>
+                                <span class="font-semibold text-gray-800">{{formatCurrency(selectedProduct.minAmount)}}
+                                    - {{formatCurrency(selectedProduct.maxAmount)}}</span>
                             </div>
-                            <div class="flex justify-between">
+                            <div class="flex justify-between border-b border-gray-100 pb-2">
                                 <span class="text-gray-600">Kỳ hạn vay:</span>
-                                <span class="font-semibold">{{selectedProduct.minTerm}} - {{selectedProduct.maxTerm}}
-                                    tháng</span>
+                                <span class="font-semibold text-gray-800">{{selectedProduct.minTerm}} -
+                                    {{selectedProduct.maxTerm}} tháng</span>
                             </div>
-                            <div class="flex justify-between">
+                            <div class="flex justify-between border-b border-gray-100 pb-2">
                                 <span class="text-gray-600">Trạng thái:</span>
                                 <span
-                                    [ngClass]="{'text-green-600': selectedProduct.status === 'ACTIVE', 'text-gray-600': selectedProduct.status === 'INACTIVE'}"
-                                    class="font-semibold">
+                                    [ngClass]="{'text-green-600': selectedProduct.status === 'ACTIVE', 'text-gray-500': selectedProduct.status === 'INACTIVE'}"
+                                    class="font-semibold flex items-center">
+                                    <span
+                                        [ngClass]="{'bg-green-500': selectedProduct.status === 'ACTIVE', 'bg-gray-400': selectedProduct.status === 'INACTIVE'}"
+                                        class="w-2 h-2 rounded-full mr-2"></span>
                                     {{ selectedProduct.status === 'ACTIVE' ? 'Đang hoạt động' : 'Không hoạt động' }}
                                 </span>
                             </div>
-                            <div class="flex justify-between">
+                            <div class="flex justify-between border-b border-gray-100 pb-2">
                                 <span class="text-gray-600">Ngày tạo:</span>
-                                <span class="font-semibold">{{selectedProduct.createdAt | date:'dd/MM/yyyy
+                                <span class="font-semibold text-gray-800">{{selectedProduct.createdAt | date:'dd/MM/yyyy
                                     HH:mm'}}</span>
                             </div>
-                            <div class="flex justify-between">
+                            <div class="flex justify-between pb-2">
                                 <span class="text-gray-600">Cập nhật gần nhất:</span>
-                                <span class="font-semibold">{{selectedProduct.updatedAt | date:'dd/MM/yyyy
+                                <span class="font-semibold text-gray-800">{{selectedProduct.updatedAt | date:'dd/MM/yyyy
                                     HH:mm'}}</span>
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-2">Yêu cầu tài liệu</h3>
-                        <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                            <i nz-icon nzType="file-text" nzTheme="outline" class="mr-2 text-[#E74C3C]"></i>
+                            Yêu cầu tài liệu
+                        </h3>
+                        <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-sm h-full">
                             <div *ngIf="selectedProduct.requiredDocuments" class="text-gray-700">
-                                <div [innerHTML]="formatRequiredDocuments(selectedProduct.requiredDocuments)"></div>
+                                <div [innerHTML]="formatRequiredDocuments(selectedProduct.requiredDocuments)"
+                                    class="space-y-1"></div>
                             </div>
-                            <div *ngIf="!selectedProduct.requiredDocuments" class="text-gray-500 italic">
-                                Không có yêu cầu tài liệu
+                            <div *ngIf="!selectedProduct.requiredDocuments"
+                                class="text-gray-500 italic flex items-center justify-center h-full">
+                                <div class="text-center">
+                                    <i nz-icon nzType="file-unknown" nzTheme="outline"
+                                        class="text-3xl text-gray-300 block mb-2"></i>
+                                    Không có yêu cầu tài liệu
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -415,21 +534,31 @@
 
                 <!-- Features Section - only display if features exist -->
                 <div *ngIf="selectedProduct.features && selectedProduct.features.length > 0" class="mb-6">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Đặc điểm nổi bật</h3>
-                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
-                        <li *ngFor="let feature of selectedProduct.features">{{feature}}</li>
-                    </ul>
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                        <i nz-icon nzType="star" nzTheme="outline" class="mr-2 text-[#E74C3C]"></i>
+                        Đặc điểm nổi bật
+                    </h3>
+                    <div class="bg-white border border-gray-200 p-5 rounded-xl shadow-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div *ngFor="let feature of selectedProduct.features" class="flex items-start">
+                                <i nz-icon nzType="check-circle" nzTheme="outline" class="text-green-500 mt-1 mr-2"></i>
+                                <span>{{feature}}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Modal Footer -->
-            <div class="p-6 border-t border-gray-200 flex justify-end">
+            <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end">
                 <button (click)="closeModal()"
-                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 mr-3 transition-colors duration-200">
+                    class="px-5 py-2.5 bg-white text-gray-700 rounded-lg hover:bg-gray-100 border border-gray-200 mr-3 transition-colors duration-200 flex items-center">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" class="mr-1"></i>
                     Đóng
                 </button>
                 <button (click)="editProduct(selectedProduct)"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    class="px-5 py-2.5 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200 flex items-center">
+                    <i nz-icon nzType="edit" nzTheme="outline" class="mr-1"></i>
                     Chỉnh sửa
                 </button>
             </div>
