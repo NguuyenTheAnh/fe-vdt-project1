@@ -93,12 +93,12 @@
 
                     <div class="flex justify-end mt-6">
                         <button
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 mr-2 transition-colors duration-200"
+                            class="px-4 border-gray-100 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 mr-2 transition-colors duration-200"
                             (click)="resetFilters()">
                             Đặt lại
                         </button>
                         <button
-                            class="px-4 py-2 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200"
+                            class="px-4 border-gray-100 py-2 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200"
                             (click)="onSearch()">
                             Áp dụng
                         </button>
@@ -134,7 +134,7 @@
 
                     <div class="flex justify-end mt-6">
                         <button
-                            class="px-4 py-2 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200"
+                            class="px-4 border-gray-100 py-2 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200"
                             (click)="onSearch()">
                             Áp dụng
                         </button>
@@ -644,7 +644,7 @@
                             <i nz-icon nzType="file-text" nzTheme="outline" class="mr-2 text-[#E74C3C]"></i>
                             Yêu cầu tài liệu
                             <button *ngIf="isEditMode" (click)="openDocumentSelector()"
-                                class="ml-auto px-2 py-1 bg-[#E74C3C] text-white text-xs rounded-md hover:bg-[#C0392B] flex items-center transition-all">
+                                class="ml-auto px-2 border-gray-100 py-1 bg-[#E74C3C] text-white text-xs rounded-md hover:bg-[#C0392B] flex items-center transition-all">
                                 <i nz-icon nzType="plus" nzTheme="outline" class="mr-1"></i> Thêm tài liệu
                             </button>
                         </h3>
@@ -783,7 +783,8 @@
                 </div>
                 <div class="flex items-center">
                     <!-- Close Button -->
-                    <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <button (click)="closeModal()"
+                        class="text-gray-500 border-gray-100 hover:text-gray-700 focus:outline-none">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -872,7 +873,7 @@
                             <i nz-icon nzType="file-text" nzTheme="outline" class="mr-2 text-[#E74C3C]"></i>
                             Yêu cầu tài liệu
                             <button (click)="openDocumentSelector()"
-                                class="ml-auto px-2 py-1 bg-[#E74C3C] text-white text-xs rounded-md hover:bg-[#C0392B] flex items-center transition-all">
+                                class="ml-auto px-2 py-1 bg-[#E74C3C] border-gray-100 text-white text-xs rounded-md hover:bg-[#C0392B] flex items-center transition-all">
                                 <i nz-icon nzType="plus" nzTheme="outline" class="mr-1"></i> Thêm tài liệu
                             </button>
                         </h3>
@@ -936,7 +937,7 @@
                     Hủy
                 </button>
                 <button (click)="saveChanges()" [disabled]="isSaving"
-                    class="px-6 py-2.5 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200 flex items-center shadow-sm hover:shadow disabled:opacity-70 disabled:cursor-not-allowed">
+                    class="px-6 py-2.5 bg-[#E74C3C] border-gray-100 text-white rounded-lg hover:bg-[#C0392B] transition-colors duration-200 flex items-center shadow-sm hover:shadow disabled:opacity-70 disabled:cursor-not-allowed">
                     <i *ngIf="!isSaving" nz-icon nzType="plus" nzTheme="outline" class="mr-2"></i>
                     <i *ngIf="isSaving" nz-icon nzType="loading" nzTheme="outline" class="mr-2 animate-spin"></i>
                     {{ isSaving ? 'Đang tạo...' : 'Tạo sản phẩm' }}

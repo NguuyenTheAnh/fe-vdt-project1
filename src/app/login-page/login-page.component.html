@@ -61,9 +61,10 @@
                     <div class="flex items-center justify-between"> <label nz-checkbox formControlName="remember"
                             class="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300">
                             <span>Ghi nhớ đăng nhập</span>
-                        </label>
-                        <a class="text-sm text-[#E74C3C] hover:text-[#C0392B] transition-all duration-300 hover:underline"
-                            href="#">Quên mật khẩu?</a>
+                        </label> <a (click)="openForgotPasswordModal()"
+                            class="text-sm text-[#E74C3C] hover:text-[#C0392B] transition-all duration-300 hover:underline cursor-pointer">Quên
+                            mật khẩu?</a>
+
                     </div>
                 </nz-form-control>
             </nz-form-item> <!-- Submit -->
@@ -80,6 +81,234 @@
             <a routerLink="/register"
                 class="text-[#E74C3C] hover:text-[#C0392B] font-medium text-sm transition-all duration-300 hover:underline">Đăng
                 ký ngay</a>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div *ngIf="isForgotPasswordModalOpen"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div @modalAnimation class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+
+            <!-- Modal Header with Steps Progress -->
+            <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">Khôi phục mật khẩu</h2>
+                    <button (click)="closeForgotPasswordModal()"
+                        class="text-gray-500 border-gray-100 hover:text-gray-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Steps Progress -->
+                <div class="flex items-center mb-2">
+                    <ng-container *ngFor="let step of [1,2,3,4]; let i = index">
+                        <!-- Circle -->
+                        <div [ngClass]="{
+            'bg-[#E74C3C] text-white': currentStep >= step,
+            'bg-gray-200 text-gray-600': currentStep < step
+        }" class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors duration-300">
+                            {{ step }}
+                        </div>
+
+                        <!-- Line (only if not last step) -->
+                        <div *ngIf="i < 3" class="flex-1 flex justify-center">
+                            <div [ngClass]="{
+              'bg-[#E74C3C]': currentStep > step,
+              'bg-gray-200': currentStep <= step
+          }" class="h-0.5 w-full max-w-[48px] my-auto transition-colors duration-300"></div>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <!-- Current Step Title -->
+                <p class="text-sm text-gray-600 text-center">{{ getStepTitle() }}</p>
+            </div>
+
+            <!-- Modal Content -->
+            <form nz-form [formGroup]="forgotPasswordForm" (ngSubmit)="handleStepAction()" nzLayout="vertical"
+                class="p-6">
+
+                <!-- Step 1: Enter Email -->
+                <div *ngIf="currentStep === 1" class="space-y-4">
+                    <div class="text-center mb-6">
+                        <div
+                            class="w-16 h-16 bg-[#E74C3C]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#E74C3C]" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                            </svg>
+                        </div>
+                        <p class="text-gray-600">Nhập địa chỉ email để nhận mã xác thực</p>
+                    </div>
+
+                    <nz-form-item>
+                        <nz-form-label nzFor="forgotEmail" nzRequired>Email</nz-form-label>
+                        <nz-form-control nzHasFeedback [nzErrorTip]="emailErrorTpl">
+                            <nz-input-group [nzPrefix]="emailPrefix" class="rounded-md">
+                                <ng-template #emailPrefix>
+                                    <span class="flex items-center justify-center text-gray-400 pl-3 pr-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                                        </svg>
+                                    </span>
+                                </ng-template>
+                                <input type="email" nz-input formControlName="email" id="forgotEmail"
+                                    placeholder="Nhập địa chỉ email của bạn" />
+                            </nz-input-group>
+                            <ng-template #emailErrorTpl let-control>
+                                <ng-container *ngIf="control.hasError('required')">Vui lòng nhập email.</ng-container>
+                                <ng-container *ngIf="control.hasError('email')">Email không hợp lệ.</ng-container>
+                            </ng-template>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <!-- Step 2: Enter Verification Code -->
+                <div *ngIf="currentStep === 2" class="space-y-4">
+                    <div class="text-center mb-6">
+                        <div
+                            class="w-16 h-16 bg-[#E74C3C]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#E74C3C]" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <p class="text-gray-600">Nhập mã xác thực đã được gửi đến email</p>
+                        <p class="text-sm text-[#E74C3C] mt-1">{{ forgotPasswordForm.get('email')?.value }}</p>
+                    </div>
+
+                    <nz-form-item>
+                        <nz-form-label nzFor="verificationCode" nzRequired>Mã xác thực</nz-form-label>
+                        <nz-form-control nzHasFeedback [nzErrorTip]="codeErrorTpl">
+                            <nz-input-group [nzPrefix]="codePrefix" class="rounded-md">
+                                <ng-template #codePrefix>
+                                    <span class="flex items-center justify-center text-gray-400 pl-3 pr-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159-.026-1.563.434L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1.035.421-1.658A6 6 0 1121.75 8.25z" />
+                                        </svg>
+                                    </span>
+                                </ng-template>
+                                <input type="text" nz-input formControlName="verificationCode" id="verificationCode"
+                                    placeholder="Nhập mã 6 chữ số" maxlength="6" />
+                            </nz-input-group>
+                            <ng-template #codeErrorTpl let-control>
+                                <ng-container *ngIf="control.hasError('required')">Vui lòng nhập mã xác
+                                    thực.</ng-container>
+                                <ng-container *ngIf="control.hasError('minlength')">Mã xác thực phải có ít nhất 6 ký
+                                    tự.</ng-container>
+                            </ng-template>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <!-- Step 3: Enter New Password -->
+                <div *ngIf="currentStep === 3" class="space-y-4">
+                    <div class="text-center mb-6">
+                        <div
+                            class="w-16 h-16 bg-[#E74C3C]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#E74C3C]" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                            </svg>
+                        </div>
+                        <p class="text-gray-600">Tạo mật khẩu mới cho tài khoản</p>
+                    </div>
+
+                    <nz-form-item>
+                        <nz-form-label nzFor="newPassword" nzRequired>Mật khẩu mới</nz-form-label>
+                        <nz-form-control nzHasFeedback [nzErrorTip]="newPasswordErrorTpl">
+                            <nz-input-group [nzPrefix]="passwordPrefix" class="rounded-md">
+                                <ng-template #passwordPrefix>
+                                    <span class="flex items-center justify-center text-gray-400 pl-3 pr-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                        </svg>
+                                    </span>
+                                </ng-template>
+                                <input type="password" nz-input formControlName="newPassword" id="newPassword"
+                                    placeholder="Nhập mật khẩu mới" />
+                            </nz-input-group>
+                            <ng-template #newPasswordErrorTpl let-control>
+                                <ng-container *ngIf="control.hasError('required')">Vui lòng nhập mật khẩu
+                                    mới.</ng-container>
+                                <ng-container *ngIf="control.hasError('minlength')">Mật khẩu phải có ít nhất 6 ký
+                                    tự.</ng-container>
+                            </ng-template>
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label nzFor="confirmPassword" nzRequired>Nhập lại mật khẩu</nz-form-label>
+                        <nz-form-control nzHasFeedback [nzErrorTip]="confirmPasswordErrorTpl">
+                            <nz-input-group [nzPrefix]="passwordPrefix" class="rounded-md">
+                                <input type="password" nz-input formControlName="confirmPassword" id="confirmPassword"
+                                    placeholder="Nhập lại mật khẩu mới" />
+                            </nz-input-group>
+                            <ng-template #confirmPasswordErrorTpl let-control>
+                                <ng-container *ngIf="control.hasError('required')">Vui lòng nhập lại mật
+                                    khẩu.</ng-container>
+                                <ng-container
+                                    *ngIf="forgotPasswordForm.get('newPassword')?.value !== forgotPasswordForm.get('confirmPassword')?.value && forgotPasswordForm.get('confirmPassword')?.touched">
+                                    Mật khẩu không khớp.
+                                </ng-container>
+                            </ng-template>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <!-- Step 4: Success -->
+                <div *ngIf="currentStep === 4" class="space-y-4 text-center">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Đặt lại mật khẩu thành công!</h3>
+                    <p class="text-gray-600 mb-6">Mật khẩu của bạn đã được cập nhật. Bạn có thể đăng nhập với mật khẩu
+                        mới.</p>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="flex justify-between mt-8">
+                    <button *ngIf="currentStep > 1 && currentStep < 4" type="button" (click)="previousStep()"
+                        class="px-4 py-2 border-gray-100 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        Quay lại
+                    </button>
+                    <div *ngIf="currentStep === 1" class="w-full"></div>
+
+                    <button type="submit" [disabled]="!isCurrentStepValid() || isProcessing" [ngClass]="{
+        'bg-[#E74C3C] hover:bg-[#C0392B] text-white': isCurrentStepValid() && !isProcessing,
+        'bg-gray-300 text-gray-500 cursor-not-allowed': !isCurrentStepValid() || isProcessing
+    }" class="px-6 py-2  border-gray-100  rounded-lg transition-colors flex items-center ml-auto">
+
+                        <span *ngIf="isProcessing" class="flex items-center whitespace-nowrap">
+                            Đang xử lý...
+                        </span>
+
+                        <span *ngIf="currentStep < 4 && !isProcessing" class="whitespace-nowrap">
+                            {{ currentStep === 1 ? 'Gửi mã' : currentStep === 2 ? 'Xác thực' : 'Cập nhật' }}
+                        </span>
+
+                        <span *ngIf="currentStep === 4 && !isProcessing" class="whitespace-nowrap">Hoàn tất</span>
+                    </button>
+
+                </div>
+            </form>
         </div>
     </div>
 </div>
