@@ -304,7 +304,174 @@
 
                         <span *ngIf="currentStep === 4 && !isProcessing" class="whitespace-nowrap">Hoàn tất</span>
                     </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
+    <!-- Account Activation Modal -->
+    <div *ngIf="isActivationModalOpen"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div @modalAnimation class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+
+            <!-- Modal Header with Steps Progress -->
+            <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">Kích hoạt tài khoản</h2>
+                    <button (click)="closeActivationModal()"
+                        class="text-gray-500 border-gray-100 hover:text-gray-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Steps Progress -->
+                <div class="flex items-center mb-2">
+                    <ng-container *ngFor="let step of [1,2,3]; let i = index">
+                        <!-- Circle -->
+                        <div [ngClass]="{
+            'bg-[#E74C3C] text-white': activationCurrentStep >= step,
+            'bg-gray-200 text-gray-600': activationCurrentStep < step
+        }" class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors duration-300">
+                            {{ step }}
+                        </div>
+
+                        <!-- Line (only if not last step) -->
+                        <div *ngIf="i < 2" class="flex-1 flex justify-center">
+                            <div [ngClass]="{
+              'bg-[#E74C3C]': activationCurrentStep > step,
+              'bg-gray-200': activationCurrentStep <= step
+          }" class="h-0.5 w-full max-w-[48px] my-auto transition-colors duration-300"></div>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <!-- Current Step Title -->
+                <p class="text-sm text-gray-600 text-center">{{ getActivationStepTitle() }}</p>
+            </div>
+
+            <!-- Modal Content -->
+            <form nz-form [formGroup]="activationForm" (ngSubmit)="handleActivationStepAction()"
+                (keydown.enter)="$event.preventDefault(); handleActivationStepAction()" nzLayout="vertical" class="p-6">
+
+                <!-- Step 1: Enter Verification Code -->
+                <div *ngIf="activationCurrentStep === 1" class="space-y-4">
+                    <div class="text-center mb-6">
+                        <div
+                            class="w-16 h-16 bg-[#E74C3C]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#E74C3C]" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <p class="text-gray-600">Tài khoản chưa được kích hoạt! Vui lòng nhập mã xác thực để kích hoạt
+                            tài khoản
+                        </p>
+                        <p class="text-sm text-[#E74C3C] mt-1">{{ userEmail }}</p>
+                    </div>
+
+                    <nz-form-item>
+                        <nz-form-label nzFor="activationVerificationCode" nzRequired>Mã xác thực</nz-form-label>
+                        <nz-form-control nzHasFeedback [nzErrorTip]="activationCodeErrorTpl">
+                            <nz-input-group [nzPrefix]="activationCodePrefix" class="rounded-md">
+                                <ng-template #activationCodePrefix>
+                                    <span class="flex items-center justify-center text-gray-400 pl-3 pr-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159-.026-1.563.434L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1.035.421-1.658A6 6 0 1121.75 8.25z" />
+                                        </svg>
+                                    </span>
+                                </ng-template>
+                                <input type="text" nz-input formControlName="verificationCode"
+                                    id="activationVerificationCode" placeholder="Nhập mã xác thực" />
+                            </nz-input-group>
+                            <ng-template #activationCodeErrorTpl let-control>
+                                <ng-container *ngIf="control.hasError('required')">Vui lòng nhập mã xác
+                                    thực.</ng-container>
+                                <ng-container *ngIf="control.hasError('minlength')">Vui lòng nhập mã xác thực hợp
+                                    lệ.</ng-container>
+                            </ng-template>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <!-- Step 2: Activate Account -->
+                <div *ngIf="activationCurrentStep === 2" class="space-y-4 text-center">
+                    <div class="text-center mb-6">
+                        <div
+                            class="w-16 h-16 bg-[#E74C3C]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#E74C3C]" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p class="text-gray-600">Mã xác thực chính xác! Nhấn "Kích hoạt" để hoàn tất quá trình kích hoạt
+                            tài khoản</p>
+                    </div>
+                </div>
+
+                <!-- Step 3: Success -->
+                <div *ngIf="activationCurrentStep === 3" class="space-y-4 text-center">
+                    <!-- Invisible focusable input to ensure form can be submitted with Enter key -->
+                    <input type="text" class="sr-only" readonly tabindex="0"
+                        (keydown.enter)="handleActivationStepAction()" #activationStep3Input />
+
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Kích hoạt tài khoản thành công!</h3>
+                    <p class="text-gray-600 mb-6">Tài khoản của bạn đã được kích hoạt. Bạn có thể đăng nhập ngay bây
+                        giờ.</p>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="flex justify-between mt-8">
+                    <!-- Left side buttons -->
+                    <div class="flex gap-2">
+                        <!-- Resend Code button (only show in step 1 when needed) -->
+                        <button *ngIf="activationCurrentStep === 1 && showResendActivationButton" type="button"
+                            (click)="resendActivationCode()" [disabled]="isResendingActivationCode"
+                            class="px-4 py-2 border border-[#E74C3C] text-[#E74C3C] bg-white rounded-lg hover:bg-[#E74C3C] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            {{ isResendingActivationCode ? 'Đang gửi...' : 'Gửi lại mã' }}
+                        </button>
+
+                        <!-- Back button for steps 2+ -->
+                        <button *ngIf="activationCurrentStep > 1 && activationCurrentStep < 3" type="button"
+                            (click)="previousActivationStep()"
+                            class="px-4 py-2 border-gray-100 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                            Quay lại
+                        </button>
+                    </div>
+
+                    <!-- Right side: Main action button -->
+                    <button type="submit" [disabled]="!isCurrentActivationStepValid() || isActivationProcessing"
+                        [ngClass]="{
+        'bg-[#E74C3C] hover:bg-[#C0392B] text-white': isCurrentActivationStepValid() && !isActivationProcessing,
+        'bg-gray-300 text-gray-500 cursor-not-allowed': !isCurrentActivationStepValid() || isActivationProcessing
+    }" class="px-6 py-2 border-gray-100 rounded-lg transition-colors flex items-center"
+                        [attr.autofocus]="activationCurrentStep === 3 ? true : null">
+
+                        <span *ngIf="isActivationProcessing" class="flex items-center whitespace-nowrap">
+                            Đang xử lý...
+                        </span>
+
+                        <span *ngIf="activationCurrentStep < 3 && !isActivationProcessing" class="whitespace-nowrap">
+                            {{ activationCurrentStep === 1 ? 'Xác thực' : 'Kích hoạt' }}
+                        </span>
+
+                        <span *ngIf="activationCurrentStep === 3 && !isActivationProcessing"
+                            class="whitespace-nowrap">Hoàn tất</span>
+                    </button>
                 </div>
             </form>
         </div>

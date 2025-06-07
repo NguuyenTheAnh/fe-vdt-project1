@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@ang
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { AuthService, LoginRequest, PasswordResetRequest } from '../services/auth.service';
+import { AuthService, LoginRequest, PasswordResetRequest, AccountActivationRequest } from '../services/auth.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
@@ -23,9 +23,11 @@ import { trigger, transition, style, animate } from '@angular/animations';
 })
 export class LoginPageComponent implements OnInit, AfterViewChecked {
   @ViewChild('step4Input') step4Input?: ElementRef<HTMLInputElement>;
+  @ViewChild('activationStep3Input') activationStep3Input?: ElementRef<HTMLInputElement>;
 
   loginForm!: FormGroup;
   forgotPasswordForm!: FormGroup;
+  activationForm!: FormGroup;
   isLoading = false;
 
   // Forgot Password Modal
@@ -34,6 +36,16 @@ export class LoginPageComponent implements OnInit, AfterViewChecked {
   totalSteps = 4;
   isProcessing = false;
   private shouldFocusStep4Input = false;
+
+  // Account Activation Modal
+  isActivationModalOpen = false;
+  activationCurrentStep = 1;
+  activationTotalSteps = 3;
+  isActivationProcessing = false;
+  isResendingActivationCode = false;
+  showResendActivationButton = false;
+  private shouldFocusActivationStep3Input = false;
+  userEmail = '';
 
   constructor(
     private fb: FormBuilder,
@@ -54,6 +66,10 @@ export class LoginPageComponent implements OnInit, AfterViewChecked {
       verificationCode: ['', [Validators.required, Validators.minLength(1)]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
+    });
+
+    this.activationForm = this.fb.group({
+      verificationCode: ['', [Validators.required, Validators.minLength(1)]]
     });
   }
 
@@ -105,6 +121,17 @@ export class LoginPageComponent implements OnInit, AfterViewChecked {
         error: (error) => {
           this.isLoading = false;
           console.error('Login error:', error);
+
+          // Check for account not activated error (HTTP 403, code 1007)
+          if (error.status === 403 && error.error && error.error.code === 1007) {
+            this.userEmail = this.loginForm.get('email')?.value || '';
+            this.notification.warning(
+              'Tài khoản chưa được kích hoạt',
+              'Vui lòng kích hoạt tài khoản trước khi đăng nhập.'
+            );
+            this.openActivationModal();
+            return;
+          }
 
           // Check if the error response has specific codes
           let errorMessage = 'Đã xảy ra lỗi khi kết nối đến máy chủ. Vui lòng thử lại sau.';
@@ -333,6 +360,189 @@ export class LoginPageComponent implements OnInit, AfterViewChecked {
     return !!(control?.valid);
   }
 
+  // Account Activation Modal Methods
+  openActivationModal(): void {
+    this.isActivationModalOpen = true;
+    this.activationCurrentStep = 1;
+    this.showResendActivationButton = false;
+    this.activationForm.reset();
+    document.body.style.overflow = 'hidden';
+
+    // Automatically send activation email when modal opens
+    this.sendActivationEmailForLogin();
+  }
+
+  closeActivationModal(): void {
+    this.isActivationModalOpen = false;
+    this.activationCurrentStep = 1;
+    this.showResendActivationButton = false;
+    this.activationForm.reset();
+    document.body.style.overflow = 'auto';
+  }
+
+  sendActivationEmailForLogin(): void {
+    if (!this.userEmail) return;
+
+    this.authService.sendAccountActivationEmail(this.userEmail).subscribe({
+      next: (response) => {
+        if (response.code === 1000) {
+          this.notification.success(
+            'Email đã được gửi',
+            'Vui lòng kiểm tra email để nhận mã kích hoạt tài khoản.'
+          );
+        } else {
+          this.notification.error('Lỗi', 'Không thể gửi email kích hoạt. Vui lòng thử lại.');
+        }
+      },
+      error: (error) => {
+        console.error('Error sending activation email:', error);
+        this.notification.error('Lỗi', 'Không thể gửi email kích hoạt. Vui lòng thử lại sau.');
+      }
+    });
+  }
+
+  resendActivationCode(): void {
+    this.isResendingActivationCode = true;
+    this.authService.sendAccountActivationEmail(this.userEmail).subscribe({
+      next: (response) => {
+        this.isResendingActivationCode = false;
+        if (response.code === 1000) {
+          this.notification.success('Thành công', 'Mã xác thực mới đã được gửi đến email của bạn');
+          this.showResendActivationButton = false;
+          this.activationForm.get('verificationCode')?.setValue('');
+        } else {
+          this.notification.error('Lỗi', 'Không thể gửi lại mã xác thực. Vui lòng thử lại.');
+        }
+      },
+      error: (error) => {
+        this.isResendingActivationCode = false;
+        console.error('Error resending activation code:', error);
+        this.notification.error('Lỗi', 'Không thể gửi lại mã xác thực. Vui lòng thử lại sau.');
+      }
+    });
+  }
+
+  getActivationStepTitle(): string {
+    switch (this.activationCurrentStep) {
+      case 1: return '1. Nhập mã xác thực';
+      case 2: return '2. Kích hoạt';
+      case 3: return 'Hoàn tất';
+      default: return '';
+    }
+  }
+
+  nextActivationStep(): void {
+    if (this.activationCurrentStep < this.activationTotalSteps) {
+      this.isActivationProcessing = true;
+
+      switch (this.activationCurrentStep) {
+        case 1:
+          // Step 1: Verify activation token
+          const token = this.activationForm.get('verificationCode')?.value;
+          this.authService.verifyAccountActivationToken(token).subscribe({
+            next: (response) => {
+              this.isActivationProcessing = false;
+              if (response.code === 1000 && response.data === true) {
+                this.notification.success('Thành công', 'Mã xác thực chính xác');
+                this.showResendActivationButton = false;
+                this.activationCurrentStep++;
+              } else {
+                this.notification.error('Lỗi', 'Mã xác thực không chính xác hoặc đã hết hạn');
+              }
+            },
+            error: (error) => {
+              this.isActivationProcessing = false;
+              console.error('Error verifying activation token:', error);
+
+              if (error.status === 400 && error.error && error.error.code === 6004) {
+                this.notification.error('Mã xác thực đã hết hạn', 'Vui lòng nhấn "Gửi lại mã" để nhận mã xác thực mới');
+                this.showResendActivationButton = true;
+              } else {
+                this.notification.error('Lỗi', 'Không thể xác thực mã. Vui lòng thử lại.');
+              }
+            }
+          });
+          break;
+
+        case 2:
+          // Step 2: Activate account
+          const activationData: AccountActivationRequest = {
+            email: this.userEmail,
+            token: this.activationForm.get('verificationCode')?.value
+          };
+
+          this.authService.activateAccount(activationData).subscribe({
+            next: (response) => {
+              this.isActivationProcessing = false;
+              if (response.code === 1000) {
+                this.notification.success('Thành công', 'Tài khoản đã được kích hoạt');
+                this.activationCurrentStep++;
+                this.shouldFocusActivationStep3Input = true;
+              } else {
+                this.notification.error('Lỗi', response.message || 'Không thể kích hoạt tài khoản. Vui lòng thử lại.');
+              }
+            },
+            error: (error) => {
+              this.isActivationProcessing = false;
+              console.error('Error activating account:', error);
+              this.notification.error('Lỗi', 'Không thể kích hoạt tài khoản. Vui lòng thử lại sau.');
+            }
+          });
+          break;
+      }
+    }
+  }
+
+  previousActivationStep(): void {
+    if (this.activationCurrentStep > 1) {
+      this.activationCurrentStep--;
+    }
+  }
+
+  handleActivationStepAction(): void {
+    // Handle step 3 separately (completion step)
+    if (this.activationCurrentStep === 3) {
+      this.closeActivationModal();
+      this.notification.success('Hoàn tất', 'Tài khoản đã được kích hoạt thành công. Bạn có thể đăng nhập ngay.');
+      return;
+    }
+
+    const currentStepControl = this.getCurrentActivationStepControl();
+
+    if (currentStepControl && currentStepControl.valid) {
+      this.nextActivationStep();
+    } else {
+      this.markActivationFormGroupTouched(currentStepControl);
+    }
+  }
+
+  getCurrentActivationStepControl(): any {
+    switch (this.activationCurrentStep) {
+      case 1:
+        return this.activationForm.get('verificationCode');
+      case 2:
+        return { valid: true };
+      default:
+        return null;
+    }
+  }
+
+  markActivationFormGroupTouched(control: any): void {
+    if (this.activationCurrentStep === 1) {
+      this.activationForm.get('verificationCode')?.markAsTouched();
+      this.activationForm.get('verificationCode')?.updateValueAndValidity();
+    }
+  }
+
+  isCurrentActivationStepValid(): boolean {
+    if (this.activationCurrentStep === 2 || this.activationCurrentStep === 3) {
+      return true;
+    }
+
+    const control = this.getCurrentActivationStepControl();
+    return !!(control?.valid);
+  }
+
   ngAfterViewChecked(): void {
     // Focus the step 4 input when it becomes available
     if (this.shouldFocusStep4Input && this.step4Input) {
@@ -340,6 +550,14 @@ export class LoginPageComponent implements OnInit, AfterViewChecked {
         this.step4Input?.nativeElement.focus();
       }, 0);
       this.shouldFocusStep4Input = false;
+    }
+
+    // Focus the activation step 3 input when it becomes available
+    if (this.shouldFocusActivationStep3Input && this.activationStep3Input) {
+      setTimeout(() => {
+        this.activationStep3Input?.nativeElement.focus();
+      }, 0);
+      this.shouldFocusActivationStep3Input = false;
     }
   }
 }
