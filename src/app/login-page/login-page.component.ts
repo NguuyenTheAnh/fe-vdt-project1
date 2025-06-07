@@ -212,7 +212,14 @@ export class LoginPageComponent implements OnInit, AfterViewChecked {
             error: (error) => {
               this.isProcessing = false;
               console.error('Error verifying token:', error);
-              this.notification.error('Lỗi', 'Không thể xác thực mã. Vui lòng thử lại.');
+
+              // Check for specific error case: expired verification code
+              if (error.status === 400 && error.error && error.error.code === 6004) {
+                this.notification.error('Mã xác thực đã hết hạn', 'Quay lại bước 1 và nhấn gửi mã để nhận mã mới');
+                this.currentStep = 1; // Go back to step 1
+              } else {
+                this.notification.error('Lỗi', 'Không thể xác thực mã. Vui lòng thử lại.');
+              }
             }
           });
           break;

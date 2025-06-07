@@ -25,6 +25,12 @@ export interface PasswordResetRequest {
   token: string;
 }
 
+// Interface for account activation request
+export interface AccountActivationRequest {
+  email: string;
+  token: string;
+}
+
 // Interface for API responses
 export interface ApiResponse<T> {
   code: number;
@@ -213,5 +219,22 @@ export class AuthService {
   // Step 3: Reset password with token
   resetPassword(resetData: PasswordResetRequest): Observable<ApiResponse<void>> {
     return this.apiService.post<void>('/auth/password-reset', resetData);
+  }
+
+  // Account Activation Methods
+
+  // Step 1: Send activation email
+  sendAccountActivationEmail(email: string): Observable<ApiResponse<void>> {
+    return this.apiService.post<void>(`/auth/account-activation/email/${email}`, {});
+  }
+
+  // Step 2: Verify activation token
+  verifyAccountActivationToken(token: string): Observable<ApiResponse<boolean>> {
+    return this.apiService.post<boolean>(`/auth/account-activation/token/${token}`, {});
+  }
+
+  // Step 3: Activate account with token
+  activateAccount(activationData: AccountActivationRequest): Observable<ApiResponse<void>> {
+    return this.apiService.post<void>('/auth/account-activation', activationData);
   }
 }
