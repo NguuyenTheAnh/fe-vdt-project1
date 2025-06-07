@@ -1,8 +1,10 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoanService, LoanProduct, PageableResponse } from '../../services/loan.service';
+import { LoanService, LoanProduct, PageableResponse, LoanProductSearchParams } from '../../services/loan.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-loan-product-list-dashboard',
@@ -20,12 +22,14 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
     ])
   ]
 })
-export class LoanProductListDashboardComponent implements OnInit {
+export class LoanProductListDashboardComponent implements OnInit, OnDestroy {
   loanProducts: LoanProduct[] = [];
-  filteredProducts: LoanProduct[] = []; // For search/filter results
+  filteredProducts: LoanProduct[] = [];
   isLoading: boolean = true;
   error: string | null = null;
-  selectedProduct: LoanProduct | null = null; isModalOpen: boolean = false; isEditMode: boolean = false; // Chế độ chỉnh sửa
+  selectedProduct: LoanProduct | null = null;
+  isModalOpen: boolean = false;
+  isEditMode: boolean = false; // Chế độ chỉnh sửa
   isCreatingNew: boolean = false; // Chế độ tạo mới sản phẩm
   isSaving: boolean = false; // Trạng thái đang lưu
   editingProduct: any = {}; // Bản nháp để chỉnh sửa
@@ -35,6 +39,9 @@ export class LoanProductListDashboardComponent implements OnInit {
   // Document selector search
   documentSearchTerm: string = '';
   filteredDocumentTypes: { key: string; value: string }[] = [];
+
+  // Search debouncing
+  private searchSubject = new Subject<string>();
 
   // Map các mã tài liệu sang tên hiển thị tiếng Việt
   documentTypeDisplayMap: { [key: string]: string } = {
@@ -89,8 +96,7 @@ export class LoanProductListDashboardComponent implements OnInit {
 
   // Sorting
   sortField: string = 'id';
-  sortDirection: string = 'desc';
-  constructor(
+  sortDirection: string = 'desc'; constructor(
     private loanService: LoanService,
     private router: Router,
     private notification: NzNotificationService
@@ -98,33 +104,59 @@ export class LoanProductListDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadLoanProducts();
+
+    // Set up search debouncing
+    this.searchSubject.pipe(
+      debounceTime(500), // Wait 500ms after user stops typing
+      distinctUntilChanged() // Only emit if value has changed
+    ).subscribe(searchTerm => {
+      this.searchTerm = searchTerm;
+      this.applyFilters();
+    });
   }
 
-  loadLoanProducts(): void {
+  ngOnDestroy(): void {
+    this.searchSubject.complete();
+  } loadLoanProducts(): void {
     this.isLoading = true;
     this.error = null;
 
-    const sortParam = `${this.sortField},${this.sortDirection}`;
+    // Prepare search parameters - use server-side filtering for search term and status
+    const searchParams: LoanProductSearchParams = {
+      page: this.currentPage,
+      size: this.pageSize,
+      sort: `${this.sortField},${this.sortDirection}`
+    };
 
-    this.loanService.getLoanProducts(this.currentPage, this.pageSize, sortParam).subscribe({
+    // Server-side filtering for search term and status
+    if (this.searchTerm && this.searchTerm.trim()) {
+      searchParams.name = this.searchTerm.trim();
+    }
+
+    if (this.statusFilter && this.statusFilter !== 'ALL') {
+      searchParams.status = this.statusFilter;
+    }
+
+    // Use searchLoanProducts for server-side filtering
+    this.loanService.searchLoanProducts(searchParams).subscribe({
       next: (response) => {
         if (response && response.data) {
-          this.loanProducts = response.data.content;
+          this.loanProducts = response.data.content;          // Apply client-side range filters only
+          this.applyClientSideRangeFilters();
 
-          // Cập nhật thông tin phân trang
+          // Update pagination info from server response
           this.totalPages = response.data.totalPages || 0;
           this.totalElements = response.data.totalElements || 0;
           this.currentPage = response.data.number || 0;
-
-          // Apply any current filters
-          this.applyFilters();
         } else {
           this.loanProducts = [];
           this.filteredProducts = [];
           this.totalPages = 0;
+          this.totalElements = 0;
         }
         this.isLoading = false;
-      }, error: (err) => {
+      },
+      error: (err) => {
         this.error = 'Không thể tải danh sách sản phẩm vay. Vui lòng thử lại sau.';
         this.isLoading = false;
         console.error('Error loading loan products:', err);
@@ -137,61 +169,65 @@ export class LoanProductListDashboardComponent implements OnInit {
         );
       }
     });
-  }
-  // Apply search and filters
-  applyFilters(): void {
-    if (!this.loanProducts.length) return;
+  }  // Apply only client-side range filters (interest rate, amount, term)
+  applyClientSideRangeFilters(): void {
+    if (!this.loanProducts.length) {
+      this.filteredProducts = [];
+      return;
+    }
 
     let filtered = [...this.loanProducts];
 
-    // Apply search term filter
-    if (this.searchTerm.trim()) {
-      const term = this.searchTerm.toLowerCase().trim();
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(term) ||
-        product.description.toLowerCase().includes(term)
-      );
-    }
-
-    // Apply status filter
-    if (this.statusFilter !== 'ALL') {
-      filtered = filtered.filter(product => product.status === this.statusFilter);
-    }
-
-    // Apply interest rate filter
+    // Apply interest rate range filter
     filtered = filtered.filter(product =>
       product.interestRate >= this.interestRateRange[0] &&
       product.interestRate <= this.interestRateRange[1]
     );
 
-    // Apply amount filter (min amount must be less than or equal to the max filter, or max amount must be greater than or equal to min filter)
+    // Apply amount range filter
     filtered = filtered.filter(product =>
-      (product.minAmount <= this.amountRange[1] && product.maxAmount >= this.amountRange[0])
+      product.minAmount <= this.amountRange[1] && product.maxAmount >= this.amountRange[0]
     );
 
-    // Apply term filter
+    // Apply term range filter
     filtered = filtered.filter(product =>
-      (product.minTerm <= this.termRange[1] && product.maxTerm >= this.termRange[0])
+      product.minTerm <= this.termRange[1] && product.maxTerm >= this.termRange[0]
     );
 
     this.filteredProducts = filtered;
   }
 
-  // Search method
+  // Apply search and filters - now separate server-side and client-side filtering
+  applyFilters(): void {
+    // For search term and status filter changes, reload from server
+    this.currentPage = 0; // Reset to first page when filtering
+    this.loadLoanProducts();
+  }
+
+  // Apply only range filters when range values change
+  applyRangeFilters(): void {
+    this.applyClientSideRangeFilters();
+  }
+  // Handle search input changes with debouncing
+  onSearchInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchSubject.next(target.value);
+  }
+  // Search method - for immediate search (like clicking search button)
   onSearch(): void {
     this.applyFilters();
-  }
-  // Reset all filters
+  }  // Reset all filters
   resetFilters(): void {
     this.searchTerm = '';
     this.statusFilter = 'ALL';
     this.interestRateRange = [0, 30];
     this.amountRange = [0, 1000000000];
     this.termRange = [1, 60];
-    this.filteredProducts = [...this.loanProducts];
-  }
+    this.currentPage = 0; // Reset to first page
 
-  // Sort products
+    // Reload data with reset filters
+    this.loadLoanProducts();
+  }  // Sort products - now using server-side sorting
   sortProducts(field: string): void {
     if (this.sortField === field) {
       // Toggle direction if same field
@@ -202,15 +238,21 @@ export class LoanProductListDashboardComponent implements OnInit {
     }
 
     this.currentPage = 0; // Reset to first page when sorting
+
+    // Reload data with new sorting
     this.loadLoanProducts();
   }
-
   // Get icon for sort indication
   getSortIcon(field: string): string {
     if (this.sortField !== field) {
       return 'sort';
     }
     return this.sortDirection === 'asc' ? 'sort-ascending' : 'sort-descending';
+  }
+  // Get paginated products for current page - now shows filtered products directly from server
+  get paginatedProducts(): LoanProduct[] {
+    // For server-side pagination, just return the filtered products from client-side range filtering
+    return this.filteredProducts;
   }
 
   // Format currency
@@ -260,9 +302,7 @@ export class LoanProductListDashboardComponent implements OnInit {
       case 'INACTIVE': return 'Không hoạt động';
       default: return 'Tất cả';
     }
-  }
-
-  // Page navigation
+  }  // Page navigation - now works with server-side pagination
   goToPage(page: number): void {
     // Ensure page is a valid number
     page = Number(page);
@@ -274,6 +314,8 @@ export class LoanProductListDashboardComponent implements OnInit {
     // Validate the page range
     if (page >= 0 && page <= maxPage) {
       this.currentPage = page;
+
+      // Load new page data
       this.loadLoanProducts();
 
       // Scroll to top of products list for better UX
@@ -293,11 +335,11 @@ export class LoanProductListDashboardComponent implements OnInit {
   onPageIndexChange(index: number): void {
     // NG-Zorro pagination is 1-based, but our API is 0-based
     this.goToPage(index - 1);
-  }
-
-  onPageSizeChange(size: number): void {
+  } onPageSizeChange(size: number): void {
     this.pageSize = size;
     this.currentPage = 0; // Reset to first page when changing page size
+
+    // Reload data with new page size
     this.loadLoanProducts();
   }
 
@@ -503,8 +545,7 @@ export class LoanProductListDashboardComponent implements OnInit {
     if (this.isCreatingNew) {
       this.loanService.createLoanProduct(this.editingProduct).subscribe({
         next: (response) => {
-          if (response && response.data) {
-            // Thêm sản phẩm mới vào danh sách
+          if (response && response.data) {            // Thêm sản phẩm mới vào danh sách
             this.loanProducts.unshift(response.data);
 
             // Cập nhật danh sách đã lọc

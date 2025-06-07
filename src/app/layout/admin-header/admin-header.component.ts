@@ -52,6 +52,8 @@ export class AdminHeaderComponent implements OnInit, OnDestroy {
 
     if (url.includes('/admin/main-dashboard')) {
       this.currentSection = 'Trang chủ';
+    } else if (url.includes('/admin/role-list')) {
+      this.currentSection = 'Quản lý vai trò';
     } else if (url.includes('/admin/user-list')) {
       this.currentSection = 'Quản lý người dùng';
     } else if (url.includes('/admin/loan-product-list')) {

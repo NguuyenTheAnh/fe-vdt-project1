@@ -20,6 +20,7 @@ import { LoanApplicationListDashboardComponent } from './admin/loan-application-
 import { DisbursementDashboardComponent } from './admin/disbursement-dashboard/disbursement-dashboard.component';
 import { ReportDashboardComponent } from './admin/report-dashboard/report-dashboard.component';
 import { SystemConfigDashboardComponent } from './admin/system-config-dashboard/system-config-dashboard.component';
+import { RoleDashboardComponent } from './admin/role-dashboard/role-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -38,6 +39,7 @@ const routes: Routes = [
   }, {
     path: 'admin', canActivate: [AuthGuard, AdminGuard], children: [
       { path: 'main-dashboard', component: MainDashboardComponent },
+      { path: 'role-list', component: RoleDashboardComponent },
       { path: 'user-list', component: UserListDashboardComponent },
       { path: 'loan-product-list', component: LoanProductListDashboardComponent },
       { path: 'loan-application-list', component: LoanApplicationListDashboardComponent },

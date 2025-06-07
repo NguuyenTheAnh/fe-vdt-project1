@@ -83,13 +83,74 @@ export interface LoanApplication {
     };
 }
 
+export interface LoanProductSearchParams {
+    page?: number;
+    size?: number;
+    sort?: string;
+    name?: string;
+    description?: string;
+    status?: string;
+    minInterestRate?: number;
+    maxInterestRate?: number;
+    minAmount?: number;
+    maxAmount?: number;
+    minTerm?: number;
+    maxTerm?: number;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class LoanService {
     constructor(private apiService: ApiService) { }
+
     getLoanProducts(page: number = 0, size: number = 10, sort: string = "id,desc"): Observable<ApiResponse<PageableResponse<LoanProduct>>> {
         return this.apiService.get<PageableResponse<LoanProduct>>(`/loan-products?page=${page}&size=${size}&sort=${sort}`);
+    }
+
+    /**
+     * Tìm kiếm và lọc sản phẩm vay với các tham số
+     * @param params Tham số tìm kiếm và lọc
+     * @returns Observable chứa danh sách sản phẩm vay đã được lọc
+     */
+    searchLoanProducts(params: LoanProductSearchParams): Observable<ApiResponse<PageableResponse<LoanProduct>>> {
+        const queryParams = new URLSearchParams();
+
+        // Basic pagination and sorting
+        queryParams.append('page', (params.page || 0).toString());
+        queryParams.append('size', (params.size || 10).toString());
+        queryParams.append('sort', params.sort || 'id,desc');
+
+        // Search filters
+        if (params.name && params.name.trim()) {
+            queryParams.append('name', params.name.trim());
+        }
+        if (params.description && params.description.trim()) {
+            queryParams.append('description', params.description.trim());
+        }
+        if (params.status && params.status !== 'ALL') {
+            queryParams.append('status', params.status);
+        }
+        if (params.minInterestRate !== undefined && params.minInterestRate >= 0) {
+            queryParams.append('minInterestRate', params.minInterestRate.toString());
+        }
+        if (params.maxInterestRate !== undefined && params.maxInterestRate >= 0) {
+            queryParams.append('maxInterestRate', params.maxInterestRate.toString());
+        }
+        if (params.minAmount !== undefined && params.minAmount >= 0) {
+            queryParams.append('minAmount', params.minAmount.toString());
+        }
+        if (params.maxAmount !== undefined && params.maxAmount >= 0) {
+            queryParams.append('maxAmount', params.maxAmount.toString());
+        }
+        if (params.minTerm !== undefined && params.minTerm >= 0) {
+            queryParams.append('minTerm', params.minTerm.toString());
+        }
+        if (params.maxTerm !== undefined && params.maxTerm >= 0) {
+            queryParams.append('maxTerm', params.maxTerm.toString());
+        }
+
+        return this.apiService.get<PageableResponse<LoanProduct>>(`/loan-products?${queryParams.toString()}`);
     }
 
     /**

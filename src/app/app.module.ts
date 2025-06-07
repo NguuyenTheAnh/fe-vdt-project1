@@ -56,6 +56,7 @@ import { ReportDashboardComponent } from './admin/report-dashboard/report-dashbo
 import { SystemConfigDashboardComponent } from './admin/system-config-dashboard/system-config-dashboard.component';
 import { AdminSidebarComponent } from './layout/admin-sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from './layout/admin-header/admin-header.component';
+import { RoleDashboardComponent } from './admin/role-dashboard/role-dashboard.component';
 registerLocaleData(vi);
 
 @NgModule({
@@ -75,7 +76,8 @@ registerLocaleData(vi);
     ReportDashboardComponent,
     SystemConfigDashboardComponent,
     AdminSidebarComponent,
-    AdminHeaderComponent
+    AdminHeaderComponent,
+    RoleDashboardComponent
   ],
   imports: [
     BrowserModule,

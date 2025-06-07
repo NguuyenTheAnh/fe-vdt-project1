@@ -19,7 +19,8 @@
             <!-- Search Bar with Enhanced Design -->
             <div class="w-full md:w-1/2 lg:w-2/5 mb-4 md:mb-0">
                 <div class="relative group">
-                    <input type="text" [(ngModel)]="searchTerm" placeholder="Tìm kiếm theo tên khoản vay, mô tả..."
+                    <input type="text" [(ngModel)]="searchTerm" (input)="onSearchInput($event)"
+                        (keyup.enter)="onSearch()" placeholder="Tìm kiếm theo tên khoản vay, mô tả..."
                         class="w-full pl-12 pr-10 py-3 border-2 border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#E74C3C]/30 focus:border-[#E74C3C] transition-all duration-300 shadow-sm hover:shadow-md" />
                     <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
                         <i nz-icon nzType="search" nzTheme="outline" class="text-xl"></i>
@@ -64,8 +65,8 @@
                 <div class="bg-white rounded-xl shadow-xl p-6 w-80 border border-gray-100">
                     <h4 class="font-medium text-gray-800 mb-4">Lãi suất (%)</h4>
                     <div class="mb-4">
-                        <nz-slider nzRange [(ngModel)]="interestRateRange" [nzMin]="0" [nzMax]="30"
-                            [nzStep]="0.1"></nz-slider>
+                        <nz-slider nzRange [(ngModel)]="interestRateRange" [nzMin]="0" [nzMax]="30" [nzStep]="0.1"
+                            (ngModelChange)="applyRangeFilters()"></nz-slider>
                         <div class="flex justify-between text-sm text-gray-500">
                             <span>{{interestRateRange[0]}}%</span>
                             <span>{{interestRateRange[1]}}%</span>
@@ -74,8 +75,8 @@
 
                     <h4 class="font-medium text-gray-800 mb-4">Hạn mức vay</h4>
                     <div class="mb-4">
-                        <nz-slider nzRange [(ngModel)]="amountRange" [nzMin]="0" [nzMax]="1000000000"
-                            [nzStep]="100000"></nz-slider>
+                        <nz-slider nzRange [(ngModel)]="amountRange" [nzMin]="0" [nzMax]="1000000000" [nzStep]="100000"
+                            (ngModelChange)="applyRangeFilters()"></nz-slider>
                         <div class="flex justify-between text-sm text-gray-500">
                             <span>{{formatCurrency(amountRange[0])}}</span>
                             <span>{{formatCurrency(amountRange[1])}}</span>
@@ -84,7 +85,8 @@
 
                     <h4 class="font-medium text-gray-800 mb-4">Kỳ hạn (tháng)</h4>
                     <div class="mb-4">
-                        <nz-slider nzRange [(ngModel)]="termRange" [nzMin]="1" [nzMax]="60" [nzStep]="1"></nz-slider>
+                        <nz-slider nzRange [(ngModel)]="termRange" [nzMin]="1" [nzMax]="60" [nzStep]="1"
+                            (ngModelChange)="applyRangeFilters()"></nz-slider>
                         <div class="flex justify-between text-sm text-gray-500">
                             <span>{{termRange[0]}} tháng</span>
                             <span>{{termRange[1]}} tháng</span>
@@ -266,7 +268,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr *ngFor="let product of filteredProducts" class="hover:bg-gray-50">
+                    <tr *ngFor="let product of paginatedProducts" class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
                         </td>
@@ -301,10 +303,8 @@
                 </tbody>
             </table>
         </div>
-    </div>
-
-    <!-- Empty State for Filtered Results -->
-    <div *ngIf="!isLoading && !error && loanProducts.length > 0 && filteredProducts.length === 0"
+    </div> <!-- Empty State for Filtered Results -->
+    <div *ngIf="!isLoading && !error && totalElements > 0 && filteredProducts.length === 0"
         class="text-center py-16 bg-white rounded-xl shadow-lg">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none"
             viewBox="0 0 24 24" stroke="currentColor">
@@ -312,23 +312,22 @@
                 d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <h3 class="text-xl font-medium text-gray-600 mb-2">Không tìm thấy sản phẩm vay phù hợp</h3>
-        <p class="text-gray-500">Không có sản phẩm vay nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
-        <button (click)="resetFilters(); onSearch();"
+        <p class="text-gray-500">Không có sản phẩm vay nào phù hợp với tiêu chí lọc nâng cao của bạn.</p>
+        <button (click)="resetFilters()"
             class="mt-4 border-gray-100 px-6 py-2 bg-[#E74C3C] text-white rounded-md hover:bg-[#C0392B]">
             Đặt lại bộ lọc
         </button>
     </div>
 
     <!-- Empty State for No Products -->
-    <div *ngIf="!isLoading && !error && loanProducts.length === 0"
-        class="text-center py-16 bg-white rounded-xl shadow-lg">
+    <div *ngIf="!isLoading && !error && totalElements === 0" class="text-center py-16 bg-white rounded-xl shadow-lg">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none"
             viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        <h3 class="text-xl font-medium text-gray-600 mb-2">Không tìm thấy sản phẩm vay nào</h3>
-        <p class="text-gray-500">Hiện tại chưa có sản phẩm vay nào được tạo.</p>
+        <h3 class="text-xl font-medium text-gray-600 mb-2">Chưa có sản phẩm vay nào</h3>
+        <p class="text-gray-500">Hiện tại chưa có sản phẩm vay nào được tạo hoặc phù hợp với tìm kiếm của bạn.</p>
         <button (click)="createNewProduct()"
             class="mt-4 border-gray-100 px-6 py-2 bg-[#E74C3C] text-white rounded-md hover:bg-[#C0392B]">
             Tạo sản phẩm vay mới
@@ -336,7 +335,7 @@
     </div>
 
     <!-- Results Summary and Pagination -->
-    <div *ngIf="!isLoading && !error && loanProducts.length > 0" class="mt-8">
+    <div *ngIf="!isLoading && !error && filteredProducts.length > 0" class="mt-8">
         <!-- Results Summary with Enhanced Styling -->
         <div
             class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white rounded-lg shadow-sm p-4 border border-gray-100">
@@ -344,7 +343,10 @@
                 <i nz-icon nzType="info-circle" nzTheme="fill" class="text-[#E74C3C] mr-2"></i>
                 Hiển thị <span class="font-semibold mx-1 text-[#E74C3C]">{{filteredProducts.length}}</span> sản phẩm vay
                 <span *ngIf="loanProducts.length !== filteredProducts.length" class="ml-1">
-                    (trong tổng số <span class="font-semibold">{{loanProducts.length}}</span> sản phẩm)
+                    (lọc nâng cao từ <span class="font-semibold">{{loanProducts.length}}</span> sản phẩm)
+                </span>
+                <span class="ml-2 text-sm text-gray-500">
+                    - Tổng: {{totalElements}} sản phẩm
                 </span>
             </p>
 
