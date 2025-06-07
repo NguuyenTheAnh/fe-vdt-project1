@@ -126,11 +126,9 @@
 
                 <!-- Current Step Title -->
                 <p class="text-sm text-gray-600 text-center">{{ getStepTitle() }}</p>
-            </div>
-
-            <!-- Modal Content -->
-            <form nz-form [formGroup]="forgotPasswordForm" (ngSubmit)="handleStepAction()" nzLayout="vertical"
-                class="p-6">
+            </div> <!-- Modal Content -->
+            <form nz-form [formGroup]="forgotPasswordForm" (ngSubmit)="handleStepAction()"
+                (keydown.enter)="$event.preventDefault(); handleStepAction()" nzLayout="vertical" class="p-6">
 
                 <!-- Step 1: Enter Email -->
                 <div *ngIf="currentStep === 1" class="space-y-4">
@@ -265,10 +263,12 @@
                             </ng-template>
                         </nz-form-control>
                     </nz-form-item>
-                </div>
-
-                <!-- Step 4: Success -->
+                </div> <!-- Step 4: Success -->
                 <div *ngIf="currentStep === 4" class="space-y-4 text-center">
+                    <!-- Invisible focusable input to ensure form can be submitted with Enter key -->
+                    <input type="text" class="sr-only" readonly tabindex="0" (keydown.enter)="handleStepAction()"
+                        #step4Input />
+
                     <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
@@ -287,12 +287,12 @@
                         class="px-4 py-2 border-gray-100 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                         Quay lại
                     </button>
-                    <div *ngIf="currentStep === 1" class="w-full"></div>
-
-                    <button type="submit" [disabled]="!isCurrentStepValid() || isProcessing" [ngClass]="{
+                    <div *ngIf="currentStep === 1" class="w-full"></div> <button type="submit"
+                        [disabled]="!isCurrentStepValid() || isProcessing" [ngClass]="{
         'bg-[#E74C3C] hover:bg-[#C0392B] text-white': isCurrentStepValid() && !isProcessing,
         'bg-gray-300 text-gray-500 cursor-not-allowed': !isCurrentStepValid() || isProcessing
-    }" class="px-6 py-2  border-gray-100  rounded-lg transition-colors flex items-center ml-auto">
+    }" class="px-6 py-2  border-gray-100  rounded-lg transition-colors flex items-center ml-auto"
+                        [attr.autofocus]="currentStep === 4 ? true : null">
 
                         <span *ngIf="isProcessing" class="flex items-center whitespace-nowrap">
                             Đang xử lý...

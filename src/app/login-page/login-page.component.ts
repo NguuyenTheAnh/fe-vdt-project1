@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -21,7 +21,9 @@ import { trigger, transition, style, animate } from '@angular/animations';
     ])
   ]
 })
-export class LoginPageComponent implements OnInit {
+export class LoginPageComponent implements OnInit, AfterViewChecked {
+  @ViewChild('step4Input') step4Input?: ElementRef<HTMLInputElement>;
+
   loginForm!: FormGroup;
   forgotPasswordForm!: FormGroup;
   isLoading = false;
@@ -31,6 +33,7 @@ export class LoginPageComponent implements OnInit {
   currentStep = 1;
   totalSteps = 4;
   isProcessing = false;
+  private shouldFocusStep4Input = false;
 
   constructor(
     private fb: FormBuilder,
@@ -228,6 +231,8 @@ export class LoginPageComponent implements OnInit {
               if (response.code === 1000) {
                 this.notification.success('Thành công', 'Mật khẩu đã được cập nhật');
                 this.currentStep++;
+                // Trigger focus for step 4 input
+                this.shouldFocusStep4Input = true;
               } else {
                 this.notification.error('Lỗi', response.message || 'Không thể cập nhật mật khẩu. Vui lòng thử lại.');
               }
@@ -250,15 +255,20 @@ export class LoginPageComponent implements OnInit {
   }
 
   handleStepAction(): void {
+    console.log('handleStepAction called, currentStep:', this.currentStep);
+
+    // Handle step 4 separately (completion step)
+    if (this.currentStep === 4) {
+      console.log('Closing modal from step 4');
+      this.closeForgotPasswordModal();
+      this.notification.success('Hoàn tất', 'Bạn có thể đăng nhập với mật khẩu mới');
+      return;
+    }
+
     const currentStepControl = this.getCurrentStepControl();
 
     if (currentStepControl && currentStepControl.valid) {
-      if (this.currentStep === 4) {
-        this.closeForgotPasswordModal();
-        this.notification.success('Hoàn tất', 'Bạn có thể đăng nhập với mật khẩu mới');
-      } else {
-        this.nextStep();
-      }
+      this.nextStep();
     } else {
       this.markFormGroupTouched(currentStepControl);
     }
@@ -301,6 +311,11 @@ export class LoginPageComponent implements OnInit {
   }
 
   isCurrentStepValid(): boolean {
+    // Step 4 is always valid (completion step)
+    if (this.currentStep === 4) {
+      return true;
+    }
+
     const control = this.getCurrentStepControl();
     if (this.currentStep === 3) {
       const newPassword = this.forgotPasswordForm.get('newPassword');
@@ -309,5 +324,15 @@ export class LoginPageComponent implements OnInit {
         newPassword?.value === confirmPassword?.value);
     }
     return !!(control?.valid);
+  }
+
+  ngAfterViewChecked(): void {
+    // Focus the step 4 input when it becomes available
+    if (this.shouldFocusStep4Input && this.step4Input) {
+      setTimeout(() => {
+        this.step4Input?.nativeElement.focus();
+      }, 0);
+      this.shouldFocusStep4Input = false;
+    }
   }
 }
