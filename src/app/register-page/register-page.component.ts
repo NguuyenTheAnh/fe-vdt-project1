@@ -58,6 +58,8 @@ export class RegisterPageComponent implements OnInit, AfterViewChecked {
   currentStep = 1;
   totalSteps = 3;
   isProcessing = false;
+  isResendingCode = false;
+  showResendButton = false;
   private shouldFocusStep3Input = false;
   userEmail = '';
 
@@ -172,6 +174,7 @@ export class RegisterPageComponent implements OnInit, AfterViewChecked {
   openActivationModal(): void {
     this.isActivationModalOpen = true;
     this.currentStep = 1;
+    this.showResendButton = false;
     this.activationForm.reset();
     document.body.style.overflow = 'hidden';
   }
@@ -179,8 +182,30 @@ export class RegisterPageComponent implements OnInit, AfterViewChecked {
   closeActivationModal(): void {
     this.isActivationModalOpen = false;
     this.currentStep = 1;
+    this.showResendButton = false;
     this.activationForm.reset();
     document.body.style.overflow = 'auto';
+  }
+
+  resendActivationCode(): void {
+    this.isResendingCode = true;
+    this.authService.sendAccountActivationEmail(this.userEmail).subscribe({
+      next: (response) => {
+        this.isResendingCode = false;
+        if (response.code === 1000) {
+          this.notification.success('Thành công', 'Mã xác thực mới đã được gửi đến email của bạn');
+          this.showResendButton = false;
+          this.activationForm.get('verificationCode')?.setValue('');
+        } else {
+          this.notification.error('Lỗi', 'Không thể gửi lại mã xác thực. Vui lòng thử lại.');
+        }
+      },
+      error: (error) => {
+        this.isResendingCode = false;
+        console.error('Error resending activation code:', error);
+        this.notification.error('Lỗi', 'Không thể gửi lại mã xác thực. Vui lòng thử lại sau.');
+      }
+    });
   }
 
   getStepTitle(): string {
@@ -193,6 +218,7 @@ export class RegisterPageComponent implements OnInit, AfterViewChecked {
   }
 
   nextStep(): void {
+    console.log('nextStep called, currentStep:', this.currentStep);
     if (this.currentStep < this.totalSteps) {
       this.isProcessing = true;
 
@@ -205,6 +231,7 @@ export class RegisterPageComponent implements OnInit, AfterViewChecked {
               this.isProcessing = false;
               if (response.code === 1000 && response.data === true) {
                 this.notification.success('Thành công', 'Mã xác thực chính xác');
+                this.showResendButton = false; // Hide resend button on successful verification
                 this.currentStep++;
               } else {
                 this.notification.error('Lỗi', 'Mã xác thực không chính xác hoặc đã hết hạn');
@@ -216,8 +243,8 @@ export class RegisterPageComponent implements OnInit, AfterViewChecked {
 
               // Check for specific error case: expired verification code
               if (error.status === 400 && error.error && error.error.code === 6004) {
-                this.notification.error('Mã xác thực đã hết hạn', 'Vui lòng nhấn đăng ký để nhận mã xác thực khác');
-                this.closeActivationModal();
+                this.notification.error('Mã xác thực đã hết hạn', 'Vui lòng nhấn "Gửi lại mã" để nhận mã xác thực mới');
+                this.showResendButton = true;
               } else {
                 this.notification.error('Lỗi', 'Không thể xác thực mã. Vui lòng thử lại.');
               }
@@ -286,6 +313,9 @@ export class RegisterPageComponent implements OnInit, AfterViewChecked {
     switch (this.currentStep) {
       case 1:
         return this.activationForm.get('verificationCode');
+      case 2:
+        // Step 2 doesn't need form validation, return a dummy valid object
+        return { valid: true };
       default:
         return null;
     }
@@ -299,8 +329,8 @@ export class RegisterPageComponent implements OnInit, AfterViewChecked {
   }
 
   isCurrentStepValid(): boolean {
-    // Step 3 is always valid (completion step)
-    if (this.currentStep === 3) {
+    // Step 2 and 3 are always valid (confirmation and completion steps)
+    if (this.currentStep === 2 || this.currentStep === 3) {
       return true;
     }
 

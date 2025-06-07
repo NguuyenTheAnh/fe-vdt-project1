@@ -286,20 +286,29 @@
                     <h3 class="text-xl font-semibold text-gray-800 mb-2">Kích hoạt tài khoản thành công!</h3>
                     <p class="text-gray-600 mb-6">Tài khoản của bạn đã được kích hoạt. Bạn có thể đăng nhập ngay bây
                         giờ.</p>
-                </div>
-
-                <!-- Modal Footer -->
+                </div> <!-- Modal Footer -->
                 <div class="flex justify-between mt-8">
-                    <button *ngIf="currentStep > 1 && currentStep < 3" type="button" (click)="previousStep()"
-                        class="px-4 py-2 border-gray-100 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                        Quay lại
-                    </button>
-                    <div *ngIf="currentStep === 1" class="w-full"></div>
+                    <!-- Left side buttons -->
+                    <div class="flex gap-2">
+                        <!-- Resend Code button (only show in step 1 when needed) -->
+                        <button *ngIf="currentStep === 1 && showResendButton" type="button"
+                            (click)="resendActivationCode()" [disabled]="isResendingCode"
+                            class="px-4 py-2 border border-[#E74C3C] text-[#E74C3C] bg-white rounded-lg hover:bg-[#E74C3C] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            {{ isResendingCode ? 'Đang gửi...' : 'Gửi lại mã' }}
+                        </button>
 
+                        <!-- Back button for steps 2+ -->
+                        <button *ngIf="currentStep > 1 && currentStep < 3" type="button" (click)="previousStep()"
+                            class="px-4 py-2 border-gray-100 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                            Quay lại
+                        </button>
+                    </div>
+
+                    <!-- Right side: Main action button -->
                     <button type="submit" [disabled]="!isCurrentStepValid() || isProcessing" [ngClass]="{
         'bg-[#E74C3C] hover:bg-[#C0392B] text-white': isCurrentStepValid() && !isProcessing,
         'bg-gray-300 text-gray-500 cursor-not-allowed': !isCurrentStepValid() || isProcessing
-    }" class="px-6 py-2 border-gray-100 rounded-lg transition-colors flex items-center ml-auto"
+    }" class="px-6 py-2 border-gray-100 rounded-lg transition-colors flex items-center"
                         [attr.autofocus]="currentStep === 3 ? true : null">
 
                         <span *ngIf="isProcessing" class="flex items-center whitespace-nowrap">
