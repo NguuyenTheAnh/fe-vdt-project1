@@ -18,6 +18,13 @@ export interface LoginRequest {
   password: string;
 }
 
+// Interface for password reset request
+export interface PasswordResetRequest {
+  email: string;
+  newPassword: string;
+  token: string;
+}
+
 // Interface for API responses
 export interface ApiResponse<T> {
   code: number;
@@ -189,5 +196,22 @@ export class AuthService {
           return throwError(() => error);
         })
       );
+  }
+
+  // Password Reset Methods
+
+  // Step 1: Send reset email
+  sendPasswordResetEmail(email: string): Observable<ApiResponse<void>> {
+    return this.apiService.post<void>(`/auth/password-reset/email/${email}`, {});
+  }
+
+  // Step 2: Verify reset token
+  verifyPasswordResetToken(token: string): Observable<ApiResponse<boolean>> {
+    return this.apiService.post<boolean>(`/auth/password-reset/token/${token}`, {});
+  }
+
+  // Step 3: Reset password with token
+  resetPassword(resetData: PasswordResetRequest): Observable<ApiResponse<void>> {
+    return this.apiService.post<void>('/auth/password-reset', resetData);
   }
 }

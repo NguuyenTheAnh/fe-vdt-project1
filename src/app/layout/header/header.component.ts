@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     isScrolled = false;
     unreadNotificationCount = 0;
     private subscriptions: Subscription[] = [];
+    private notificationSubscribed = false; // Flag để tránh duplicate subscription
 
     constructor(
         private userService: UserService,
@@ -38,32 +39,48 @@ export class HeaderComponent implements OnInit, OnDestroy {
             // Log để debug
             console.log('Header updated - User:', user?.fullName);
             console.log('Header updated - User role:', user?.role?.name);
-            console.log('Header updated - isAdmin:', this.isAdmin);
-
-            // Only subscribe to notifications when user is logged in
-            if (user) {
-                // Get initial unread count
-                this.appNotificationService.getUnreadCount().subscribe();
+            console.log('Header updated - isAdmin:', this.isAdmin);            // Only subscribe to notifications when user is logged in
+            if (!user) {
+                // Reset unread count và flag khi user logout
+                this.unreadNotificationCount = 0;
+                this.notificationSubscribed = false;
             }
         });
         this.subscriptions.push(userSubscription);
 
-        // Subscribe to unread notification count
+        // Subscribe to app initialization để chỉ load notifications khi app đã hoàn tất khởi tạo
+        const appInitSubscription = this.userService.appInitialized$.subscribe(isInitialized => {
+            if (isInitialized && this.currentUser && !this.notificationSubscribed) {
+                // App đã khởi tạo xong và user đã login, bây giờ mới load notifications
+                this.subscribeToNotifications();
+            }
+        });
+        this.subscriptions.push(appInitSubscription);
+
+        // Kiểm tra vị trí cuộn ban đầu
+        this.isScrolled = window.scrollY > 30;
+    } private subscribeToNotifications(): void {
+        // Đánh dấu đã subscribe để tránh duplicate
+        this.notificationSubscribed = true;
+
+        // Gọi API để lấy unread count
+        this.appNotificationService.getUnreadCount().subscribe();
+
+        // Subscribe to unread notification count changes
         const notificationSubscription = this.appNotificationService.unreadCount$.subscribe(count => {
             this.unreadNotificationCount = count;
         });
         this.subscriptions.push(notificationSubscription);
-
-        // Kiểm tra vị trí cuộn ban đầu
-        this.isScrolled = window.scrollY > 30;
     }
 
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions to avoid memory leaks
         this.subscriptions.forEach(sub => sub.unsubscribe());
-    }
+    } logout(): void {
+        // Reset notifications khi logout
+        this.appNotificationService.resetUnreadCount();
+        this.notificationSubscribed = false;
 
-    logout(): void {
         this.authService.logout();
         this.router.navigate(['/login']);
     }

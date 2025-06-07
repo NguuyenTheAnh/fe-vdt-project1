@@ -24,11 +24,9 @@ export class AppNotificationService {
     private unreadCountSubject = new BehaviorSubject<number>(0);
 
     // Observable that components can subscribe to
-    public unreadCount$ = this.unreadCountSubject.asObservable();
-
-    constructor(private apiService: ApiService) {
-        // Initialize by fetching unread count
-        this.getUnreadCount().subscribe();
+    public unreadCount$ = this.unreadCountSubject.asObservable(); constructor(private apiService: ApiService) {
+        // Không tự động gọi getUnreadCount() ở đây nữa
+        // Sẽ được gọi từ component khi user đăng nhập
     }
 
     /**
@@ -116,5 +114,13 @@ export class AppNotificationService {
             this.unreadCount--;
             this.unreadCountSubject.next(this.unreadCount);
         }
+    }
+
+    /**
+     * Reset unread count khi user logout
+     */
+    resetUnreadCount(): void {
+        this.unreadCount = 0;
+        this.unreadCountSubject.next(0);
     }
 }

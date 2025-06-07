@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { AuthService, LoginRequest } from '../services/auth.service';
+import { AuthService, LoginRequest, PasswordResetRequest } from '../services/auth.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
@@ -48,7 +48,7 @@ export class LoginPageComponent implements OnInit {
 
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      verificationCode: ['', [Validators.required, Validators.minLength(6)]],
+      verificationCode: ['', [Validators.required, Validators.minLength(1)]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     });
@@ -84,18 +84,39 @@ export class LoginPageComponent implements OnInit {
               });
             }, 500);
           } else {
+            // Handle specific error codes for login validation
+            let errorMessage = 'Email hoặc mật khẩu không chính xác.';
+
+            if (response.code === 1004 || response.code === 1005) {
+              errorMessage = 'Email hoặc mật khẩu không chính xác.';
+            } else if (response.message) {
+              errorMessage = response.message;
+            }
+
             this.notification.error(
               'Đăng nhập thất bại',
-              response.message || 'Email hoặc mật khẩu không chính xác.'
+              errorMessage
             );
           }
         },
         error: (error) => {
           this.isLoading = false;
           console.error('Login error:', error);
+
+          // Check if the error response has specific codes
+          let errorMessage = 'Đã xảy ra lỗi khi kết nối đến máy chủ. Vui lòng thử lại sau.';
+
+          if (error.error && error.error.code) {
+            if (error.error.code === 1004 || error.error.code === 1005) {
+              errorMessage = 'Email hoặc mật khẩu không chính xác.';
+            } else if (error.error.message) {
+              errorMessage = error.error.message;
+            }
+          }
+
           this.notification.error(
             'Đăng nhập thất bại',
-            'Đã xảy ra lỗi khi kết nối đến máy chủ. Vui lòng thử lại sau.'
+            errorMessage
           );
         }
       });
@@ -150,24 +171,75 @@ export class LoginPageComponent implements OnInit {
     if (this.currentStep < this.totalSteps) {
       this.isProcessing = true;
 
-      // Simulate API call delay
-      setTimeout(() => {
-        this.isProcessing = false;
+      switch (this.currentStep) {
+        case 1:
+          // Step 1: Send password reset email
+          const email = this.forgotPasswordForm.get('email')?.value;
+          this.authService.sendPasswordResetEmail(email).subscribe({
+            next: (response) => {
+              this.isProcessing = false;
+              if (response.code === 1000) {
+                this.notification.success('Thành công', 'Mã xác thực đã được gửi đến email của bạn');
+                this.currentStep++;
+              } else {
+                this.notification.error('Lỗi', response.message || 'Không thể gửi email. Vui lòng thử lại.');
+              }
+            },
+            error: (error) => {
+              this.isProcessing = false;
+              console.error('Error sending reset email:', error);
+              this.notification.error('Lỗi', 'Không thể gửi email xác thực. Vui lòng thử lại sau.');
+            }
+          });
+          break;
 
-        switch (this.currentStep) {
-          case 1:
-            this.notification.success('Thành công', 'Mã xác thực đã được gửi đến email của bạn');
-            break;
-          case 2:
-            this.notification.success('Thành công', 'Mã xác thực chính xác');
-            break;
-          case 3:
-            this.notification.success('Thành công', 'Mật khẩu đã được cập nhật');
-            break;
-        }
+        case 2:
+          // Step 2: Verify reset token
+          const token = this.forgotPasswordForm.get('verificationCode')?.value;
+          this.authService.verifyPasswordResetToken(token).subscribe({
+            next: (response) => {
+              this.isProcessing = false;
+              if (response.code === 1000 && response.data === true) {
+                this.notification.success('Thành công', 'Mã xác thực chính xác');
+                this.currentStep++;
+              } else {
+                this.notification.error('Lỗi', 'Mã xác thực không chính xác hoặc đã hết hạn');
+              }
+            },
+            error: (error) => {
+              this.isProcessing = false;
+              console.error('Error verifying token:', error);
+              this.notification.error('Lỗi', 'Không thể xác thực mã. Vui lòng thử lại.');
+            }
+          });
+          break;
 
-        this.currentStep++;
-      }, 1000);
+        case 3:
+          // Step 3: Reset password
+          const resetData: PasswordResetRequest = {
+            email: this.forgotPasswordForm.get('email')?.value,
+            newPassword: this.forgotPasswordForm.get('newPassword')?.value,
+            token: this.forgotPasswordForm.get('verificationCode')?.value
+          };
+
+          this.authService.resetPassword(resetData).subscribe({
+            next: (response) => {
+              this.isProcessing = false;
+              if (response.code === 1000) {
+                this.notification.success('Thành công', 'Mật khẩu đã được cập nhật');
+                this.currentStep++;
+              } else {
+                this.notification.error('Lỗi', response.message || 'Không thể cập nhật mật khẩu. Vui lòng thử lại.');
+              }
+            },
+            error: (error) => {
+              this.isProcessing = false;
+              console.error('Error resetting password:', error);
+              this.notification.error('Lỗi', 'Không thể cập nhật mật khẩu. Vui lòng thử lại sau.');
+            }
+          });
+          break;
+      }
     }
   }
 
@@ -201,19 +273,30 @@ export class LoginPageComponent implements OnInit {
       case 3:
         const newPassword = this.forgotPasswordForm.get('newPassword');
         const confirmPassword = this.forgotPasswordForm.get('confirmPassword');
-        return (newPassword?.valid && confirmPassword?.valid &&
-          newPassword?.value === confirmPassword?.value) ? newPassword : null;
+
+        // Check if both passwords are valid and match
+        if (newPassword?.valid && confirmPassword?.valid &&
+          newPassword?.value === confirmPassword?.value) {
+          return newPassword;
+        }
+        return null;
       default:
         return null;
     }
   }
 
   markFormGroupTouched(control: any): void {
-    if (this.currentStep === 3) {
+    if (this.currentStep === 1) {
+      this.forgotPasswordForm.get('email')?.markAsTouched();
+      this.forgotPasswordForm.get('email')?.updateValueAndValidity();
+    } else if (this.currentStep === 2) {
+      this.forgotPasswordForm.get('verificationCode')?.markAsTouched();
+      this.forgotPasswordForm.get('verificationCode')?.updateValueAndValidity();
+    } else if (this.currentStep === 3) {
       this.forgotPasswordForm.get('newPassword')?.markAsTouched();
       this.forgotPasswordForm.get('confirmPassword')?.markAsTouched();
-    } else if (control) {
-      control.markAsTouched();
+      this.forgotPasswordForm.get('newPassword')?.updateValueAndValidity();
+      this.forgotPasswordForm.get('confirmPassword')?.updateValueAndValidity();
     }
   }
 
