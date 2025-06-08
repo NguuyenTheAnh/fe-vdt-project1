@@ -403,11 +403,11 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
       address: ''
     };
   }
-
   // Pagination helper methods
   getPaginationRange(): (number | string)[] {
     const range: (number | string)[] = [];
     const delta = 2; // Number of pages to show around current page
+    const currentDisplayPage = this.getCurrentPageDisplay(); // 1-based current page
 
     if (this.totalPages <= 7) {
       // Show all pages if total is 7 or less
@@ -419,8 +419,8 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
       range.push(1);
 
       // Calculate start and end of middle range
-      let start = Math.max(2, this.currentPage + 1 - delta);
-      let end = Math.min(this.totalPages - 1, this.currentPage + 1 + delta);
+      let start = Math.max(2, currentDisplayPage - delta);
+      let end = Math.min(this.totalPages - 1, currentDisplayPage + delta);
 
       // Adjust range if too close to beginning
       if (start <= 3) {
@@ -457,12 +457,29 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
 
     return range;
   }
-
   goToPage(page: number): void {
-    if (page >= 0 && page < this.totalPages && page !== this.currentPage) {
-      this.currentPage = page;
+    const targetPage = page - 1; // Convert to 0-based for API
+    if (targetPage >= 0 && targetPage < this.totalPages && targetPage !== this.currentPage) {
+      this.currentPage = targetPage;
       this.loadUsers();
     }
+  }
+
+  hasPreviousPage(): boolean {
+    return this.currentPage > 0;
+  }
+
+  hasNextPage(): boolean {
+    return this.currentPage < this.totalPages - 1;
+  }
+
+  getCurrentPageDisplay(): number {
+    return this.currentPage + 1;
+  }
+
+  isCurrentPage(pageNumber: number | string): boolean {
+    if (typeof pageNumber === 'string') return false;
+    return pageNumber === this.getCurrentPageDisplay();
   }
 
   // User Detail Modal Methods

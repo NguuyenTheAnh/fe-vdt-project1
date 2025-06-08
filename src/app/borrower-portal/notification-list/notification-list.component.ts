@@ -355,7 +355,8 @@ export class NotificationListComponent implements OnInit, OnDestroy {
       'REQUIRE_MORE_INFO': 'Cần thêm thông tin',
       'APPROVED': 'Đã phê duyệt',
       'REJECTED': 'Từ chối',
-      'DISBURSED': 'Đã giải ngân',
+      'PARTIALLY_DISBURSED': 'Giải ngân một phần',
+      'FULLY_DISBURSED': 'Đã giải ngân hoàn tất',
     };
 
     return labels[status] || status;

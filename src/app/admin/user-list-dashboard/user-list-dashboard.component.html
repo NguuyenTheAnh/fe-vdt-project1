@@ -272,10 +272,9 @@
 
                         <!-- Role -->
                         <td class="px-6 py-4 whitespace-nowrap w-64">
-                            <span [ngClass]="{
-                                'bg-purple-100 text-purple-600 border-purple-200': user.role.name !== 'USER',
-                                'bg-blue-100 text-blue-800 border-blue-200': user.role.name === 'USER'
-                            }" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
+                            <span
+                                [ngClass]="{'bg-purple-100 text-purple-600 border-purple-200': user.role.name !== 'USER', 'bg-blue-100 text-blue-800 border-blue-200': user.role.name === 'USER'}"
+                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
                                 <i *ngIf="user.role.name === 'ADMIN'" nz-icon nzType="crown" nzTheme="fill"
                                     class="mr-1 text-purple-600"></i>
                                 <i *ngIf="user.role.name === 'USER'" nz-icon nzType="user" nzTheme="outline"
@@ -288,14 +287,12 @@
 
                         <!-- Account Status -->
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span [ngClass]="{
-                                'bg-green-100 text-green-800 border-green-200': user.accountStatus === 'ACTIVE',
-                                'bg-red-100 text-red-800 border-red-200': user.accountStatus === 'INACTIVE'
-                            }" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
-                                <span [ngClass]="{
-                                    'bg-green-500': user.accountStatus === 'ACTIVE',
-                                    'bg-red-500': user.accountStatus === 'INACTIVE'
-                                }" class="w-2 h-2 rounded-full mr-2"></span>
+                            <span
+                                [ngClass]="{'bg-green-100 text-green-800 border-green-200': user.accountStatus === 'ACTIVE', 'bg-red-100 text-red-800 border-red-200': user.accountStatus === 'INACTIVE'}"
+                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border">
+                                <span
+                                    [ngClass]="{'bg-green-500': user.accountStatus === 'ACTIVE', 'bg-red-500': user.accountStatus === 'INACTIVE'}"
+                                    class="w-2 h-2 rounded-full mr-2"></span>
                                 {{ getStatusLabel(user.accountStatus) }}
                             </span>
                         </td>
@@ -381,70 +378,61 @@
                 </select>
                 <span class="text-gray-700 ml-1">người dùng</span>
             </div>
-        </div>
-
-        <!-- Simple Pagination with < 1 2 3 > Style -->
-        <div *ngIf="totalPages > 0" class="flex justify-center mt-8 mb-6">
-            <div
-                class="custom-pagination-simple bg-white rounded-lg shadow-md border border-gray-200 px-4 py-2 flex items-center gap-1">
-
-                <!-- Previous Button -->
-                <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0" [ngClass]="
-                    currentPage === 0 
-                      ? 'text-gray-300 cursor-not-allowed' 
-                      : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'
-                  " class="px-3 py-1 rounded transition-all duration-200 disabled:opacity-50">
-                    &lt;
-                </button>
-
-                <!-- Page Numbers -->
-                <div class="flex items-center mx-2 space-x-2">
-                    <button *ngFor="let page of getPaginationRange()" (click)="page !== '...' && goToPage(+page - 1)"
-                        [disabled]="page === '...'" [ngClass]="
-                            page === '...' 
-                              ? 'text-gray-400 cursor-default px-2 py-1' 
-                              : (currentPage + 1 === +page 
-                                  ? 'bg-[#E74C3C] text-white px-3 py-1 rounded font-medium' 
-                                  : 'text-gray-700 hover:bg-gray-100 hover:text-[#E74C3C] px-3 py-1 rounded')
-                        " class="transition-all duration-200 min-w-[32px] text-center">
-                        {{page}}
+        </div> <!-- Beautiful Pagination Section -->
+        <div class="flex flex-col items-center justify-center bg-white rounded-lg shadow-sm p-6 border border-gray-100">
+            <!-- Desktop Pagination - Simple numbered style -->
+            <div class="hidden md:flex items-center space-x-2 mb-4"> <!-- Previous Button --> <button
+                    [disabled]="!hasPreviousPage()" (click)="goToPage(getCurrentPageDisplay() - 1)" [ngClass]="{
+                        'bg-gray-100 text-gray-400 cursor-not-allowed': !hasPreviousPage(),
+                        'bg-white text-gray-700 hover:bg-[#E74C3C] hover:text-white border-gray-300 hover:border-[#E74C3C]': hasPreviousPage()
+                    }"
+                    class="px-4 py-2 border rounded-lg transition-all duration-200 font-medium flex items-center shadow-sm">
+                    <i nz-icon nzType="left" class="mr-1"></i>
+                    Trước
+                </button><!-- Page Numbers -->
+                <div class="flex items-center space-x-1">
+                    <button *ngFor="let page of getPaginationRange()" [disabled]="page === '...'"
+                        (click)="page !== '...' && goToPage(+page)" [ngClass]="{
+                            'bg-[#E74C3C] text-white border-[#E74C3C] shadow-md': isCurrentPage(page),
+                            'bg-white text-gray-700 hover:bg-[#E74C3C] hover:text-white border-gray-300 hover:border-[#E74C3C]': !isCurrentPage(page) && page !== '...',
+                            'bg-transparent text-gray-400 cursor-default border-transparent': page === '...'
+                        }"
+                        class="min-w-[40px] h-10 border rounded-lg transition-all duration-200 font-medium flex items-center justify-center">
+                        {{ page }}
                     </button>
-                </div>
-
-                <!-- Next Button -->
-                <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1" [ngClass]="
-                    currentPage === totalPages - 1 
-                      ? 'text-gray-300 cursor-not-allowed' 
-                      : 'text-gray-600 hover:text-white hover:bg-[#E74C3C]'
-                  " class="px-3 py-1 rounded transition-all duration-200 disabled:opacity-50">
-                    &gt;
+                </div> <!-- Next Button --> <button [disabled]="!hasNextPage()"
+                    (click)="goToPage(getCurrentPageDisplay() + 1)" [ngClass]="{
+                        'bg-gray-100 text-gray-400 cursor-not-allowed': !hasNextPage(),
+                        'bg-white text-gray-700 hover:bg-[#E74C3C] hover:text-white border-gray-300 hover:border-[#E74C3C]': hasNextPage()
+                    }"
+                    class="px-4 py-2 border rounded-lg transition-all duration-200 font-medium flex items-center shadow-sm">
+                    Sau
+                    <i nz-icon nzType="right" class="ml-1"></i>
                 </button>
-            </div>
-        </div>
-
-        <!-- Mobile Pagination -->
-        <div *ngIf="totalPages > 0" class="flex md:hidden justify-center mt-6">
-            <div
-                class="bg-white rounded-lg shadow-md border border-gray-200 px-4 py-3 flex items-center justify-between w-full max-w-sm">
-                <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0"
-                    class="text-gray-600 hover:text-[#E74C3C] disabled:text-gray-300 disabled:cursor-not-allowed p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
+            </div> <!-- Mobile Pagination - Simple current/total display -->
+            <div class="flex md:hidden items-center justify-center space-x-4 mb-4"> <button
+                    [disabled]="!hasPreviousPage()" (click)="goToPage(getCurrentPageDisplay() - 1)" [ngClass]="{
+                        'bg-gray-100 text-gray-400 cursor-not-allowed': !hasPreviousPage(),
+                        'bg-[#E74C3C] text-white hover:bg-[#C0392B]': hasPreviousPage()
+                    }" class="px-4 py-2 rounded-lg transition-all duration-200 font-medium flex items-center">
+                    <i nz-icon nzType="left" class="mr-1"></i>
+                    Trước
                 </button>
-
-                <span class="text-gray-700 font-medium">
-                    Trang {{currentPage + 1}} / {{totalPages}}
-                </span>
-
-                <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1"
-                    class="text-gray-600 hover:text-[#E74C3C] disabled:text-gray-300 disabled:cursor-not-allowed p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
+                <div class="flex items-center bg-gray-50 px-4 py-2 rounded-lg border">
+                    <span class="text-gray-700 font-medium">
+                        Trang {{ getCurrentPageDisplay() }} / {{ totalPages }}
+                    </span>
+                </div> <button [disabled]="!hasNextPage()" (click)="goToPage(getCurrentPageDisplay() + 1)" [ngClass]="{
+                        'bg-gray-100 text-gray-400 cursor-not-allowed': !hasNextPage(),
+                        'bg-[#E74C3C] text-white hover:bg-[#C0392B]': hasNextPage()
+                    }" class="px-4 py-2 rounded-lg transition-all duration-200 font-medium flex items-center">
+                    Sau
+                    <i nz-icon nzType="right" class="ml-1"></i>
                 </button>
+            </div> <!-- Page Info - Centered -->
+            <div class="text-center text-sm text-gray-600">
+                Trang <span class="font-semibold text-[#E74C3C]">{{ getCurrentPageDisplay() }}</span>
+                trên <span class="font-semibold">{{ totalPages }}</span>
             </div>
         </div>
     </div>

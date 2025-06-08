@@ -9,6 +9,7 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { DocumentService, Document } from '../../services/document.service';
 import { ApiService } from '../../services/api.service';
+import { LoanApplicationStatus } from '../../services/application.service';
 
 interface DocumentUpload {
     documentType: string;
@@ -29,6 +30,9 @@ export class ApplicationDetailComponent implements OnInit {
     isLoading: boolean = false;
     error: string | null = null;
     parsedPersonalInfo: any = {};
+
+    // Expose enum to template
+    LoanApplicationStatus = LoanApplicationStatus;
 
     // Danh sách tài liệu yêu cầu
     requiredDocuments: DocumentUpload[] = [];
@@ -78,9 +82,9 @@ export class ApplicationDetailComponent implements OnInit {
         'PENDING': 'Chờ xét duyệt',
         'UNDER_REVIEW': 'Đang xem xét',
         'APPROVED': 'Đã duyệt',
-        'REJECTED': 'Từ chối',
-        'CANCELLED': 'Đã hủy',
-        'DISBURSED': 'Đã giải ngân'
+        'REJECTED': 'Từ chối', 'CANCELLED': 'Đã hủy',
+        'PARTIALLY_DISBURSED': 'Giải ngân một phần',
+        'FULLY_DISBURSED': 'Đã giải ngân hoàn tất'
     };
 
     // For formatting values
@@ -315,10 +319,8 @@ export class ApplicationDetailComponent implements OnInit {
      * Custom function to handle the upload button click
      */
     uploadDocument(doc: DocumentUpload, event: Event): void {
-        event.preventDefault();
-
-        // Don't allow document uploads if application is not in NEW status
-        if (this.application && this.application.status !== 'NEW') {
+        event.preventDefault();        // Don't allow document uploads if application is not in NEW status
+        if (this.application && this.application.status !== LoanApplicationStatus.NEW) {
             this.notificationService.warning(
                 'Không thể cập nhật',
                 'Không thể cập nhật tài liệu sau khi hồ sơ đã được gửi yêu cầu xét duyệt'
@@ -351,9 +353,8 @@ export class ApplicationDetailComponent implements OnInit {
 
     /**
      * Get appropriate tooltip for document button based on application status and document state
-     */
-    getDocumentButtonTooltip(doc: DocumentUpload): string {
-        if (this.application && this.application.status !== 'NEW') {
+     */    getDocumentButtonTooltip(doc: DocumentUpload): string {
+        if (this.application && this.application.status !== LoanApplicationStatus.NEW) {
             return 'Không thể cập nhật tài liệu sau khi hồ sơ đã được gửi yêu cầu xét duyệt';
         }
 
@@ -362,16 +363,14 @@ export class ApplicationDetailComponent implements OnInit {
 
     /**
      * Get CSS class for application status
-     */
-    getStatusClass(status: string): string {
+     */    getStatusClass(status: string): string {
         switch (status) {
-            case 'NEW': return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'PENDING': return 'bg-orange-100 text-orange-800 border-orange-200';
-            case 'UNDER_REVIEW': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-            case 'APPROVED': return 'bg-green-100 text-green-800 border-green-200';
-            case 'REJECTED': return 'bg-red-100 text-red-800 border-red-200';
-            case 'CANCELLED': return 'bg-gray-100 text-gray-800 border-gray-200';
-            case 'DISBURSED': return 'bg-purple-100 text-purple-800 border-purple-200';
+            case LoanApplicationStatus.NEW: return 'bg-blue-100 text-blue-800 border-blue-200';
+            case LoanApplicationStatus.PENDING: return 'bg-orange-100 text-orange-800 border-orange-200';
+            case LoanApplicationStatus.REQUIRE_MORE_INFO: return 'bg-yellow-100 text-yellow-800 border-yellow-200'; case LoanApplicationStatus.APPROVED: return 'bg-green-100 text-green-800 border-green-200';
+            case LoanApplicationStatus.REJECTED: return 'bg-red-100 text-red-800 border-red-200';
+            case LoanApplicationStatus.PARTIALLY_DISBURSED: return 'bg-purple-100 text-purple-800 border-purple-200';
+            case LoanApplicationStatus.FULLY_DISBURSED: return 'bg-purple-100 text-purple-800 border-purple-200';
             default: return 'bg-gray-100 text-gray-800 border-gray-200';
         }
     }
@@ -398,16 +397,14 @@ export class ApplicationDetailComponent implements OnInit {
             nzOkDanger: true,
             nzCancelText: 'Không, giữ lại',
             nzOnOk: () => {
-                this.isLoading = true;
-
-                // Ensure applicationId is defined
+                this.isLoading = true;                                // Ensure applicationId is defined
                 if (this.application && this.application.id) {
                     this.loanService.cancelApplication(this.application.id).subscribe({
                         next: (response) => {
                             if (response && response.code === 1000) {
                                 // Cập nhật trạng thái trên UI
                                 if (this.application) {
-                                    this.application.status = 'CANCELLED';
+                                    this.application.status = LoanApplicationStatus.REJECTED;
                                 }
                             } else {
                                 console.error('Error response when cancelling application:', response);
@@ -465,15 +462,14 @@ export class ApplicationDetailComponent implements OnInit {
                 };                // Use the API service directly to create a notification
                 this.apiService.post<any>('/notifications', notificationPayload)
                     .subscribe({
-                        next: () => {
-                            // 2. Update application status to "PENDING" using new API
-                            this.loanService.updateApplicationStatus(this.application!.id!, 'PENDING')
+                        next: () => {                            // 2. Update application status to "PENDING" using new API
+                            this.loanService.updateApplicationStatus(this.application!.id!, LoanApplicationStatus.PENDING)
                                 .subscribe({
                                     next: (response) => {
                                         if (response && response.code === 1000) {
                                             // Update local application object
                                             if (this.application) {
-                                                this.application.status = 'PENDING';
+                                                this.application.status = LoanApplicationStatus.PENDING;
                                             }
 
                                             // Show success message

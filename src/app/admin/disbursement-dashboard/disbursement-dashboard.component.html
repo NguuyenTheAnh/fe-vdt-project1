@@ -1,1 +1,555 @@
-<p>disbursement-dashboard works!</p>
+<div class="min-h-screen">
+    <div>
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+                <div>
+                    <h1 class="text-3xl font-semibold mb-3 text-gray-800">Quản lý giải ngân</h1>
+                    <p class="text-gray-600">Quản lý và theo dõi tất cả các giao dịch giải ngân</p>
+                </div>
+                <div class="flex gap-3 flex-wrap">
+                    <button (click)="refreshData()" class="action-button btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Làm mới
+                    </button>
+                    <button (click)="openCreateModal()" class="action-button btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Tạo giải ngân
+                    </button>
+                    <button (click)="exportDisbursements()" class="action-button btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Xuất dữ liệu
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 statistics-card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 text-green-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-lg font-semibold text-gray-900">{{formatCurrency(totalDisbursedToday)}}</h2>
+                        <p class="text-sm text-gray-600">Giải ngân hôm nay</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 statistics-card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-lg font-semibold text-gray-900">{{formatCurrency(totalDisbursedThisMonth)}}</h2>
+                        <p class="text-sm text-gray-600">Giải ngân tháng này</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 statistics-card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-lg font-semibold text-gray-900">{{pendingDisbursements}}</h2>
+                        <p class="text-sm text-gray-600">Đơn chờ giải ngân</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 statistics-card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-lg font-semibold text-gray-900">{{totalElements}}</h2>
+                        <p class="text-sm text-gray-600">Tổng giao dịch</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="filter-section">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Search Input -->
+                <div class="lg:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+                    <div class="search-input-container">
+                        <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="onSearch()"
+                            placeholder="Tìm kiếm theo mã giao dịch, mã đơn vay..." class="form-input search-input">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="search-icon" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Application Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Đơn vay</label>
+                    <select [(ngModel)]="selectedApplicationId" (change)="onSearch()" class="form-select">
+                        <option value="">Tất cả đơn vay</option>
+                        <option *ngFor="let app of approvedApplications" [value]="app.id">
+                            #{{app.id}} - {{app.user.fullName}}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Sort Options -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sắp xếp theo</label>
+                    <div class="flex gap-2">
+                        <select [(ngModel)]="sortBy" (change)="onSortChange()" class="form-select flex-1">
+                            <option *ngFor="let option of sortOptions" [value]="option.value">{{option.label}}</option>
+                        </select>
+                        <button (click)="toggleSortDirection()"
+                            class="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" [class.transform]="sortDirection === 'desc'"
+                                [class.rotate-180]="sortDirection === 'desc'">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-6 flex gap-3 flex-wrap">
+                <button (click)="onSearch()" class="action-button btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Tìm kiếm
+                </button>
+                <button (click)="clearSearch()" class="action-button btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Xóa bộ lọc
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="error" class="filter-section !border-red-300 !border-l-red-500 bg-red-50 error-message">
+            <p class="flex items-center text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clip-rule="evenodd" />
+                </svg>
+                {{ error }}
+            </p>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="results-section">
+            <div class="results-header flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Danh sách giao dịch giải ngân</h3>
+                    <span class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                        Tổng: {{totalElements}} giao dịch
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-gray-600 whitespace-nowrap">Hiển thị:</label>
+                    <select [(ngModel)]="pageSize" (change)="onPageSizeChange()"
+                        class="form-select !w-auto min-w-[80px]">
+                        <option *ngFor="let size of pageSizeOptions" [value]="size">{{size}}</option>
+                    </select>
+                    <span class="text-sm text-gray-600 whitespace-nowrap">mục/trang</span>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="flex justify-center items-center py-16">
+                <div class="loading-spinner"></div>
+            </div>
+
+            <!-- Table -->
+            <div *ngIf="!isLoading" class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Mã giao dịch</th>
+                            <th>Đơn vay</th>
+                            <th>Khách hàng</th>
+                            <th>Số tiền</th>
+                            <th>Ngày giao dịch</th>
+                            <th>Ghi chú</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let disbursement of disbursements">
+                            <!-- Transaction ID -->
+                            <td>
+                                <div class="text-sm font-medium text-gray-900">#{{disbursement.transactionId}}</div>
+                            </td>
+
+                            <!-- Application Info -->
+                            <td>
+                                <div class="text-sm font-medium text-gray-900">#{{disbursement.applicationId}}</div>
+                                <div class="text-sm text-gray-500" *ngIf="disbursement.loanApplication">
+                                    {{disbursement.loanApplication.productName}}
+                                </div>
+                            </td>
+
+                            <!-- Customer Info -->
+                            <td>
+                                <div class="text-sm font-medium text-gray-900" *ngIf="disbursement.loanApplication">
+                                    {{disbursement.loanApplication.userEmail}}
+                                </div>
+                            </td>
+
+                            <!-- Amount -->
+                            <td>
+                                <div class="text-sm font-medium text-green-600">
+                                    {{formatCurrency(disbursement.amount)}}
+                                </div>
+                            </td>
+
+                            <!-- Transaction Date -->
+                            <td>
+                                <div class="text-sm text-gray-900">
+                                    {{formatTransactionDate(disbursement.transactionDate)}}</div>
+                                <div class="text-sm text-gray-500">{{formatDate(disbursement.createdAt)}}</div>
+                            </td>
+
+                            <!-- Notes -->
+                            <td>
+                                <div class="text-sm text-gray-700 max-w-xs truncate" [title]="disbursement.notes">
+                                    {{disbursement.notes || 'Không có ghi chú'}}
+                                </div>
+                            </td>
+
+                            <!-- Actions -->
+                            <td>
+                                <div class="flex items-center gap-2">
+                                    <!-- View button -->
+                                    <button (click)="openViewModal(disbursement)"
+                                        class="text-blue-600 hover:text-blue-800 transition-colors duration-200 p-1 rounded-full hover:bg-blue-50"
+                                        title="Xem chi tiết">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+
+                                    <!-- Delete button -->
+                                    <button (click)="deleteDisbursement(disbursement.transactionId)"
+                                        class="text-red-600 hover:text-red-800 transition-colors duration-200 p-1 rounded-full hover:bg-red-50"
+                                        title="Xóa giao dịch">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Empty State -->
+                <div *ngIf="disbursements.length === 0 && !isLoading" class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                    <h3 class="text-xl font-medium text-gray-600 mb-2">Không tìm thấy giao dịch nào</h3>
+                    <p class="text-gray-500">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm khác.</p>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div *ngIf="!isLoading && disbursements.length > 0" class="pagination-container">
+                <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+                    <div class="text-sm text-gray-700">
+                        Hiển thị {{currentPage * pageSize + 1}} - {{getEndIndex()}} trong {{totalElements}} kết quả
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <!-- Previous Button -->
+                        <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 0"
+                            class="pagination-button">
+                            Trước
+                        </button>
+
+                        <!-- Page Numbers -->
+                        <button *ngFor="let page of getPaginationArray()" (click)="onPageChange(page)"
+                            [class.active]="page === currentPage" class="pagination-button">
+                            {{page + 1}}
+                        </button>
+
+                        <!-- Next Button -->
+                        <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages - 1"
+                            class="pagination-button">
+                            Sau
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Disbursement Modal -->
+        <div *ngIf="isCreateModalOpen"
+            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                    <h2 class="text-2xl font-semibold text-gray-800">Tạo giao dịch giải ngân</h2>
+                    <button (click)="closeCreateModal()"
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6">
+                    <form (ngSubmit)="createDisbursement()" class="space-y-6">
+                        <!-- Application Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Đơn vay <span
+                                    class="text-red-500">*</span></label>
+                            <select [(ngModel)]="createForm.applicationId" name="applicationId" required
+                                class="form-select w-full" [disabled]="isLoadingApplications">
+                                <option value="0">-- Chọn đơn vay --</option>
+                                <option *ngFor="let app of approvedApplications" [value]="app.id">
+                                    #{{app.id}} - {{app.user.fullName}} - {{formatCurrency(app.requestedAmount)}}
+                                </option>
+                            </select>
+                            <p class="text-sm text-gray-500 mt-1">Chỉ hiển thị các đơn vay đã được duyệt</p>
+                        </div>
+
+                        <!-- Amount -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Số tiền giải ngân <span
+                                    class="text-red-500">*</span></label>
+                            <input type="number" [(ngModel)]="createForm.amount" name="amount" required min="1"
+                                step="1000" placeholder="Nhập số tiền giải ngân" class="form-input w-full">
+                            <p class="text-sm text-gray-500 mt-1">Số tiền không được vượt quá số tiền còn lại của đơn
+                                vay</p>
+                        </div>
+
+                        <!-- Transaction Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ngày giao dịch</label>
+                            <input type="datetime-local" [(ngModel)]="createForm.transactionDate" name="transactionDate"
+                                class="form-input w-full">
+                            <p class="text-sm text-gray-500 mt-1">Để trống sẽ sử dụng thời gian hiện tại</p>
+                        </div>
+
+                        <!-- Notes -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ghi chú</label>
+                            <textarea [(ngModel)]="createForm.notes" name="notes" rows="3"
+                                placeholder="Nhập ghi chú về giao dịch giải ngân..."
+                                class="form-input w-full resize-vertical"></textarea>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="flex gap-3 pt-4">
+                            <button type="submit" [disabled]="isCreating"
+                                class="flex-1 bg-[#E74C3C] text-white py-3 px-6 rounded-lg font-medium hover:bg-[#C0392B] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span *ngIf="!isCreating">Tạo giao dịch</span>
+                                <span *ngIf="isCreating" class="flex items-center justify-center">
+                                    <div
+                                        class="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2">
+                                    </div>
+                                    Đang tạo...
+                                </span>
+                            </button>
+                            <button type="button" (click)="closeCreateModal()"
+                                class="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+                                Hủy
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Disbursement Modal -->
+        <div *ngIf="isViewModalOpen && selectedDisbursement"
+            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto modal-content">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                    <h2 class="text-2xl font-semibold text-gray-800">Chi tiết giao dịch
+                        #{{selectedDisbursement.transactionId}}</h2>
+                    <button (click)="closeViewModal()"
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Transaction Information -->
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Thông tin giao dịch</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Mã giao dịch:</span>
+                                    <span class="font-medium">#{{selectedDisbursement.transactionId}}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Số tiền:</span>
+                                    <span
+                                        class="font-medium text-green-600">{{formatCurrency(selectedDisbursement.amount)}}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Ngày giao dịch:</span>
+                                    <span
+                                        class="font-medium">{{formatTransactionDate(selectedDisbursement.transactionDate)}}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Ngày tạo:</span>
+                                    <span class="font-medium">{{formatDate(selectedDisbursement.createdAt)}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Application Information -->
+                        <div class="bg-gray-50 p-4 rounded-lg" *ngIf="selectedDisbursement.loanApplication">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Thông tin đơn vay</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Mã đơn vay:</span>
+                                    <span class="font-medium">#{{selectedDisbursement.loanApplication.id}}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Khách hàng:</span>
+                                    <span class="font-medium">{{selectedDisbursement.loanApplication.userEmail}}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Sản phẩm:</span>
+                                    <span
+                                        class="font-medium">{{selectedDisbursement.loanApplication.productName}}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Số tiền vay:</span>
+                                    <span
+                                        class="font-medium">{{formatCurrency(selectedDisbursement.loanApplication.requestedAmount)}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg" *ngIf="selectedDisbursement.notes">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Ghi chú</h3>
+                            <p class="text-gray-700">{{selectedDisbursement.notes}}</p>
+                        </div>
+
+                        <!-- Disbursement Summary -->
+                        <div class="md:col-span-2 bg-blue-50 p-4 rounded-lg" *ngIf="disbursementSummary">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Tổng quan giải ngân</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-blue-600">
+                                        {{formatCurrency(disbursementSummary.totalDisbursedAmount)}}</div>
+                                    <div class="text-sm text-gray-600">Đã giải ngân</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-gray-600">
+                                        {{formatCurrency(disbursementSummary.remainingAmount)}}</div>
+                                    <div class="text-sm text-gray-600">Còn lại</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-green-600">
+                                        {{disbursementSummary.transactionCount}}</div>
+                                    <div class="text-sm text-gray-600">Giao dịch</div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Tiến độ giải ngân</span>
+                                    <span>{{calculateProgress(disbursementSummary.totalDisbursedAmount,
+                                        disbursementSummary.requestedAmount)}}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="h-2 rounded-full"
+                                        [class]="getProgressColorClass(calculateProgress(disbursementSummary.totalDisbursedAmount, disbursementSummary.requestedAmount))"
+                                        [style.width.%]="calculateProgress(disbursementSummary.totalDisbursedAmount, disbursementSummary.requestedAmount)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Badge -->
+                            <div class="flex justify-center">
+                                <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full"
+                                    [class]="getDisbursementStatusColorClass(disbursementSummary.isFullyDisbursed)">
+                                    {{getDisbursementStatusLabel(disbursementSummary.isFullyDisbursed)}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-6 border-t border-gray-200 flex justify-end">
+                    <button (click)="closeViewModal()"
+                        class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

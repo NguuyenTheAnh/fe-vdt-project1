@@ -30,7 +30,8 @@ export class ApplicationListComponent implements OnInit {
     'APPROVED': 'Đã duyệt',
     'REJECTED': 'Từ chối',
     'CANCELLED': 'Đã hủy',
-    'DISBURSED': 'Đã giải ngân'
+    'PARTIALLY_DISBURSED': 'Giải ngân một phần',
+    'FULLY_DISBURSED': 'Đã giải ngân hoàn tất'
   };
 
   // For formatting values

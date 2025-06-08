@@ -176,29 +176,6 @@
                             <div class="text-base font-medium">{{ statusTranslations[application.status || ''] || 'N/A'
                                 }}</div>
                         </div>
-                        <div *ngIf="application.disbursedAmount" class="bg-gray-50 rounded-lg p-4 info-card">
-                            <div class="text-sm text-gray-500 mb-1 flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                Số tiền đã giải ngân
-                            </div>
-                            <div class="text-lg font-semibold text-green-600">{{
-                                formatAmount(application.disbursedAmount) }}</div>
-                        </div>
-                        <div *ngIf="application.disbursedDate" class="bg-gray-50 rounded-lg p-4 info-card">
-                            <div class="text-sm text-gray-500 mb-1 flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                Ngày giải ngân
-                            </div>
-                            <div class="text-base font-medium">{{ formatDate(application.disbursedDate) }}</div>
-                        </div>
                     </div>
                 </div>
 
@@ -340,14 +317,12 @@
                                         <div
                                             class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-[#E74C3C]">
                                         </div>
-                                    </div>
-
-                                    <button (click)="uploadDocument(doc, $event)"
+                                    </div> <button (click)="uploadDocument(doc, $event)"
                                         class="btn-primary border-gray-100 upload-btn bg-[#E74C3C] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200 text-sm font-medium flex items-center shadow-md hover:shadow-lg"
-                                        [class.cursor-pointer]="application.status === 'NEW' && !doc.uploading"
-                                        [class.opacity-50]="application.status !== 'NEW' || doc.uploading"
-                                        [disabled]="doc.uploading || application.status !== 'NEW'" nz-tooltip
-                                        [nzTooltipTitle]="getDocumentButtonTooltip(doc)">
+                                        [class.cursor-pointer]="application.status === LoanApplicationStatus.NEW && !doc.uploading"
+                                        [class.opacity-50]="application.status !== LoanApplicationStatus.NEW || doc.uploading"
+                                        [disabled]="doc.uploading || application.status !== LoanApplicationStatus.NEW"
+                                        nz-tooltip [nzTooltipTitle]="getDocumentButtonTooltip(doc)">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -372,9 +347,8 @@
                             d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                     </svg>
                     Quay lại
-                </button>
-                <button *ngIf="application.status === 'NEW'" (click)="requestApplicationReview()"
-                    [disabled]="!areAllDocumentsUploaded()"
+                </button> <button *ngIf="application.status === LoanApplicationStatus.NEW"
+                    (click)="requestApplicationReview()" [disabled]="!areAllDocumentsUploaded()"
                     class="btn-primary cursor-pointer border-gray-100 bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition duration-200 mr-3 flex items-center"
                     nz-tooltip
                     [nzTooltipTitle]="areAllDocumentsUploaded() ? 'Gửi yêu cầu xét duyệt hồ sơ' : 'Vui lòng tải lên tất cả tài liệu yêu cầu trước khi gửi'">
@@ -384,8 +358,7 @@
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                     Yêu cầu duyệt hồ sơ
-                </button>
-                <button *ngIf="application.status === 'NEW'" (click)="cancelApplication()"
+                </button> <button *ngIf="application.status === LoanApplicationStatus.NEW" (click)="cancelApplication()"
                     class="btn-primary cursor-pointer border-gray-100 bg-[#E74C3C] text-white px-5 py-2 rounded-lg hover:bg-red-700 transition duration-200 flex items-center"
                     nz-tooltip nzTooltipTitle="Hủy hồ sơ vay hiện tại">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"

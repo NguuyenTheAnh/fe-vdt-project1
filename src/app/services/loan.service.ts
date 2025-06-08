@@ -57,8 +57,6 @@ export interface LoanApplication {
     requestedTerm: number;
     personalInfo: string; // Dạng JSON string với format: {"Thu nhập":15000000,"Nghề nghiệp":"Nhân viên văn phòng"}
     status?: string;
-    disbursedAmount?: number | null;
-    disbursedDate?: string | null;
     internalNotes?: string | null;
     createdAt?: string;
     updatedAt?: string;
