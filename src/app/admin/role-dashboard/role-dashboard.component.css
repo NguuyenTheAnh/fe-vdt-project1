@@ -1,0 +1,19 @@
+/* Modal rounded corners styling */
+::ng-deep .rounded-modal .ant-modal-content {
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+::ng-deep .rounded-modal .ant-modal-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+
+::ng-deep .rounded-modal .ant-modal-body {
+    padding: 0 !important;
+    border-radius: 0 0 12px 12px !important;
+}
+
+/* Ensure the modal has rounded corners */
+::ng-deep .rounded-modal .ant-modal {
+    border-radius: 12px !important;
+}

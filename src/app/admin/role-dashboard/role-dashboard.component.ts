@@ -29,6 +29,13 @@ export class RoleDashboardComponent implements OnInit {
   newRoleName: string = '';
   isCreatingRole: boolean = false;
 
+  // Role suggestions for the modal
+  roleSuggestions = [
+    { name: 'DISBURSEMENT_MANAGER', description: 'Quản lý giải ngân và theo dõi khoản vay' },
+    { name: 'REPORT_VIEWER', description: 'Xem báo cáo và thống kê hệ thống' },
+    { name: 'USER_MANAGER', description: 'Quản lý người dùng và tài khoản' },
+  ];
+
   constructor(
     private roleService: RoleService,
     private notification: NzNotificationService,
@@ -364,5 +371,14 @@ export class RoleDashboardComponent implements OnInit {
     this.permissions.forEach(permission => {
       this.permissionStates[permission.name] = false;
     });
+  }
+
+  /**
+   * Select a role suggestion and fill the input
+   */
+  selectRoleSuggestion(roleName: string): void {
+    if (!this.isCreatingRole) {
+      this.newRoleName = roleName;
+    }
   }
 }
