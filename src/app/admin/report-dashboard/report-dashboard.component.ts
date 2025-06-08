@@ -252,15 +252,53 @@ export class ReportDashboardComponent implements OnInit {
   }
 
   /**
-   * Format currency for display
+   * Get last update time for header status
+   */
+  getLastUpdateTime(): string {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    return `lúc ${timeStr}`;
+  }
+
+  /**
+   * Get day of week in Vietnamese
+   */
+  getDayOfWeek(dateStr: string): string {
+    const date = new Date(dateStr);
+    const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+    return days[date.getDay()];
+  }
+
+  /**
+   * Get progress percentage for visual representation
+   */
+  getProgressPercentage(amount: number): number {
+    const maxAmount = this.getMaxTimeAmount();
+    return maxAmount > 0 ? (amount / maxAmount) * 100 : 0;
+  }
+
+  /**
+   * Get average amount per day
+   */
+  getAverageAmount(): number {
+    if (this.timeData.length === 0) return 0;
+    const total = this.timeData.reduce((sum, item) => sum + item.totalApprovedAmount, 0);
+    return total / this.timeData.length;
+  }
+
+  /**
+   * Enhanced format currency with better display
    */
   formatCurrency(amount: number): string {
     if (amount >= 1000000000) {
       return (amount / 1000000000).toFixed(1) + ' tỷ VND';
     } else if (amount >= 1000000) {
-      return (amount / 1000000).toFixed(1) + ' triệu VND';
+      return (amount / 1000000).toFixed(1) + ' tr VND';
     } else if (amount >= 1000) {
-      return (amount / 1000).toFixed(0) + ' nghìn VND';
+      return (amount / 1000).toFixed(0) + 'k VND';
     }
     return amount.toLocaleString('vi-VN') + ' VND';
   }
@@ -305,5 +343,40 @@ export class ReportDashboardComponent implements OnInit {
    */
   getMaxTimeAmount(): number {
     return Math.max(...this.timeData.map(s => s.totalApprovedAmount), 1);
+  }
+
+  // Export functionality
+  async exportReport(): Promise<void> {
+    try {
+      const reportData = {
+        summary: this.dashboardSummary,
+        statusStatistics: this.statusStatistics,
+        productStatistics: this.productStatistics,
+        approvalRatio: this.approvalRatio,
+        timeData: this.timeData,
+        exportDate: new Date().toISOString(),
+        dateRange: {
+          startDate: this.startDate,
+          endDate: this.endDate,
+          period: this.selectedPeriod
+        }
+      };
+
+      const blob = new Blob([JSON.stringify(reportData, null, 2)], {
+        type: 'application/json'
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bao-cao-thong-ke-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export failed:', error);
+      this.error = 'Không thể xuất báo cáo. Vui lòng thử lại.';
+    }
   }
 }

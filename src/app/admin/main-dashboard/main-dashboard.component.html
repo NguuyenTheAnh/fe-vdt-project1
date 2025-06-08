@@ -1,1 +1,148 @@
-<p>main-dashboard works!</p>
+<div class="dashboard-container min-h-screen p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="dashboard-header mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard Quản Trị</h1>
+                    <p class="text-gray-600">Chào mừng bạn đến với hệ thống quản lý khoản vay</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-500">Hôm nay</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ currentDate | date:'dd/MM/yyyy' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Section -->
+        <div class="stats-section mb-8">
+            <!-- Error Message -->
+            <div *ngIf="dashboardError"
+                class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-center justify-between">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z">
+                        </path>
+                    </svg>
+                    <div>
+                        <p class="text-red-800 font-medium">{{ dashboardError }}</p>
+                        <p class="text-red-600 text-sm">Vui lòng thử lại hoặc liên hệ quản trị viên</p>
+                    </div>
+                </div>
+                <button (click)="retryLoadData()"
+                    class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-md transition-colors">
+                    Thử lại
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div *ngFor="let stat of quickStats"
+                    class="stat-card bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-600 mb-1">{{ stat.title }}</p>
+
+                            <!-- Loading State -->
+                            <div *ngIf="stat.isLoading" class="animate-pulse">
+                                <div class="h-8 bg-gray-200 rounded w-20 mb-2"></div>
+                                <div class="h-4 bg-gray-200 rounded w-16"></div>
+                            </div>
+
+                            <!-- Data State -->
+                            <div *ngIf="!stat.isLoading">
+                                <p class="text-2xl font-bold text-gray-900">{{ stat.value }}</p>
+                                <p *ngIf="stat.change" class="text-sm font-medium mt-1"
+                                    [ngClass]="stat.title === 'Đơn vay bị từ chối' ? 'text-red-600' : 'text-green-600'">
+                                    {{ stat.change }}
+                                    <span *ngIf="stat.title !== 'Tỷ lệ duyệt' && stat.title !== 'Đơn vay bị từ chối'">
+                                        duyệt</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center"
+                                [ngClass]="stat.bgColor">
+                                <!-- Loading spinner -->
+                                <div *ngIf="stat.isLoading" class="animate-spin rounded-full h-6 w-6 border-b-2"
+                                    [ngClass]="stat.color.replace('text-', 'border-')"></div>
+                                <!-- Icon -->
+                                <svg *ngIf="!stat.isLoading" class="w-6 h-6" [ngClass]="stat.color" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        [attr.d]="stat.icon"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Cards Section -->
+        <div class="navigation-section">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Quản Lý Hệ Thống</h2>
+                <p class="text-gray-600">Chọn một mục để bắt đầu quản lý</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div *ngFor="let item of dashboardItems"
+                    class="nav-card group cursor-pointer bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-1"
+                    (click)="navigateTo(item.route)">
+
+                    <!-- Card Header with Gradient -->
+                    <div class="card-header h-24 bg-gradient-to-r p-6 flex items-center justify-between text-white relative overflow-hidden"
+                        [ngClass]="item.color">
+                        <div class="relative z-10">
+                            <h3 class="text-xl font-bold">{{ item.title }}</h3>
+                        </div>
+                        <div class="relative z-10">
+                            <svg class="w-8 h-8 opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    [attr.d]="item.icon"></path>
+                            </svg>
+                        </div>
+
+                        <!-- Decorative elements -->
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -translate-y-16 translate-x-16">
+                        </div>
+                        <div
+                            class="absolute bottom-0 left-0 w-20 h-20 bg-white opacity-10 rounded-full translate-y-10 -translate-x-10">
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body p-6">
+                        <p
+                            class="text-gray-600 leading-relaxed group-hover:text-gray-800 transition-colors duration-300">
+                            {{ item.description }}
+                        </p>
+
+                        <!-- Action indicator -->
+                        <div class="flex items-center justify-between mt-4">
+                            <span
+                                class="text-sm text-gray-500 group-hover:text-gray-700 transition-colors duration-300">
+                                Nhấn để truy cập
+                            </span>
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-red-500 group-hover:translate-x-1 transition-all duration-300"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Hover effect overlay -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-transparent to-red-50 opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,294 @@
+/* Main Dashboard Styles */
+.dashboard-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100vh;
+}
+
+.dashboard-header {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Stats Section */
+.stats-section {
+    animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.stat-card.loading {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.stat-card .loading-shimmer {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.stat-card:hover {
+    border-color: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(239, 68, 68, 0.05);
+}
+
+/* Navigation Cards */
+.navigation-section {
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.nav-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s ease;
+}
+
+.nav-card:hover::before {
+    left: 100%;
+}
+
+.nav-card:hover {
+    border-color: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(239, 68, 68, 0.1);
+}
+
+.nav-card .card-header {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-card .card-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-card:hover .card-header::after {
+    opacity: 1;
+}
+
+.nav-card .card-body {
+    position: relative;
+    z-index: 1;
+}
+
+/* Gradient Colors */
+.from-blue-500 {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.from-green-500 {
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+}
+
+.from-purple-500 {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+}
+
+.from-orange-500 {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.from-indigo-500 {
+    background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+}
+
+.from-red-500 {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.from-teal-500 {
+    background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+}
+
+/* Recent Activity Section */
+.recent-activity-section {
+    animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+
+.activity-item {
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    border-color: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Loading States and Animations */
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error State Styles */
+.error-state {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-color: #fecaca;
+}
+
+.retry-button {
+    transition: all 0.2s ease;
+}
+
+.retry-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.875rem;
+    }
+
+    .nav-card {
+        margin-bottom: 1rem;
+    }
+
+    .stats-section .grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .navigation-section .grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-card .text-2xl {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .navigation-section .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Accessibility improvements */
+.nav-card:focus {
+    outline: 2px solid #ef4444;
+    outline-offset: 2px;
+}
+
+.nav-card:focus-visible {
+    outline: 2px solid #ef4444;
+    outline-offset: 2px;
+}
+
+/* Custom scrollbar for better UX */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Print styles */
+@media print {
+    .dashboard-container {
+        background: white;
+        box-shadow: none;
+    }
+
+    .nav-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
+    }
+}

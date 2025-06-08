@@ -1,54 +1,60 @@
 <!-- Report Dashboard Page -->
-<div class="min-h-screen bg-[#F5F5F5]">
-    <!-- Page Header -->
-    <div class="bg-gradient-to-r from-[#E74C3C] to-[#C0392B] py-8">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
-                        Báo cáo & Thống kê
-                    </h1>
-                    <p class="text-white opacity-90 text-lg">
-                        Tổng quan về hoạt động và hiệu quả kinh doanh
-                    </p>
+<div class="min-h-screen">
+    <div>
+        <!-- Page Header -->
+        <div class="page-header enhanced-header">
+            <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+                <div class="header-content">
+                    <div class="flex items-center gap-3 mb-3">
+                        <h1 class="text-3xl text-gray-800 tracking-tight">Báo cáo & Thống kê</h1>
+                    </div>
+                    <p class="text-gray-600 text-lg">Tổng quan về hoạt động và hiệu quả kinh doanh</p>
+                    <div class="flex items-center gap-2 mt-3">
+                        <div class="status-indicator"></div>
+                        <span class="text-sm text-gray-500">Dữ liệu được cập nhật {{ getLastUpdateTime() }}</span>
+                    </div>
                 </div>
-                <div class="mt-4 md:mt-0">
+                <div class="flex gap-3 flex-wrap">
                     <button (click)="refreshSection('all')" [disabled]="isLoading"
-                        class="bg-white bg-opacity-10 hover:bg-opacity-20 text-white px-6 py-3 rounded-lg transition-all duration-300 flex items-center">
-                        <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
+                        class="action-button btn-secondary enhanced-button"
+                        [attr.data-tooltip]="'Làm mới tất cả dữ liệu'">
+                        <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        <div *ngIf="isLoading"
-                            class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
+                        <div *ngIf="isLoading" class="loading-spinner-small"></div>
                         {{ isLoading ? 'Đang tải...' : 'Làm mới' }}
+                    </button>
+                    <button (click)="exportReport()" class="action-button btn-primary enhanced-button"
+                        [attr.data-tooltip]="'Xuất báo cáo dưới dạng JSON'">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Xuất báo cáo
                     </button>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 py-8">
         <!-- Global Loading State -->
         <div *ngIf="isLoading" class="flex justify-center items-center py-20">
             <div class="text-center">
-                <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#E74C3C] mx-auto mb-4">
-                </div>
+                <div class="loading-spinner mx-auto mb-4"></div>
                 <p class="text-gray-600 text-lg">Đang tải dữ liệu báo cáo...</p>
             </div>
         </div>
 
         <!-- Global Error State -->
-        <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg mb-8">
+        <div *ngIf="error" class="filter-section !border-red-300 !border-l-red-500 bg-red-50 error-message">
             <div class="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-red-600" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span class="font-medium">{{ error }}</span>
+                <span class="font-medium text-red-700">{{ error }}</span>
             </div>
         </div>
 
@@ -57,139 +63,165 @@
             <!-- Dashboard Summary Cards -->
             <div *ngIf="dashboardSummary" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Applications Card -->
-                <div
-                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-l-4 border-[#E74C3C]">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-medium">Tổng số hồ sơ</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">{{ dashboardSummary.totalApplications |
-                                number }}</p>
-                        </div>
-                        <div class="bg-[#E74C3C] bg-opacity-10 p-3 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#E74C3C]" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                <div class="enhanced-statistics-card bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+                    <div class="card-header">
+                        <div class="icon-wrapper bg-red-100 text-red-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-number">{{ dashboardSummary.totalApplications | number }}</h2>
+                            <p class="card-label">Tổng số hồ sơ</p>
+                            <div class="card-trend positive">
+                                <svg class="trend-icon" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span>+12%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Approved Applications Card -->
-                <div
-                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-l-4 border-green-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-medium">Đã duyệt</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">{{ dashboardSummary.approvedCount | number
-                                }}</p>
-                        </div>
-                        <div class="bg-green-100 p-3 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                <div class="enhanced-statistics-card bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                    <div class="card-header">
+                        <div class="icon-wrapper bg-green-100 text-green-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-number">{{ dashboardSummary.approvedCount | number }}</h2>
+                            <p class="card-label">Đã duyệt</p>
+                            <div class="card-trend positive">
+                                <svg class="trend-icon" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span>+8%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Rejected Applications Card -->
-                <div
-                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-l-4 border-red-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-medium">Từ chối</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">{{ dashboardSummary.rejectedCount | number
-                                }}</p>
-                        </div>
-                        <div class="bg-red-100 p-3 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                <div class="enhanced-statistics-card bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200">
+                    <div class="card-header">
+                        <div class="icon-wrapper bg-yellow-100 text-yellow-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-number">{{ dashboardSummary.rejectedCount | number }}</h2>
+                            <p class="card-label">Từ chối</p>
+                            <div class="card-trend negative">
+                                <svg class="trend-icon" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span>-3%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Approval Rate Card -->
-                <div
-                    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-l-4 border-blue-500">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-medium">Tỷ lệ duyệt</p>
-                            <p class="text-3xl font-bold text-gray-800 mt-2">{{
-                                formatPercentage(dashboardSummary.approvalRate) }}</p>
-                        </div>
-                        <div class="bg-blue-100 p-3 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                <div class="enhanced-statistics-card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                    <div class="card-header">
+                        <div class="icon-wrapper bg-blue-100 text-blue-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-number">{{ formatPercentage(dashboardSummary.approvalRate) }}</h2>
+                            <p class="card-label">Tỷ lệ duyệt</p>
+                            <div class="card-trend positive">
+                                <svg class="trend-icon" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span>+5%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Charts Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Status Statistics Chart -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-semibold text-gray-800">Thống kê theo trạng thái</h3>
-                        <button (click)="refreshSection('status')" [disabled]="isStatusLoading"
-                            class="text-gray-400 hover:text-[#E74C3C] transition-colors duration-200">
-                            <svg *ngIf="!isStatusLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <div *ngIf="isStatusLoading"
-                                class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#E74C3C]"></div>
-                        </button>
+                <div class="results-section">
+                    <div class="results-header">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-800">Thống kê theo trạng thái</h3>
+                            <button (click)="refreshSection('status')" [disabled]="isStatusLoading"
+                                class="action-button btn-secondary !p-2">
+                                <svg *ngIf="!isStatusLoading" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <div *ngIf="isStatusLoading" class="loading-spinner !w-4 !h-4"></div>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Status Chart Loading -->
-                    <div *ngIf="isStatusLoading" class="flex justify-center items-center h-64">
-                        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#E74C3C]"></div>
+                    <div *ngIf="isStatusLoading" class="flex justify-center items-center h-64 p-6">
+                        <div class="loading-spinner"></div>
                     </div>
 
                     <!-- Status Chart Error -->
-                    <div *ngIf="statusError" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        <p class="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            {{ statusError }}
-                        </p>
+                    <div *ngIf="statusError" class="p-6">
+                        <div class="filter-section !border-red-300 !border-l-red-500 bg-red-50 error-message">
+                            <div class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-600" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="font-medium text-red-700">{{ statusError }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Status Chart Content -->
-                    <div *ngIf="!isStatusLoading && !statusError && statusStatistics.length > 0">
+                    <div *ngIf="!isStatusLoading && !statusError && statusStatistics.length > 0" class="p-6">
                         <!-- Simple Bar Chart Representation -->
-                        <div class="space-y-3">
+                        <div class="space-y-4">
                             <div *ngFor="let stat of statusStatistics" class="flex items-center">
-                                <div class="w-24 text-sm text-gray-600 font-medium">{{ stat.statusText }}</div>
+                                <div class="w-24 text-sm text-gray-700 font-medium">{{ stat.statusText }}</div>
                                 <div class="flex-1 mx-4">
-                                    <div class="bg-gray-200 rounded-full h-4 relative overflow-hidden">
-                                        <div class="h-full rounded-full transition-all duration-1000"
+                                    <div class="bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                                        <div class="h-full rounded-full transition-all duration-1000 chart-bar"
                                             [style.width.%]="(stat.count / getMaxStatusCount()) * 100"
                                             [style.background-color]="stat.color"></div>
                                     </div>
                                 </div>
-                                <div class="w-16 text-right text-sm font-semibold text-gray-800">{{ stat.count }}</div>
+                                <div class="w-16 text-right text-sm font-semibold text-gray-900">{{ stat.count }}</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Empty State -->
                     <div *ngIf="!isStatusLoading && !statusError && statusStatistics.length === 0"
-                        class="text-center py-12">
+                        class="text-center py-12 p-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -200,41 +232,43 @@
                 </div>
 
                 <!-- Product Statistics Chart -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-semibold text-gray-800">Thống kê theo sản phẩm</h3>
-                        <button (click)="refreshSection('product')" [disabled]="isProductLoading"
-                            class="text-gray-400 hover:text-[#E74C3C] transition-colors duration-200">
-                            <svg *ngIf="!isProductLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <div *ngIf="isProductLoading"
-                                class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#E74C3C]"></div>
-                        </button>
+                <div class="results-section">
+                    <div class="results-header">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-800">Thống kê theo sản phẩm</h3>
+                            <button (click)="refreshSection('product')" [disabled]="isProductLoading"
+                                class="action-button btn-secondary !p-2">
+                                <svg *ngIf="!isProductLoading" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <div *ngIf="isProductLoading" class="loading-spinner !w-4 !h-4"></div>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Product Chart Loading -->
-                    <div *ngIf="isProductLoading" class="flex justify-center items-center h-64">
-                        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#E74C3C]"></div>
+                    <div *ngIf="isProductLoading" class="flex justify-center items-center h-64 p-6">
+                        <div class="loading-spinner"></div>
                     </div>
 
                     <!-- Product Chart Error -->
-                    <div *ngIf="productError" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        <p class="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            {{ productError }}
-                        </p>
+                    <div *ngIf="productError" class="p-6">
+                        <div class="filter-section !border-red-300 !border-l-red-500 bg-red-50 error-message">
+                            <div class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-600" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="font-medium text-red-700">{{ productError }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Product Chart Content -->
-                    <div *ngIf="!isProductLoading && !productError && productStatistics.length > 0">
+                    <div *ngIf="!isProductLoading && !productError && productStatistics.length > 0" class="p-6">
                         <!-- Simple Bar Chart Representation -->
                         <div class="space-y-3">
                             <div *ngFor="let stat of productStatistics" class="flex items-center">
@@ -247,14 +281,14 @@
                                             [style.background-color]="stat.color"></div>
                                     </div>
                                 </div>
-                                <div class="w-16 text-right text-sm font-semibold text-gray-800">{{ stat.count }}</div>
+                                <div class="w-16 text-right text-sm font-semibold text-gray-900">{{ stat.count }}</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Empty State -->
                     <div *ngIf="!isProductLoading && !productError && productStatistics.length === 0"
-                        class="text-center py-12">
+                        class="text-center py-12 p-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -266,44 +300,45 @@
             </div>
 
             <!-- Second Row Charts -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                 <!-- Approval Ratio Chart -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-semibold text-gray-800">Tỷ lệ duyệt/từ chối</h3>
-                        <button (click)="refreshSection('approval')" [disabled]="isApprovalLoading"
-                            class="text-gray-400 hover:text-[#E74C3C] transition-colors duration-200">
-                            <svg *ngIf="!isApprovalLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <div *ngIf="isApprovalLoading"
-                                class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#E74C3C]"></div>
-                        </button>
+                <div class="results-section">
+                    <div class="results-header">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-800">Tỷ lệ duyệt/từ chối</h3>
+                            <button (click)="refreshSection('approval')" [disabled]="isApprovalLoading"
+                                class="action-button btn-secondary !p-2">
+                                <svg *ngIf="!isApprovalLoading" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <div *ngIf="isApprovalLoading" class="loading-spinner !w-4 !h-4"></div>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Approval Chart Loading -->
-                    <div *ngIf="isApprovalLoading" class="flex justify-center items-center h-64">
-                        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#E74C3C]"></div>
+                    <div *ngIf="isApprovalLoading" class="flex justify-center items-center h-64 p-6">
+                        <div class="loading-spinner"></div>
                     </div>
 
                     <!-- Approval Chart Error -->
-                    <div *ngIf="approvalError"
-                        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        <p class="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            {{ approvalError }}
-                        </p>
+                    <div *ngIf="approvalError" class="p-6">
+                        <div class="filter-section !border-red-300 !border-l-red-500 bg-red-50 error-message">
+                            <div class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-600" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="font-medium text-red-700">{{ approvalError }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Approval Chart Content -->
-                    <div *ngIf="!isApprovalLoading && !approvalError && approvalRatio" class="text-center">
+                    <div *ngIf="!isApprovalLoading && !approvalError && approvalRatio" class="text-center p-6">
                         <!-- Circular Progress Chart -->
                         <div class="relative w-48 h-48 mx-auto mb-6">
                             <svg class="w-48 h-48 transform -rotate-90" viewBox="0 0 100 100">
@@ -316,7 +351,7 @@
                             </svg>
                             <div class="absolute inset-0 flex items-center justify-center">
                                 <div class="text-center">
-                                    <div class="text-3xl font-bold text-gray-800">{{
+                                    <div class="text-3xl font-bold text-gray-900">{{
                                         formatPercentage(approvalRatio.approvalRate) }}</div>
                                     <div class="text-sm text-gray-600">Tỷ lệ duyệt</div>
                                 </div>
@@ -339,7 +374,7 @@
                     </div>
 
                     <!-- Empty State -->
-                    <div *ngIf="!isApprovalLoading && !approvalError && !approvalRatio" class="text-center py-12">
+                    <div *ngIf="!isApprovalLoading && !approvalError && !approvalRatio" class="text-center py-12 p-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -350,30 +385,29 @@
                 </div>
 
                 <!-- Time-based Chart -->
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-semibold text-gray-800">Số tiền duyệt theo thời gian</h3>
-                        <button (click)="refreshSection('time')" [disabled]="isTimeLoading"
-                            class="text-gray-400 hover:text-[#E74C3C] transition-colors duration-200">
-                            <svg *ngIf="!isTimeLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <div *ngIf="isTimeLoading"
-                                class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#E74C3C]"></div>
-                        </button>
+                <div class="results-section">
+                    <div class="results-header">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-800">Số tiền duyệt theo thời gian</h3>
+                            <button (click)="refreshSection('time')" [disabled]="isTimeLoading"
+                                class="action-button btn-secondary !p-2">
+                                <svg *ngIf="!isTimeLoading" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <div *ngIf="isTimeLoading" class="loading-spinner !w-4 !h-4"></div>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Time Period Selector -->
-                    <div class="mb-6">
+                    <div class="filter-section !mb-0">
                         <div class="flex flex-wrap gap-2 mb-4">
                             <button *ngFor="let period of ['today', 'week', 'month', 'quarter', 'year']"
-                                (click)="onPeriodChange(period)" [class.bg-[#E74C3C]]="selectedPeriod === period"
-                                [class.text-white]="selectedPeriod === period"
-                                [class.bg-gray-100]="selectedPeriod !== period"
-                                [class.text-gray-700]="selectedPeriod !== period"
-                                class="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-[#E74C3C] hover:text-white">
+                                (click)="onPeriodChange(period)"
+                                [class]="selectedPeriod === period ? 'action-button btn-primary' : 'action-button btn-secondary'"
+                                class="!px-3 !py-1.5 !text-sm">
                                 {{ period === 'today' ? 'Hôm nay' :
                                 period === 'week' ? 'Tuần' :
                                 period === 'month' ? 'Tháng' :
@@ -382,78 +416,138 @@
                         </div>
 
                         <!-- Custom Date Range -->
-                        <div class="flex flex-wrap gap-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs text-gray-600 mb-1">Từ ngày</label>
+                                <label class="form-label">Từ ngày</label>
                                 <input type="date" [(ngModel)]="startDate" (change)="onDateRangeChange()"
-                                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#E74C3C]">
+                                    class="form-input">
                             </div>
                             <div>
-                                <label class="block text-xs text-gray-600 mb-1">Đến ngày</label>
+                                <label class="form-label">Đến ngày</label>
                                 <input type="date" [(ngModel)]="endDate" (change)="onDateRangeChange()"
-                                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#E74C3C]">
+                                    class="form-input">
                             </div>
                         </div>
                     </div>
 
                     <!-- Time Chart Loading -->
-                    <div *ngIf="isTimeLoading" class="flex justify-center items-center h-64">
-                        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#E74C3C]"></div>
+                    <div *ngIf="isTimeLoading" class="flex justify-center items-center h-64 p-6">
+                        <div class="loading-spinner"></div>
                     </div>
 
                     <!-- Time Chart Error -->
-                    <div *ngIf="timeError" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        <p class="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            {{ timeError }}
-                        </p>
+                    <div *ngIf="timeError" class="p-6">
+                        <div class="filter-section !border-red-300 !border-l-red-500 bg-red-50 error-message">
+                            <div class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-600" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="font-medium text-red-700">{{ timeError }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Time Chart Content -->
-                    <div *ngIf="!isTimeLoading && !timeError && timeData.length > 0">
-                        <!-- Summary -->
-                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
-                            <div class="grid grid-cols-2 gap-4 text-center">
-                                <div>
-                                    <p class="text-2xl font-bold text-[#E74C3C]">{{
-                                        formatCurrency(getTotalApprovedAmount()) }}</p>
-                                    <p class="text-xs text-gray-600">Tổng số tiền duyệt</p>
+                    <div *ngIf="!isTimeLoading && !timeError && timeData.length > 0" class="p-6">
+                        <!-- Enhanced Chart Visualization -->
+                        <div class="space-y-3">
+                            <div *ngFor="let item of timeData; let i = index"
+                                class="group relative overflow-hidden bg-gradient-to-r from-white to-gray-50 border border-gray-200 rounded-xl p-4 hover:shadow-lg hover:border-blue-300 transition-all duration-300 cursor-pointer">
+                                <!-- Animated Background Bar -->
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-blue-50 to-green-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 </div>
-                                <div>
-                                    <p class="text-2xl font-bold text-gray-800">{{ getTotalApplicationsFromTime() |
-                                        number }}</p>
-                                    <p class="text-xs text-gray-600">Tổng số hồ sơ</p>
+
+                                <!-- Content -->
+                                <div class="relative flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <!-- Date Icon with Animation -->
+                                        <div
+                                            class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+
+                                        <!-- Date and Progress -->
+                                        <div class="flex-grow">
+                                            <div class="flex items-center space-x-2 mb-2">
+                                                <span class="font-semibold text-gray-800">{{ item.date |
+                                                    date:'dd/MM/yyyy' }}</span>
+                                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                                                    {{ getDayOfWeek(item.date) }}
+                                                </span>
+                                            </div>
+
+                                            <!-- Progress Bar -->
+                                            <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                                                <div class="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full transition-all duration-1000 ease-out"
+                                                    [style.width.%]="getProgressPercentage(item.totalApprovedAmount)">
+                                                </div>
+                                            </div>
+                                            <div class="text-xs text-gray-500">{{ item.applicationCount }} giao dịch
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Amount with Trend -->
+                                    <div class="text-right">
+                                        <div
+                                            class="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
+                                            {{ formatCurrency(item.totalApprovedAmount) }}
+                                        </div>
+                                        <div class="flex items-center justify-end mt-1">
+                                            <svg *ngIf="i > 0 && item.totalApprovedAmount > timeData[i-1].totalApprovedAmount"
+                                                class="h-4 w-4 text-green-500 mr-1" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 17l9.2-9.2M17 17V7h-10" />
+                                            </svg>
+                                            <svg *ngIf="i > 0 && item.totalApprovedAmount < timeData[i-1].totalApprovedAmount"
+                                                class="h-4 w-4 text-red-500 mr-1" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17 7l-9.2 9.2M7 7v10h10" />
+                                            </svg>
+                                            <span class="text-sm text-gray-500">
+                                                {{ formatCurrency(item.totalApprovedAmount / item.applicationCount)
+                                                }}/giao dịch
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Hover Tooltip -->
+                                <div
+                                    class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    #{{ i + 1 }}
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Simple Line Chart Representation -->
-                        <div class="space-y-2 max-h-48 overflow-y-auto">
-                            <div *ngFor="let item of timeData; let i = index"
-                                class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
-                                <div class="text-sm text-gray-600">{{ item.date | date:'dd/MM' }}</div>
-                                <div class="flex-1 mx-3">
-                                    <div class="bg-gray-200 rounded-full h-2">
-                                        <div class="bg-[#E74C3C] h-2 rounded-full transition-all duration-1000"
-                                            [style.width.%]="(item.totalApprovedAmount / getMaxTimeAmount()) * 100">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-xs text-gray-800 text-right">
-                                    <div>{{ formatCurrency(item.totalApprovedAmount) }}</div>
-                                    <div class="text-gray-500">{{ item.applicationCount }} hồ sơ</div>
+                        <!-- Summary Stats -->
+                        <div class="mt-6 grid grid-cols-2 gap-4">
+                            <div
+                                class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
+                                <div class="text-sm text-blue-600 font-medium">Tổng số ngày</div>
+                                <div class="text-2xl font-bold text-blue-700">{{ timeData.length }}</div>
+                            </div>
+                            <div
+                                class="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
+                                <div class="text-sm text-green-600 font-medium">Trung bình/ngày</div>
+                                <div class="text-2xl font-bold text-green-700">
+                                    {{ getAverageAmount() | currency:'VND':'symbol':'1.0-0' }}
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Empty State -->
-                    <div *ngIf="!isTimeLoading && !timeError && timeData.length === 0" class="text-center py-12">
+                    <div *ngIf="!isTimeLoading && !timeError && timeData.length === 0" class="text-center py-12 p-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
