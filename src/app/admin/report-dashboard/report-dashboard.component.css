@@ -1,0 +1,221 @@
+/* Report Dashboard Styles */
+
+/* Card Animations */
+.bg-white {
+    transition: all 0.3s ease;
+}
+
+.bg-white:hover {
+    transform: translateY(-2px);
+}
+
+/* Chart Animation Classes */
+.chart-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-bar {
+    transition: width 1s ease-out;
+    border-radius: 4px;
+}
+
+.chart-bar-animated {
+    animation: growWidth 1s ease-out forwards;
+}
+
+@keyframes growWidth {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: var(--target-width);
+    }
+}
+
+/* Loading Shimmer Effect */
+.shimmer {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+/* Circular Progress Animation */
+.circular-progress {
+    transition: stroke-dasharray 1s ease-out;
+}
+
+/* Hover Effects for Interactive Elements */
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom Scrollbar for Chart Data */
+.chart-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chart-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.chart-scroll::-webkit-scrollbar-thumb {
+    background: #E74C3C;
+    border-radius: 3px;
+}
+
+.chart-scroll::-webkit-scrollbar-thumb:hover {
+    background: #C0392B;
+}
+
+/* Date Input Styling */
+input[type="date"] {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23E74C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+}
+
+/* Button Hover Animation */
+.btn-animate {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-animate::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-animate:hover::before {
+    left: 100%;
+}
+
+/* Status and Product Chart Bars */
+.stat-bar {
+    position: relative;
+    background: linear-gradient(90deg, var(--bar-color) 0%, var(--bar-color) 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+    animation: barShine 2s ease-in-out infinite;
+}
+
+@keyframes barShine {
+
+    0%,
+    100% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Error State Styling */
+.error-state {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border: 1px solid #FECACA;
+}
+
+/* Empty State Styling */
+.empty-state {
+    background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+}
+
+/* Chart Legend Styling */
+.chart-legend {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    .chart-container {
+        margin-bottom: 1rem;
+    }
+
+    .stat-bar {
+        min-height: 12px;
+    }
+
+    .chart-legend {
+        font-size: 0.75rem;
+    }
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+    .bg-white {
+        background-color: #1F2937;
+        color: #F9FAFB;
+    }
+
+    .text-gray-800 {
+        color: #F9FAFB;
+    }
+
+    .text-gray-600 {
+        color: #D1D5DB;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .bg-gradient-to-r {
+        background: #E74C3C !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .shadow-lg,
+    .shadow-xl {
+        box-shadow: none !important;
+        border: 1px solid #E5E7EB;
+    }
+
+    .hover-lift:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
