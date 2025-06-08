@@ -300,3 +300,23 @@ svg {
 .progress-green {
     background-color: #22c55e !important;
 }
+
+/* Modal overlay styling with maximum z-index */
+.modal-overlay {
+    z-index: 999999 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+}
+
+.modal-content {
+    z-index: 1000000 !important;
+    position: relative !important;
+}
+
+/* Ensure modal is above everything */
+:host ::ng-deep .fixed {
+    z-index: 999999 !important;
+}

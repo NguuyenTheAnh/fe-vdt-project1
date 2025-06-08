@@ -110,7 +110,7 @@
             <!-- Action Buttons -->
             <div class="flex gap-3">
                 <button (click)="refreshData()"
-                    class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                    class="flex items-center gap-2 mt-6 border-gray-100 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -211,7 +211,7 @@
 
                 <!-- Action Button -->
                 <button (click)="openDetailModal(loan)"
-                    class="w-full bg-[#E74C3C] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#C0392B] transition-colors duration-200">
+                    class="w-full border-gray-100 bg-[#E74C3C] text-white py-3 px-4 rounded-lg font-medium hover:bg-[#C0392B] transition-colors duration-200">
                     Xem chi tiết
                 </button>
             </div>
@@ -270,8 +270,9 @@
 
     <!-- Detail Modal -->
     <div *ngIf="isDetailModalOpen && selectedLoan"
-        class="fixed inset-0 bg-black bg-opacity-50 z-[9000] flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+        class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-[99999] flex items-center justify-center p-4"
+        style="z-index: 999999 !important;" (click)="closeDetailModal()">
+        <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
             (click)="$event.stopPropagation()">
 
             <!-- Modal Header -->

@@ -11,8 +11,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
   selector: 'app-notification-list',
   templateUrl: './notification-list.component.html',
   styleUrls: [
-    './notification-list.component.css',
-    './modal-fix.css'
+    './notification-list.component.css'
   ],
   animations: [
     trigger('modalAnimation', [
@@ -74,40 +73,37 @@ export class NotificationListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
 
-    // Create a timer to ensure loading state is displayed for at least 1.5 seconds
-    // This artificial delay ensures users can see the loading indicator even on fast connections
-    const minLoadingTime = 500; // 0.5 seconds
-    const loadingStartTime = Date.now();
-
+    // Simple loading without artificial delay to prevent UI issues
     this.userNotificationService.getNotifications(this.currentPage, this.pageSize).subscribe({
       next: (response) => {
-        // Calculate how long we've been loading so far
-        const loadingElapsedTime = Date.now() - loadingStartTime;
-        const remainingDelay = Math.max(0, minLoadingTime - loadingElapsedTime);
+        if (response && response.data) {
+          this.notifications = response.data.content.map(notification => ({
+            ...notification,
+            expanded: false // Add UI state for expanded view
+          }));
 
-        // If the API responded too quickly, add artificial delay to show loading message
+          // Update pagination info
+          this.totalPages = response.data.totalPages;
+          this.totalElements = response.data.totalElements;
+
+          // Calculate unread count
+          this.unreadCount = this.notifications.filter(n => !n.isRead).length;
+
+          // Update the shared notification count
+          this.appNotificationService.updateUnreadCount(this.unreadCount);
+        } else {
+          console.error('No data received from notifications API');
+          this.error = 'Không nhận được dữ liệu thông báo từ hệ thống.';
+        }
+        this.isLoading = false;
+
+        // Force UI update after data is loaded
         setTimeout(() => {
-          if (response && response.data) {
-            this.notifications = response.data.content.map(notification => ({
-              ...notification,
-              expanded: false // Add UI state for expanded view
-            }));
-
-            // Update pagination info
-            this.totalPages = response.data.totalPages;
-            this.totalElements = response.data.totalElements;
-
-            // Calculate unread count
-            this.unreadCount = this.notifications.filter(n => !n.isRead).length;
-
-            // Update the shared notification count
-            this.appNotificationService.updateUnreadCount(this.unreadCount);
-          } else {
-            console.error('No data received from notifications API');
-            this.error = 'Không nhận được dữ liệu thông báo từ hệ thống.';
+          const container = document.querySelector('.notification-container');
+          if (container) {
+            container.classList.add('fade-in');
           }
-          this.isLoading = false;
-        }, remainingDelay);
+        }, 50);
       },
       error: (error) => {
         console.error('Error loading notifications', error);
@@ -115,7 +111,9 @@ export class NotificationListComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     });
-  } toggleNotification(notification: UserNotification): void {
+  }
+
+  toggleNotification(notification: UserNotification): void {
     // Toggle expanded state
     notification.expanded = !notification.expanded;
 
