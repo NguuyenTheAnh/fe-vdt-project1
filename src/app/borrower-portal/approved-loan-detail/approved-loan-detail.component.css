@@ -1,0 +1,302 @@
+/* Custom styles for approved loan detail component */
+
+/* Enhanced Statistics Cards */
+.statistics-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.statistics-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(231, 76, 60, 0.05), transparent);
+    transition: left 0.5s ease;
+    z-index: 1;
+}
+
+.statistics-card:hover::before {
+    left: 100%;
+}
+
+.statistics-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow:
+        0 20px 25px -5px rgba(231, 76, 60, 0.15),
+        0 10px 10px -5px rgba(231, 76, 60, 0.1),
+        0 0 0 1px rgba(231, 76, 60, 0.05);
+    border-color: rgba(231, 76, 60, 0.2);
+}
+
+/* Icon container enhancement */
+.statistics-card .bg-opacity-10 {
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.statistics-card:hover .bg-opacity-10 {
+    transform: scale(1.1) rotate(5deg);
+    background-color: rgba(231, 76, 60, 0.15) !important;
+}
+
+/* Number animation */
+.statistics-card p {
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
+}
+
+.statistics-card:hover p {
+    transform: scale(1.05);
+}
+
+/* Loan card hover effects */
+.loan-card {
+    transition: all 0.3s ease;
+}
+
+.loan-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom scrollbar for modal */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Progress bar animation */
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+
+/* Button hover effects */
+.custom-button {
+    transition: all 0.2s ease;
+}
+
+.custom-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.custom-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Modal backdrop animation */
+.modal-backdrop {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal content animation */
+.modal-container {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Loading spinner */
+.loading-spinner {
+    animation: spin 1s linear infinite;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #E74C3C;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Status badge styles */
+.status-badge {
+    font-weight: 600;
+    letter-spacing: 0.025em;
+}
+
+/* Focus styles for form elements */
+select:focus,
+input:focus {
+    outline: none;
+    border-color: #E74C3C;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .mobile-grid {
+        gap: 1rem;
+    }
+
+    .mobile-title {
+        font-size: 1.875rem;
+    }
+}
+
+/* Custom utilities */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Pagination hover effects */
+.pagination-button {
+    transition: all 0.2s ease;
+}
+
+/* Empty state illustration */
+.empty-icon {
+    opacity: 0.6;
+}
+
+/* Success/Error message styles */
+.error-border {
+    border-left: 4px solid #ef4444;
+}
+
+.success-border {
+    border-left: 4px solid #22c55e;
+}
+
+/* Card content spacing */
+.space-y-4>*+* {
+    margin-top: 1rem;
+}
+
+.space-y-3>*+* {
+    margin-top: 0.75rem;
+}
+
+.space-y-2>*+* {
+    margin-top: 0.5rem;
+}
+
+/* Icon alignments */
+svg {
+    flex-shrink: 0;
+}
+
+/* Filter section background */
+.filter-section {
+    background: linear-gradient(to right, #ffffff, #f9fafb);
+    border: 1px solid #e5e7eb;
+}
+
+/* Statistics card gradients */
+.gradient-green {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.gradient-blue {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.gradient-orange {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+/* Modal header gradient */
+.modal-header {
+    background: linear-gradient(to right, #f9fafb, #f3f4f6);
+}
+
+/* Status color classes */
+.status-approved {
+    background-color: #dcfce7 !important;
+    color: #16a34a !important;
+}
+
+.status-partial {
+    background-color: #dbeafe !important;
+    color: #2563eb !important;
+}
+
+.status-pending {
+    background-color: #fef3c7 !important;
+    color: #d97706 !important;
+}
+
+.status-rejected {
+    background-color: #fed7aa !important;
+    color: #ea580c !important;
+}
+
+.status-completed {
+    background-color: #e9d5ff !important;
+    color: #9333ea !important;
+}
+
+/* Progress bar colors */
+.progress-yellow {
+    background-color: #eab308 !important;
+}
+
+.progress-blue {
+    background-color: #3b82f6 !important;
+}
+
+.progress-green {
+    background-color: #22c55e !important;
+}
