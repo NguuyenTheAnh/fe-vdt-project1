@@ -183,14 +183,22 @@ export class LoanService {
      */
     getApplicationById(id: number): Observable<ApiResponse<LoanApplication>> {
         return this.apiService.get<LoanApplication>(`/loan-applications/${id}`);
-    }
-
-    /**
+    }    /**
      * Cập nhật một đơn đăng ký vay
      */
     updateApplication(id: number, data: Partial<LoanApplication>): Observable<ApiResponse<LoanApplication>> {
         return this.apiService.patch<LoanApplication>(`/loan-applications/${id}`, data);
-    }    /**
+    }
+
+    /**
+     * Cập nhật trạng thái của đơn đăng ký vay
+     * @param id ID của đơn đăng ký vay
+     * @param status Trạng thái mới (PENDING, APPROVED, REJECTED, etc.)
+     * @returns Observable chứa kết quả cập nhật
+     */
+    updateApplicationStatus(id: number, status: string): Observable<ApiResponse<void>> {
+        return this.apiService.patch<void>(`/loan-applications/${id}/status?status=${status}`, {});
+    }/**
      * Hủy đơn đăng ký vay
      */
     cancelApplication(id: number): Observable<ApiResponse<void>> {

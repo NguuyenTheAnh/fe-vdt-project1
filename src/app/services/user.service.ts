@@ -4,6 +4,58 @@ import { tap, catchError, map } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { UserData } from './auth.service';
 
+// Interface for user list response
+export interface User {
+    id: number;
+    email: string;
+    fullName: string;
+    phoneNumber: string | null;
+    address: string | null;
+    accountStatus: 'ACTIVE' | 'INACTIVE';
+    createdAt: string | null;
+    updatedAt: string | null;
+    role: {
+        name: string;
+        description: string;
+    };
+}
+
+export interface UserListResponse {
+    content: User[];
+    pageable: {
+        pageNumber: number;
+        pageSize: number;
+        sort: {
+            empty: boolean;
+            sorted: boolean;
+            unsorted: boolean;
+        };
+        offset: number;
+        paged: boolean;
+        unpaged: boolean;
+    };
+    last: boolean;
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
+    sort: {
+        empty: boolean;
+        sorted: boolean;
+        unsorted: boolean;
+    };
+    first: boolean;
+    numberOfElements: number;
+    empty: boolean;
+}
+
+export interface GetUsersParams {
+    page: number;
+    size: number;
+    name?: string;
+    status?: 'ACTIVE' | 'INACTIVE';
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -208,5 +260,109 @@ export class UserService {
      */
     isAppInitialized(): boolean {
         return this.appInitializedSubject.value;
+    }
+
+    /**
+     * Lấy danh sách tất cả người dùng với phân trang, tìm kiếm theo tên và trạng thái
+     * @param params - Tham số truy vấn bao gồm page, size, name (tùy chọn), status (tùy chọn)
+     * @returns Observable<UserListResponse | null>
+     */
+    getAllUsers(params: GetUsersParams): Observable<UserListResponse | null> {
+        // Tạo query parameters
+        const queryParams: { [key: string]: string } = {
+            page: params.page.toString(),
+            size: params.size.toString()
+        };
+
+        // Thêm tham số name nếu có
+        if (params.name && params.name.trim()) {
+            queryParams['name'] = params.name.trim();
+        }
+
+        // Thêm tham số status nếu có
+        if (params.status) {
+            queryParams['status'] = params.status;
+        }
+
+        // Chuyển đổi object thành query string
+        const queryString = Object.keys(queryParams)
+            .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+            .join('&');
+
+        const url = `/users?${queryString}`;
+
+        console.log('Fetching users with URL:', url);
+
+        return this.apiService.get<UserListResponse>(url).pipe(
+            map(response => {
+                if (response && response.code === 1000 && response.data) {
+                    console.log('Users fetched successfully:', response.data);
+                    return response.data;
+                } else {
+                    console.warn('Invalid users data from API:', response);
+                    return null;
+                }
+            }), catchError(error => {
+                console.error('Error fetching users:', error);
+                return of(null);
+            })
+        );
+    }
+
+    /**
+     * Tạo người dùng mới
+     * @param userData - Thông tin người dùng cần tạo
+     * @returns Observable<User | null>
+     */
+    createUser(userData: {
+        email: string;
+        password: string;
+        fullName: string;
+        phoneNumber: string;
+        roleName: string;
+        address: string;
+    }): Observable<User | null> {
+        console.log('Creating new user:', userData);
+
+        return this.apiService.post<User>('/users', userData).pipe(
+            map(response => {
+                if (response && response.code === 1000 && response.data) {
+                    console.log('User created successfully:', response.data);
+                    return response.data;
+                } else {
+                    console.warn('Invalid response from create user API:', response);
+                    return null;
+                }
+            }),
+            catchError(error => {
+                console.error('Error creating user:', error);
+                return of(null);
+            })
+        );
+    }
+
+    /**
+     * Lấy thông tin chi tiết người dùng theo ID
+     * @param userId - ID của người dùng cần lấy thông tin
+     * @returns Observable<User | null>
+     */
+    getUserById(userId: number): Observable<User | null> {
+        console.log('Fetching user by ID:', userId);
+
+        return this.apiService.get<User>(`/users/${userId}`).pipe(
+            map(response => {
+                if (response && response.code === 1000 && response.data) {
+                    console.log('User fetched successfully:', response.data);
+                    return response.data;
+                } else {
+                    console.warn('Invalid response from get user API:', response);
+                    return null;
+                }
+            }),
+            catchError(error => {
+                console.error('Error fetching user by ID:', error);
+                return of(null);
+            })
+        );
     }
 }

@@ -1,0 +1,291 @@
+/* Custom Modal Styles */
+::ng-deep .ant-modal-content {
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+::ng-deep .ant-modal-header {
+    display: none !important;
+}
+
+::ng-deep .ant-modal-body {
+    padding: 0 !important;
+}
+
+::ng-deep .ant-modal-close {
+    display: none !important;
+}
+
+/* Status Toggle Modal Animation */
+.status-toggle-modal {
+    animation: modalFadeIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Button hover effects */
+.action-button {
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.action-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.action-button:active {
+    transform: translateY(0);
+}
+
+/* User avatar gradient effect */
+.user-avatar {
+    background: linear-gradient(135deg, #E74C3C, #C0392B);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+/* Status badge animations */
+.status-badge {
+    transition: all 0.2s ease;
+}
+
+.status-badge:hover {
+    transform: scale(1.05);
+}
+
+/* Loading spinner enhancement */
+.loading-spinner {
+    border-top-color: transparent;
+    border-right-color: transparent;
+}
+
+/* Enhanced notification styles */
+.notification-card {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(99, 102, 241, 0.05));
+    border-left: 4px solid #3B82F6;
+    transition: all 0.3s ease;
+}
+
+.notification-card:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(99, 102, 241, 0.08));
+    transform: translateX(2px);
+}
+
+/* Gradient background for warning states */
+.warning-card {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(217, 119, 6, 0.05));
+}
+
+.success-card {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(22, 163, 74, 0.05));
+}
+
+/* Enhanced focus states */
+.focus-ring:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    border-color: #E74C3C;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    ::ng-deep .ant-modal {
+        margin: 16px !important;
+        max-width: calc(100vw - 32px) !important;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .action-buttons button {
+        width: 100%;
+    }
+}
+
+/* Table enhancement */
+.user-table-row {
+    transition: all 0.2s ease;
+}
+
+.user-table-row:hover {
+    background-color: rgba(231, 76, 60, 0.02);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Action buttons in table */
+.table-action-btn {
+    transition: all 0.2s ease;
+}
+
+.table-action-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Custom scrollbar for modal content */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #E74C3C;
+    border-radius: 3px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #C0392B;
+}
+
+/* Custom Pagination Styles */
+.custom-pagination-simple {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.custom-pagination-simple button {
+    font-weight: 500;
+    font-size: 14px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-pagination-simple button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.custom-pagination-simple button:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-pagination-simple button:active {
+    transform: translateY(0);
+}
+
+/* Page size selector styling */
+select {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+/* Mobile pagination enhancements */
+@media (max-width: 768px) {
+    .custom-pagination-simple {
+        padding: 8px 12px;
+    }
+
+    .custom-pagination-simple button {
+        min-height: 28px;
+        font-size: 13px;
+    }
+}
+
+/* User Detail Modal Styles */
+::ng-deep .user-detail-modal .ant-modal {
+    top: 20px !important;
+    margin: 0 auto !important;
+    padding-bottom: 0 !important;
+}
+
+::ng-deep .user-detail-modal .ant-modal-content {
+    max-height: calc(100vh - 40px) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+::ng-deep .user-detail-modal .ant-modal-body {
+    padding: 0 !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 40px) !important;
+    flex: 1 !important;
+}
+
+/* Ensure modal opens at top */
+::ng-deep .user-detail-modal .ant-modal-wrap {
+    overflow-y: auto !important;
+    scroll-behavior: smooth !important;
+}
+
+/* User detail modal content specific styles */
+.user-detail-content {
+    scroll-behavior: smooth;
+}
+
+/* Prevent body scroll when modal is open */
+::ng-deep body.modal-open {
+    overflow: hidden !important;
+}
+
+/* Enhanced user avatar in modal */
+.user-detail-avatar {
+    background: linear-gradient(135deg, #E74C3C, #C0392B);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+    transition: all 0.3s ease;
+}
+
+.user-detail-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
+}
+
+/* Status badge animations in modal */
+.status-badge-modal {
+    transition: all 0.3s ease;
+    border-width: 1px;
+}
+
+.status-badge-modal:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Information cards in modal */
+.info-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.info-card:hover {
+    border-color: #E74C3C;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Icon styling in modal */
+.modal-icon {
+    transition: all 0.3s ease;
+}
+
+.modal-icon:hover {
+    transform: scale(1.1);
+    color: #E74C3C !important;
+}

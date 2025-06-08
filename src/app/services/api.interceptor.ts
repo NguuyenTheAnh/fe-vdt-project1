@@ -22,28 +22,26 @@ export class ApiInterceptor implements HttpInterceptor {
         private notification: NzNotificationService,
         private injector: Injector
     ) { } intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-        // Danh sách các URL không cần thêm token
-        const publicUrls = [
+        // Danh sách các URL không bao giờ cần token
+        const alwaysPublicUrls = [
             '/auth/login',
             '/auth/refresh'
         ];
 
-        // Đăng ký tài khoản (POST /users) không cần token, nhưng cập nhật (PATCH /users) cần token
-        const isPublicUsersEndpoint = request.url.includes('/users') && request.method === 'POST';
-
-        // Kiểm tra xem request hiện tại có thuộc danh sách public không
-        const isPublicRequest = publicUrls.some(url => request.url.includes(url)) || isPublicUsersEndpoint;
+        // Kiểm tra xem request có thuộc danh sách luôn public không
+        const isAlwaysPublic = alwaysPublicUrls.some(url => request.url.includes(url));
 
         // Lấy token từ localStorage
         const token = localStorage.getItem('authToken');
 
-        // Bỏ qua việc thêm token cho các request public
-        if (!isPublicRequest && token) {
+        // Logic thêm token:
+        // 1. Nếu là request luôn public (login, refresh) -> không thêm token
+        // 2. Nếu có token -> thêm token (bao gồm cả admin tạo user và user registration có token)
+        // 3. Nếu không có token -> không thêm token (user registration từ trang public)
+        if (!isAlwaysPublic && token) {
             // Thêm token vào header
             request = this.addTokenToRequest(request, token);
-        }
-
-        // Xử lý response và bắt các lỗi xác thực
+        }        // Xử lý response và bắt các lỗi xác thực
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
                 // Log lỗi để debug (giảm log không cần thiết)
@@ -51,8 +49,9 @@ export class ApiInterceptor implements HttpInterceptor {
                     console.error(`Error ${error.status} for request ${request.url}`);
                 }
 
-                // Chỉ xử lý lỗi 401 (Unauthorized) nếu không phải là request public
-                if (error.status === 401 && !isPublicRequest) {
+                // Chỉ xử lý lỗi 401 (Unauthorized) nếu không phải là request luôn public
+                // và có token (tức là user đã đăng nhập)
+                if (error.status === 401 && !isAlwaysPublic && token) {
                     console.log('Received 401 error, attempting to refresh token');
                     // Thử refresh token
                     return this.handleTokenRefresh(request, next);

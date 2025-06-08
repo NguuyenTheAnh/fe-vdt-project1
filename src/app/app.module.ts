@@ -42,6 +42,7 @@ import { NzMessageModule } from 'ng-zorro-antd/message';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { HomePageComponent } from './borrower-portal/home-page/home-page.component';
@@ -113,10 +114,10 @@ registerLocaleData(vi);
     NzDividerModule,
     NzStepsModule, NzPopoverModule,
     NzAvatarModule, NzUploadModule,
-    NzMessageModule,
-    NzSliderModule,
+    NzMessageModule, NzSliderModule,
     NzRadioModule,
-    NzSwitchModule
+    NzSwitchModule,
+    NzPaginationModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: vi_VN },

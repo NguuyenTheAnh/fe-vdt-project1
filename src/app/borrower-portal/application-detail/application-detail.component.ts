@@ -462,20 +462,12 @@ export class ApplicationDetailComponent implements OnInit {
                     applicationId: this.applicationId,
                     message: `Cấc tài liệu cần thiết đã được tải lên. Hồ sơ vay của bạn đang chờ xét duyệt.`,
                     notificationType: 'REVIEWING',
-                };
-
-                // Use the API service directly to create a notification
+                };                // Use the API service directly to create a notification
                 this.apiService.post<any>('/notifications', notificationPayload)
                     .subscribe({
                         next: () => {
-                            // 2. Update application status to "PENDING"
-                            this.loanService.updateApplication(this.application!.id!, {
-                                productId: this.application!.loanProduct?.id,
-                                requestedAmount: this.application!.requestedAmount,
-                                requestedTerm: this.application!.requestedTerm,
-                                status: 'PENDING',
-                                personalInfo: this.application!.personalInfo,
-                            })
+                            // 2. Update application status to "PENDING" using new API
+                            this.loanService.updateApplicationStatus(this.application!.id!, 'PENDING')
                                 .subscribe({
                                     next: (response) => {
                                         if (response && response.code === 1000) {
