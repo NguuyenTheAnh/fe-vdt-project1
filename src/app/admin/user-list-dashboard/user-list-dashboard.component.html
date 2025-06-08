@@ -640,12 +640,9 @@
                 </div>
             </div>
         </ng-container>
-    </nz-modal>
-
-    <!-- User Detail Modal -->
+    </nz-modal> <!-- User Detail Modal -->
     <nz-modal [(nzVisible)]="isUserDetailModalVisible" [nzFooter]="null" [nzMaskClosable]="true" [nzWidth]="700"
-        [nzCentered]="false" (nzOnCancel)="closeUserDetailModal()" nzClassName="user-detail-modal"
-        [nzBodyStyle]="{ 'max-height': 'calc(100vh - 120px)', 'overflow-y': 'auto', 'padding': '0' }">
+        (nzOnCancel)="closeUserDetailModal()" nzClassName="user-detail-modal">
 
         <ng-container *nzModalContent>
             <!-- Loading State -->
@@ -679,7 +676,9 @@
                         <div class="flex items-center">
                             <div
                                 class="w-16 h-16 user-detail-avatar rounded-full flex items-center justify-center mr-4">
-                                <i nz-icon nzType="user" nzTheme="outline" class="text-white text-2xl"></i>
+                                <span class="text-white text-2xl font-bold">
+                                    {{ selectedUserForDetail.fullName.charAt(0).toUpperCase() }}
+                                </span>
                             </div>
                             <div>
                                 <h2 class="text-2xl font-bold text-gray-800">{{ selectedUserForDetail.fullName }}</h2>
@@ -691,8 +690,8 @@
                                 'bg-green-100 text-green-800 border-green-200': selectedUserForDetail.accountStatus === 'ACTIVE',
                                 'bg-gray-100 text-gray-800 border-gray-200': selectedUserForDetail.accountStatus === 'INACTIVE'
                             }" class="status-badge-modal px-3 py-1 text-xs font-semibold rounded-full border">
-                                {{ selectedUserForDetail.accountStatus === 'ACTIVE' ? 'Đang hoạt động' : 'Không hoạt
-                                động' }}
+                                {{ selectedUserForDetail.accountStatus === 'ACTIVE' ? 'Đã kích hoạt' : 'Chưa kích hoạt'
+                                }}
                             </span>
                         </div>
                     </div>
@@ -772,8 +771,8 @@
                                         'bg-green-100 text-green-800': selectedUserForDetail.accountStatus === 'ACTIVE',
                                         'bg-gray-100 text-gray-800': selectedUserForDetail.accountStatus === 'INACTIVE'
                                     }" class="inline-flex px-3 py-1 text-sm font-medium rounded-full">
-                                        {{ selectedUserForDetail.accountStatus === 'ACTIVE' ? 'Đang hoạt động' : 'Không
-                                        hoạt động' }}
+                                        {{ selectedUserForDetail.accountStatus === 'ACTIVE' ? 'Đã kích hoạt' : 'Chưa
+                                        kích hoạt' }}
                                     </span>
                                 </div>
                             </div>
@@ -826,11 +825,11 @@
                 <!-- Modal Footer Actions -->
                 <div class="mt-8 pt-6 border-t border-gray-200 flex justify-end space-x-3 px-6 pb-6">
                     <button (click)="closeUserDetailModal()"
-                        class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-200 font-medium">
+                        class="px-6 border-gray-100 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-200 font-medium">
                         Đóng
                     </button>
                     <button
-                        class="px-6 py-2 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-all duration-200 font-medium flex items-center">
+                        class="px-6 border-gray-100 py-2 bg-[#E74C3C] text-white rounded-lg hover:bg-[#C0392B] transition-all duration-200 font-medium flex items-center">
                         <i nz-icon nzType="edit" nzTheme="outline" class="mr-2"></i>
                         Chỉnh sửa
                     </button>

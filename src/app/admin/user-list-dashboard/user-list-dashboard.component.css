@@ -209,40 +209,22 @@ select:focus {
 }
 
 /* User Detail Modal Styles */
-::ng-deep .user-detail-modal .ant-modal {
-    top: 20px !important;
-    margin: 0 auto !important;
-    padding-bottom: 0 !important;
+::ng-deep .user-detail-modal .ant-modal-content {
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
 
-::ng-deep .user-detail-modal .ant-modal-content {
-    max-height: calc(100vh - 40px) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
+::ng-deep .user-detail-modal .ant-modal-header {
+    display: none !important;
 }
 
 ::ng-deep .user-detail-modal .ant-modal-body {
     padding: 0 !important;
-    overflow-y: auto !important;
-    max-height: calc(100vh - 40px) !important;
-    flex: 1 !important;
 }
 
-/* Ensure modal opens at top */
-::ng-deep .user-detail-modal .ant-modal-wrap {
-    overflow-y: auto !important;
-    scroll-behavior: smooth !important;
-}
-
-/* User detail modal content specific styles */
-.user-detail-content {
-    scroll-behavior: smooth;
-}
-
-/* Prevent body scroll when modal is open */
-::ng-deep body.modal-open {
-    overflow: hidden !important;
+::ng-deep .user-detail-modal .ant-modal-close {
+    display: none !important;
 }
 
 /* Enhanced user avatar in modal */

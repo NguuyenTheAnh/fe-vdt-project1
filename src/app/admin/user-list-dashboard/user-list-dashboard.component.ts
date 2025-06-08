@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { UserService, User, UserListResponse, GetUsersParams } from '../../services/user.service';
@@ -9,7 +9,7 @@ import { RoleService, Role } from '../../services/role.service';
   templateUrl: './user-list-dashboard.component.html',
   styleUrls: ['./user-list-dashboard.component.css']
 })
-export class UserListDashboardComponent implements OnInit {
+export class UserListDashboardComponent implements OnInit, OnDestroy {
   // Data from API
   users: User[] = [];
 
@@ -71,9 +71,14 @@ export class UserListDashboardComponent implements OnInit {
     private userService: UserService,
     private roleService: RoleService
   ) { }
-
   ngOnInit(): void {
     this.loadUsers();
+  }
+
+  ngOnDestroy(): void {
+    // Ensure body scroll is restored when component is destroyed
+    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
   }
 
   loadUsers(): void {
@@ -199,7 +204,6 @@ export class UserListDashboardComponent implements OnInit {
     // TODO: Implement edit user functionality
     console.log('Edit user:', user);
   }
-
   toggleUserStatus(user: User): void {
     // Security check: prevent toggling admin user status
     if (user.id === 1) {
@@ -210,8 +214,11 @@ export class UserListDashboardComponent implements OnInit {
     // Show custom modal instead of default confirm
     this.selectedUserForToggle = user;
     this.isStatusToggleModalVisible = true;
-  }
 
+    // Prevent body scroll when modal opens
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
+  }
   // Custom Status Toggle Modal Methods
   handleStatusToggleOk(): void {
     if (!this.selectedUserForToggle) return;
@@ -222,26 +229,48 @@ export class UserListDashboardComponent implements OnInit {
 
     this.isTogglingStatus = true;
 
-    // TODO: Replace with actual API call
-    setTimeout(() => {
-      user.accountStatus = newStatus;
-      this.notification.success('Thành công', `Đã ${actionText} người dùng "${user.fullName}" thành công`);
-      console.log('Toggle user status:', user);
+    this.userService.updateUserStatus(user.id, newStatus).subscribe({
+      next: (success) => {
+        this.isTogglingStatus = false;
+        if (success) {
+          this.notification.success('Thành công', `Đã ${actionText} người dùng "${user.fullName}" thành công`);
+          console.log('Toggle user status successful for user ID:', user.id);
+          this.loadUsers(); // Reload the user list to reflect changes
+        } else {
+          this.notification.error('Lỗi', `Không thể ${actionText} người dùng "${user.fullName}". Vui lòng thử lại.`);
+        }
 
-      // Reset modal state
-      this.isStatusToggleModalVisible = false;
-      this.selectedUserForToggle = null;
-      this.isTogglingStatus = false;
+        // Reset modal state
+        this.isStatusToggleModalVisible = false;
+        this.selectedUserForToggle = null;
 
-      // Reload users to get updated data from server
-      this.loadUsers();
-    }, 1500); // Simulate API delay
+        // Restore body scroll when modal closes
+        document.body.style.overflow = '';
+        document.body.classList.remove('modal-open');
+      },
+      error: (error) => {
+        this.isTogglingStatus = false;
+        console.error('Error toggling user status:', error);
+        this.notification.error('Lỗi hệ thống', `Đã xảy ra lỗi khi ${actionText} người dùng. Vui lòng thử lại sau.`);
+
+        // Reset modal state even on error
+        this.isStatusToggleModalVisible = false;
+        this.selectedUserForToggle = null;
+
+        // Restore body scroll when modal closes
+        document.body.style.overflow = '';
+        document.body.classList.remove('modal-open');
+      }
+    });
   }
-
   handleStatusToggleCancel(): void {
     this.isStatusToggleModalVisible = false;
     this.selectedUserForToggle = null;
     this.isTogglingStatus = false;
+
+    // Restore body scroll when modal closes
+    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
   }
 
   getToggleActionText(): string {

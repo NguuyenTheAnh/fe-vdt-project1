@@ -365,4 +365,31 @@ export class UserService {
             })
         );
     }
+
+    /**
+     * Cập nhật trạng thái người dùng
+     * @param userId - ID của người dùng cần cập nhật trạng thái
+     * @param status - Trạng thái mới ('ACTIVE' hoặc 'INACTIVE')
+     * @returns Observable<boolean> - true nếu cập nhật thành công, false nếu thất bại
+     */
+    updateUserStatus(userId: number, status: 'ACTIVE' | 'INACTIVE'): Observable<boolean> {
+        console.log(`Updating user ${userId} status to:`, status);
+
+        // Expecting a response like { code: 1000 } without a 'data' field for this specific endpoint
+        return this.apiService.patch<any>(`/users/${userId}/status?status=${status}`, {}).pipe(
+            map(response => {
+                if (response && response.code === 1000) {
+                    console.log('User status updated successfully via API.');
+                    return true;
+                } else {
+                    console.warn('Failed to update user status or invalid response from API:', response);
+                    return false;
+                }
+            }),
+            catchError(error => {
+                console.error('Error updating user status:', error);
+                return of(false);
+            })
+        );
+    }
 }
