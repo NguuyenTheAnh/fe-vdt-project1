@@ -580,3 +580,167 @@
         display: none !important;
     }
 }
+
+/* Email Template Editor Modal Styles */
+.email-template-editor {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.email-template-editor textarea {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    line-height: 1.6;
+    tab-size: 4;
+    -moz-tab-size: 4;
+}
+
+.email-template-editor textarea:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+/* Code editor syntax highlighting simulation */
+.email-template-editor textarea::selection {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Scrollbar styling for code editor */
+.email-template-editor textarea::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.email-template-editor textarea::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.email-template-editor textarea::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.email-template-editor textarea::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Enhanced modal backdrop */
+.modal-backdrop-enhanced {
+    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Email preview container improvements */
+.email-preview {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Modal resize handle for split view */
+.modal-split-resizer {
+    width: 4px;
+    background: #e5e7eb;
+    cursor: col-resize;
+    transition: background-color 0.2s;
+}
+
+.modal-split-resizer:hover {
+    background: #9ca3af;
+}
+
+/* Enhanced status indicators */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-indicator.success {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.status-indicator.warning {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-indicator.error {
+    background-color: #fecaca;
+    color: #dc2626;
+}
+
+/* Enhanced button animations */
+.btn-enhanced {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-enhanced:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-enhanced:hover:before {
+    left: 100%;
+}
+
+/* Code formatting improvements */
+.code-formatted {
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+/* Modal animation improvements */
+.modal-enter {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Responsive adjustments for large modal */
+@media (max-width: 1536px) {
+    .email-template-editor-modal {
+        max-width: 95vw;
+        max-height: 95vh;
+    }
+}
+
+@media (max-width: 1024px) {
+    .email-template-editor-modal .modal-split-view {
+        flex-direction: column;
+    }
+
+    .email-template-editor-modal .modal-split-view>div {
+        width: 100% !important;
+        height: 50% !important;
+    }
+}

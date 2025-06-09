@@ -46,6 +46,7 @@ export class SystemConfigDashboardComponent implements OnInit {
   isDocumentModalOpen = false;
   isDeleteModalOpen = false;
   isEmailPreviewModalOpen = false;
+  isEmailTemplateEditorModalOpen = false;
 
   // Accordion states
   expandedConfigs: { [key: string]: boolean } = {};
@@ -58,10 +59,12 @@ export class SystemConfigDashboardComponent implements OnInit {
 
   // Email HTML sanitization
   sanitizedEmailHtml: SafeHtml = '';
+  emailTemplatePreviewHtml: SafeHtml = '';
 
   // Form data
   createForm: ConfigFormData = { configKey: '', configValue: '', description: '' };
   editForm: ConfigFormData = { configKey: '', configValue: '', description: '' };
+  emailTemplateForm: ConfigFormData = { configKey: '', configValue: '', description: '' };
   selectedConfig: SystemConfiguration | null = null;
 
   // Validation
@@ -364,17 +367,155 @@ export class SystemConfigDashboardComponent implements OnInit {
     this.isDeleteModalOpen = true;
   }
 
+  /**
+   * Open email template editor modal
+   */
+  openEmailTemplateEditor(config: SystemConfiguration) {
+    this.selectedConfig = config;
+    this.emailTemplateForm = {
+      configKey: config.configKey,
+      configValue: config.configValue,
+      description: config.description || ''
+    };
+    this.updateEmailTemplatePreview();
+    this.formErrors = {};
+    this.isEmailTemplateEditorModalOpen = true;
+  }
+
+  /**
+   * Update email template preview
+   */
+  updateEmailTemplatePreview() {
+    if (this.emailTemplateForm.configValue) {
+      this.emailTemplatePreviewHtml = this.sanitizer.bypassSecurityTrustHtml(this.emailTemplateForm.configValue);
+    } else {
+      this.emailTemplatePreviewHtml = '';
+    }
+  }
+
+  /**
+   * Handle email template change
+   */
+  onEmailTemplateChange() {
+    this.updateEmailTemplatePreview();
+  }
+
+  /**
+   * Get template length
+   */
+  getTemplateLength(): number {
+    return this.emailTemplateForm.configValue ? this.emailTemplateForm.configValue.length : 0;
+  }
+
+  /**
+   * Get current line (simplified implementation)
+   */
+  getCurrentLine(): number {
+    if (!this.emailTemplateForm.configValue) return 1;
+    const lines = this.emailTemplateForm.configValue.substr(0, this.emailTemplateForm.configValue.length).split('\n');
+    return lines.length;
+  }
+
+  /**
+   * Format email template (basic formatting)
+   */
+  formatEmailTemplate() {
+    if (this.emailTemplateForm.configValue) {
+      // Basic HTML formatting - you can enhance this with a proper HTML formatter
+      let formatted = this.emailTemplateForm.configValue;
+      // Simple indentation for HTML tags
+      formatted = formatted.replace(/></g, '>\n<');
+      formatted = formatted.replace(/^\s+|\s+$/gm, ''); // Remove leading/trailing spaces
+      this.emailTemplateForm.configValue = formatted;
+      this.updateEmailTemplatePreview();
+    }
+  }
+
+  /**
+   * Refresh preview
+   */
+  refreshPreview() {
+    this.updateEmailTemplatePreview();
+  }
+
+  /**
+   * Open preview in new tab
+   */
+  openPreviewInNewTab() {
+    if (this.emailTemplateForm.configValue) {
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(this.emailTemplateForm.configValue);
+        newWindow.document.close();
+      }
+    }
+  }
+
+  /**
+   * Copy template to clipboard
+   */
+  copyTemplateToClipboard() {
+    if (this.emailTemplateForm.configValue) {
+      this.copyToClipboard(this.emailTemplateForm.configValue);
+    }
+  }
+
+  /**
+   * Reset template to original value
+   */
+  resetTemplate() {
+    if (this.selectedConfig) {
+      this.emailTemplateForm.configValue = this.selectedConfig.configValue;
+      this.updateEmailTemplatePreview();
+    }
+  }
+
+  /**
+   * Save email template
+   */
+  async saveEmailTemplate() {
+    if (!this.validateForm(this.emailTemplateForm) || !this.selectedConfig) return;
+
+    this.isLoading = true;
+
+    try {
+      const response = await this.configService.updateConfiguration(
+        this.selectedConfig.configId,
+        {
+          configKey: this.emailTemplateForm.configKey,
+          configValue: this.emailTemplateForm.configValue,
+          description: this.emailTemplateForm.description
+        }
+      ).toPromise();
+
+      if (response && response.code === 1000) {
+        await this.loadConfigurations();
+        this.closeAllModals();
+      } else {
+        this.error = response?.message || 'Không thể cập nhật email template';
+      }
+    } catch (error) {
+      console.error('Error updating email template:', error);
+      this.error = 'Lỗi khi cập nhật email template';
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
   closeAllModals() {
     this.isCreateModalOpen = false;
     this.isEditModalOpen = false;
     this.isDeleteModalOpen = false;
     this.isDocumentModalOpen = false;
     this.isEmailPreviewModalOpen = false;
+    this.isEmailTemplateEditorModalOpen = false;
     this.selectedConfig = null;
     this.formErrors = {};
     this.isEditingDocuments = false;
     this.newDocumentKey = '';
     this.newDocumentValue = '';
+    this.emailTemplateForm = { configKey: '', configValue: '', description: '' };
+    this.emailTemplatePreviewHtml = '';
   }
 
   /**
