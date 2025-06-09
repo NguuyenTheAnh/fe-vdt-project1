@@ -1,0 +1,582 @@
+/* System Configuration Dashboard Custom Styles */
+
+/* Smooth hover effects for configuration group cards */
+.group-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(0);
+}
+
+.group-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Enhanced gradient backgrounds for group icons */
+.bg-gradient-blue {
+    background: linear-gradient(135deg, #3B82F6, #1E40AF);
+}
+
+.bg-gradient-green {
+    background: linear-gradient(135deg, #10B981, #047857);
+}
+
+.bg-gradient-purple {
+    background: linear-gradient(135deg, #8B5CF6, #5B21B6);
+}
+
+.bg-gradient-orange {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+.bg-gradient-red {
+    background: linear-gradient(135deg, #E74C3C, #C0392B);
+}
+
+.bg-gradient-indigo {
+    background: linear-gradient(135deg, #6366F1, #4338CA);
+}
+
+/* Smooth loading spinner animation */
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Enhanced button hover effects */
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.2);
+}
+
+/* Modal backdrop animation */
+.modal-backdrop {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Table row hover effects */
+.table-row {
+    transition: all 0.2s ease-in-out;
+}
+
+.table-row:hover {
+    background-color: rgba(249, 250, 251, 0.8);
+    transform: scale(1.005);
+}
+
+/* Search input focus effects */
+.search-input:focus {
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+/* Badge pulse animation for new items */
+.badge-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Copy button feedback animation */
+.copy-success {
+    animation: copyFeedback 0.5s ease-in-out;
+}
+
+@keyframes copyFeedback {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Floating action button animation */
+.fab {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+}
+
+/* Form validation error styles */
+.form-error {
+    color: #E74C3C;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Success message animation */
+.success-message {
+    animation: successSlide 0.5s ease-out;
+}
+
+@keyframes successSlide {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Enhanced dropdown styles */
+.dropdown-menu {
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(229, 231, 235, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+/* Responsive table scroll indicator */
+.table-container {
+    position: relative;
+}
+
+.table-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #E74C3C;
+    border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #C0392B;
+}
+
+/* Configuration value formatting */
+.config-value {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    background-color: rgba(249, 250, 251, 0.8);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    font-size: 0.875rem;
+}
+
+/* Empty state illustration animation */
+.empty-state {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 
+  Email preview styles - IMPORTANT: 
+  These styles only act as fallbacks when email templates don't have inline styles.
+  The :not([style]) selector ensures that inline styles from email templates take precedence.
+  This allows email templates to use their own styling without interference.
+*/
+.email-preview {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* Only apply fallback styles when no inline styles are present */
+.email-preview h1:not([style]) {
+    color: #1f2937;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e74c3c;
+}
+
+.email-preview h2:not([style]) {
+    color: #374151;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 20px 0 12px 0;
+}
+
+.email-preview h3:not([style]) {
+    color: #4b5563;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 16px 0 8px 0;
+}
+
+.email-preview h4:not([style]) {
+    color: #6b7280;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 12px 0 6px 0;
+}
+
+.email-preview p:not([style]) {
+    color: #374151;
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.email-preview strong:not([style]),
+.email-preview b:not([style]) {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.email-preview em:not([style]),
+.email-preview i:not([style]) {
+    color: #4b5563;
+    font-style: italic;
+}
+
+.email-preview a:not([style]) {
+    color: #e74c3c;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.email-preview a:not([style]):hover {
+    color: #c0392b;
+    border-bottom-color: #c0392b;
+}
+
+/* Email preview lists - fallback styles */
+.email-preview ul:not([style]),
+.email-preview ol:not([style]) {
+    margin: 12px 0;
+    padding-left: 24px;
+    color: #374151;
+}
+
+.email-preview li:not([style]) {
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+/* Email preview tables - fallback styles */
+.email-preview table:not([style]) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.email-preview th:not([style]) {
+    background-color: #f9fafb;
+    color: #374151;
+    font-weight: 600;
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 2px solid #e5e7eb;
+    font-size: 13px;
+}
+
+.email-preview td:not([style]) {
+    padding: 10px 8px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #4b5563;
+    font-size: 13px;
+}
+
+.email-preview tr:last-child td:not([style]) {
+    border-bottom: none;
+}
+
+.email-preview tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+/* Email preview code and pre elements */
+.email-preview code {
+    background-color: #f3f4f6;
+    color: #e74c3c;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 12px;
+}
+
+.email-preview pre {
+    background-color: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+    margin: 12px 0;
+    color: #374151;
+    font-size: 12px;
+}
+
+.email-preview pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* Email preview blockquotes */
+.email-preview blockquote {
+    border-left: 4px solid #e74c3c;
+    margin: 16px 0;
+    padding: 8px 16px;
+    background-color: #fef2f2;
+    color: #4b5563;
+    font-style: italic;
+}
+
+/* Email preview dividers */
+.email-preview hr {
+    border: none;
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 20px 0;
+}
+
+/* Email preview buttons/call-to-action */
+.email-preview .btn,
+.email-preview button {
+    background-color: #e74c3c;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500;
+    margin: 8px 4px;
+    transition: background-color 0.2s ease;
+}
+
+.email-preview .btn:hover,
+.email-preview button:hover {
+    background-color: #c0392b;
+    color: #ffffff;
+}
+
+/* Email preview images */
+.email-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 8px 0;
+}
+
+/* Email preview containers/divs with special styling */
+.email-preview .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.email-preview .header {
+    background-color: #1f2937;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 20px;
+}
+
+.email-preview .footer {
+    background-color: #f9fafb;
+    color: #6b7280;
+    padding: 16px;
+    text-align: center;
+    border-radius: 0 0 8px 8px;
+    margin-top: 20px;
+    font-size: 12px;
+}
+
+/* Email preview alert/notification boxes */
+.email-preview .alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 12px 0;
+    border-left: 4px solid;
+}
+
+.email-preview .alert-success {
+    background-color: #f0f9ff;
+    border-left-color: #10b981;
+    color: #065f46;
+}
+
+.email-preview .alert-warning {
+    background-color: #fffbeb;
+    border-left-color: #f59e0b;
+    color: #92400e;
+}
+
+.email-preview .alert-error {
+    background-color: #fef2f2;
+    border-left-color: #ef4444;
+    color: #991b1b;
+}
+
+.email-preview .alert-info {
+    background-color: #eff6ff;
+    border-left-color: #3b82f6;
+    color: #1e40af;
+}
+
+/* Email preview scrollbar styling */
+.email-preview::-webkit-scrollbar {
+    width: 6px;
+}
+
+.email-preview::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.email-preview::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.email-preview::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Accordion animation */
+.accordion-content {
+    transition: all 0.3s ease-in-out;
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .group-card {
+        margin-bottom: 1rem;
+    }
+
+    .modal-content {
+        margin: 1rem;
+        width: calc(100% - 2rem);
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+}
+
+/* Dark mode support (future enhancement) */
+@media (prefers-color-scheme: dark) {
+    .group-card {
+        background-color: #1f2937;
+        border-color: #374151;
+    }
+
+    .search-input {
+        background-color: #1f2937;
+        border-color: #374151;
+        color: #f9fafb;
+    }
+}
+
+/* Print styles */
+@media print {
+    .group-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
+    }
+
+    .modal-backdrop,
+    .fab {
+        display: none !important;
+    }
+}
