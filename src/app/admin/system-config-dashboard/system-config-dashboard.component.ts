@@ -328,13 +328,16 @@ export class SystemConfigDashboardComponent implements OnInit {
   }
 
   /**
-   * Open email preview modal
+   * Open email preview in new tab/window
    */
   openEmailPreview(config: SystemConfiguration) {
-    this.selectedConfig = config;
-    // Sanitize HTML content to allow inline styles while keeping it secure
-    this.sanitizedEmailHtml = this.sanitizer.bypassSecurityTrustHtml(config.configValue);
-    this.isEmailPreviewModalOpen = true;
+    if (config.configValue) {
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(config.configValue);
+        newWindow.document.close();
+      }
+    }
   }
 
   /**

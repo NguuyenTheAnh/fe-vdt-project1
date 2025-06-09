@@ -5,6 +5,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { SystemConfigService, RequiredDocumentsConfig } from '../../services/system-config.service';
 
 @Component({
   selector: 'app-loan-product-list-dashboard',
@@ -42,45 +43,8 @@ export class LoanProductListDashboardComponent implements OnInit, OnDestroy {
 
   // Search debouncing
   private searchSubject = new Subject<string>();
-
-  // Map các mã tài liệu sang tên hiển thị tiếng Việt
-  documentTypeDisplayMap: { [key: string]: string } = {
-    'ID_CARD': 'CMND/CCCD',
-    'PROOF_OF_INCOME': 'Chứng minh thu nhập',
-    'PROOF_OF_ADDRESS': 'Chứng minh địa chỉ',
-    'EMPLOYMENT_VERIFICATION': 'Xác nhận việc làm',
-    'BANK_STATEMENT': 'Sao kê ngân hàng',
-    'COLLATERAL_DOCUMENT': 'Tài liệu tài sản đảm bảo',
-    'BUSINESS_LICENSE': 'Giấy phép kinh doanh',
-    'TAX_RETURN': 'Tờ khai thuế',
-    'INSURANCE_POLICY': 'Hợp đồng bảo hiểm',
-    'PROPERTY_OWNERSHIP': 'Giấy tờ sở hữu tài sản',
-    'MARRIAGE_CERTIFICATE': 'Giấy chứng nhận kết hôn',
-    'BIRTH_CERTIFICATE': 'Giấy khai sinh',
-    'UTILITY_BILL': 'Hóa đơn tiện ích',
-    'VEHICLE_REGISTRATION': 'Đăng ký phương tiện',
-    'TRAVEL_ITINERARY': 'Lịch trình du lịch',
-    'FISHING_LICENSE': 'Giấy phép đánh bắt cá',
-    'IMPORT_CONTRACT': 'Hợp đồng nhập khẩu',
-    'ADMISSION_LETTER': 'Thư nhập học',
-    'BUSINESS_PLAN': 'Kế hoạch kinh doanh',
-    'DRIVING_LICENSE': 'Giấy phép lái xe',
-    'EQUIPMENT_PURCHASE_CONTRACT': 'Hợp đồng mua thiết bị',
-    'ENVIRONMENTAL_PERMIT': 'Giấy phép môi trường',
-    'EXPORT_CONTRACT': 'Hợp đồng xuất khẩu',
-    'FARMING_PLAN': 'Kế hoạch canh tác',
-    'FINANCIAL_STATEMENT': 'Báo cáo tài chính',
-    'LAND_OWNERSHIP_CERTIFICATE': 'Giấy chứng nhận quyền sử dụng đất',
-    'LAND_USE_RIGHTS': 'Giấy quyền sử dụng đất',
-    'MEDICAL_INVOICE': 'Hóa đơn y tế',
-    'PROPERTY_DOCUMENT': 'Giấy tờ tài sản',
-    'SALARY_STATEMENT': 'Bảng lương',
-    'STUDENT_ID': 'Thẻ sinh viên',
-    'STUDENT_VISA': 'Visa du học',
-    'TUITION_INVOICE': 'Hóa đơn học phí',
-    'VEHICLE_CONTRACT': 'Hợp đồng mua xe',
-    'VEHICLE_PURCHASE_CONTRACT': 'Hợp đồng mua phương tiện'
-  };
+  // Map các mã tài liệu sang tên hiển thị tiếng Việt (sẽ được tải từ SystemConfigService)
+  documentTypeDisplayMap: { [key: string]: string } = {};
   // Search and filter properties
   searchTerm: string = '';
   statusFilter: string = 'ALL';
@@ -99,10 +63,13 @@ export class LoanProductListDashboardComponent implements OnInit, OnDestroy {
   sortDirection: string = 'desc'; constructor(
     private loanService: LoanService,
     private router: Router,
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
+    private configService: SystemConfigService
   ) { }
-
   ngOnInit(): void {
+    // Load document types first
+    this.loadDocumentTypes();
+
     this.loadLoanProducts();
 
     // Set up search debouncing
@@ -114,10 +81,24 @@ export class LoanProductListDashboardComponent implements OnInit, OnDestroy {
       this.applyFilters();
     });
   }
-
   ngOnDestroy(): void {
     this.searchSubject.complete();
-  } loadLoanProducts(): void {
+  }
+
+  /**
+   * Load document types from SystemConfigService
+   */
+  async loadDocumentTypes(): Promise<void> {
+    try {
+      this.documentTypeDisplayMap = await this.configService.getRequiredDocuments();
+    } catch (error) {
+      console.error('Error loading document types:', error);
+      // Keep empty map as fallback
+      this.documentTypeDisplayMap = {};
+    }
+  }
+
+  loadLoanProducts(): void {
     this.isLoading = true;
     this.error = null;
 

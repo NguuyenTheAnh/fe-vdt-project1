@@ -10,6 +10,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { DocumentService, Document } from '../../services/document.service';
 import { ApiService } from '../../services/api.service';
 import { LoanApplicationStatus } from '../../services/application.service';
+import { SystemConfigService, RequiredDocumentsConfig } from '../../services/system-config.service';
 
 interface DocumentUpload {
     documentType: string;
@@ -32,49 +33,11 @@ export class ApplicationDetailComponent implements OnInit {
     parsedPersonalInfo: any = {};
 
     // Expose enum to template
-    LoanApplicationStatus = LoanApplicationStatus;
-
-    // Danh sách tài liệu yêu cầu
+    LoanApplicationStatus = LoanApplicationStatus;    // Danh sách tài liệu yêu cầu
     requiredDocuments: DocumentUpload[] = [];
 
-    // Map các mã tài liệu sang tên hiển thị
-    documentTypeDisplayMap: { [key: string]: string } = {
-        'ID_CARD': 'CMND/CCCD',
-        'PROOF_OF_INCOME': 'Chứng minh thu nhập',
-        'PROOF_OF_ADDRESS': 'Chứng minh địa chỉ',
-        'EMPLOYMENT_VERIFICATION': 'Xác nhận việc làm',
-        'BANK_STATEMENT': 'Sao kê ngân hàng',
-        'COLLATERAL_DOCUMENT': 'Tài liệu tài sản đảm bảo',
-        'BUSINESS_LICENSE': 'Giấy phép kinh doanh',
-        'TAX_RETURN': 'Tờ khai thuế',
-        'INSURANCE_POLICY': 'Hợp đồng bảo hiểm',
-        'PROPERTY_OWNERSHIP': 'Giấy tờ sở hữu tài sản',
-        'MARRIAGE_CERTIFICATE': 'Giấy chứng nhận kết hôn',
-        'BIRTH_CERTIFICATE': 'Giấy khai sinh',
-        'UTILITY_BILL': 'Hóa đơn tiện ích',
-        'VEHICLE_REGISTRATION': 'Đăng ký phương tiện',
-        'TRAVEL_ITINERARY': 'Lịch trình du lịch',
-        'FISHING_LICENSE': 'Giấy phép đánh bắt cá',
-        'IMPORT_CONTRACT': 'Hợp đồng nhập khẩu',
-        'ADMISSION_LETTER': 'Thư nhập học',
-        'BUSINESS_PLAN': 'Kế hoạch kinh doanh',
-        'DRIVING_LICENSE': 'Giấy phép lái xe',
-        'EQUIPMENT_PURCHASE_CONTRACT': 'Hợp đồng mua thiết bị',
-        'ENVIRONMENTAL_PERMIT': 'Giấy phép môi trường',
-        'EXPORT_CONTRACT': 'Hợp đồng xuất khẩu',
-        'FARMING_PLAN': 'Kế hoạch canh tác',
-        'FINANCIAL_STATEMENT': 'Báo cáo tài chính',
-        'LAND_OWNERSHIP_CERTIFICATE': 'Giấy chứng nhận quyền sử dụng đất',
-        'LAND_USE_RIGHTS': 'Giấy quyền sử dụng đất',
-        'MEDICAL_INVOICE': 'Hóa đơn y tế',
-        'PROPERTY_DOCUMENT': 'Giấy tờ tài sản',
-        'SALARY_STATEMENT': 'Bảng lương',
-        'STUDENT_ID': 'Thẻ sinh viên',
-        'STUDENT_VISA': 'Visa du học',
-        'TUITION_INVOICE': 'Hóa đơn học phí',
-        'VEHICLE_CONTRACT': 'Hợp đồng mua xe',
-        'VEHICLE_PURCHASE_CONTRACT': 'Hợp đồng mua phương tiện'
-    };
+    // Map các mã tài liệu sang tên hiển thị (sẽ được tải từ SystemConfigService)
+    documentTypeDisplayMap: { [key: string]: string } = {};
 
     // Các trạng thái của khoản vay
     statusTranslations: { [key: string]: string } = {
@@ -92,9 +55,7 @@ export class ApplicationDetailComponent implements OnInit {
         style: 'currency',
         currency: 'VND',
         minimumFractionDigits: 0
-    });
-
-    constructor(
+    }); constructor(
         private route: ActivatedRoute,
         private router: Router,
         private loanService: LoanService,
@@ -103,10 +64,12 @@ export class ApplicationDetailComponent implements OnInit {
         private message: NzMessageService,
         private modal: NzModalService,
         private documentService: DocumentService,
-        private apiService: ApiService
-    ) { }
+        private apiService: ApiService,
+        private configService: SystemConfigService
+    ) { } ngOnInit(): void {
+        // Load document types first
+        this.loadDocumentTypes();
 
-    ngOnInit(): void {
         this.route.paramMap.subscribe(params => {
             const id = params.get('id');
             if (id) {
@@ -149,6 +112,19 @@ export class ApplicationDetailComponent implements OnInit {
                 this.isLoading = false;
             }
         });
+    }
+
+    /**
+     * Load document types from SystemConfigService
+     */
+    async loadDocumentTypes(): Promise<void> {
+        try {
+            this.documentTypeDisplayMap = await this.configService.getRequiredDocuments();
+        } catch (error) {
+            console.error('Error loading document types:', error);
+            // Keep empty map as fallback
+            this.documentTypeDisplayMap = {};
+        }
     }
 
     /**
