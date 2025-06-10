@@ -351,13 +351,28 @@
                                     <span class="font-medium">{{formatDate(selectedApplication.updatedAt)}}</span>
                                 </div>
 
-                            </div>
-
-                            <!-- Personal Information -->
+                            </div> <!-- Personal Information -->
                             <div class="mt-4">
                                 <h4 class="font-medium text-gray-800 mb-2">Thông tin cá nhân chi tiết:</h4>
-                                <p class="text-gray-700 bg-white p-3 rounded border">
-                                    {{selectedApplication.personalInfo}}</p>
+
+                                <!-- Parse and display personalInfo as key-value pairs -->
+                                <div class="personal-info-container">
+                                    <div
+                                        *ngIf="getObjectKeys(parsePersonalInfo(selectedApplication.personalInfo)).length > 0; else noPersonalInfo">
+                                        <div *ngFor="let key of getObjectKeys(parsePersonalInfo(selectedApplication.personalInfo))"
+                                            class="personal-info-item">
+                                            <span class="personal-info-key">{{key}}</span>
+                                            <span
+                                                class="personal-info-value">{{getFormattedValue(parsePersonalInfo(selectedApplication.personalInfo)[key])}}</span>
+                                        </div>
+                                    </div>
+
+                                    <ng-template #noPersonalInfo>
+                                        <div class="no-personal-info">
+                                            Không có thông tin cá nhân chi tiết
+                                        </div>
+                                    </ng-template>
+                                </div>
                             </div>
 
                             <!-- Internal Notes -->

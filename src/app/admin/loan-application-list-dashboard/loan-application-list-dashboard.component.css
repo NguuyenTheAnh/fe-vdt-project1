@@ -240,6 +240,57 @@
     transition: all 0.2s ease-in-out;
 }
 
+/* Personal info display styles */
+.personal-info-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s ease;
+    gap: 1rem;
+}
+
+.personal-info-item:hover {
+    background-color: #f8fafc;
+}
+
+.personal-info-item:last-child {
+    border-bottom: none;
+}
+
+.personal-info-key {
+    color: #64748b;
+    font-weight: 500;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    min-width: 140px;
+    max-width: 140px;
+}
+
+.personal-info-value {
+    color: #334155;
+    font-size: 0.875rem;
+    word-break: break-word;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.personal-info-container {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.no-personal-info {
+    padding: 0.75rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-style: italic;
+    text-align: center;
+}
+
 /* Responsive design */
 @media (max-width: 1024px) {
     .filter-section .grid {

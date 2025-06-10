@@ -317,10 +317,34 @@ export class LoanApplicationListDashboardComponent implements OnInit {
 
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   }
-
   // Get end index for pagination display
   getEndIndex(): number {
     return Math.min((this.currentPage + 1) * this.pageSize, this.totalElements);
+  }
+  // Parse personalInfo string to object
+  parsePersonalInfo(personalInfo: string): { [key: string]: any } {
+    if (!personalInfo || typeof personalInfo !== 'string') return {};
+
+    try {
+      const parsed = JSON.parse(personalInfo);
+      // Ensure we return an object, not an array or other type
+      return typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed) ? parsed : {};
+    } catch (e) {
+      console.error('Error parsing personalInfo:', e);
+      return {};
+    }
+  }
+
+  // Get object keys for iteration in template
+  getObjectKeys(obj: any): string[] {
+    return obj && typeof obj === 'object' ? Object.keys(obj) : [];
+  }
+
+  // Get formatted value for display
+  getFormattedValue(value: any): string {
+    if (value === null || value === undefined) return 'N/A';
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value);
   }
 
   // Export functionality (optional)
