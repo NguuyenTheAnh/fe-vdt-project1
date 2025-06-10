@@ -1,15 +1,15 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-    selector: 'app-modal-container',
-    template: `
+  selector: 'app-modal-container',
+  template: `
     <div *ngIf="isOpen" class="modal-portal-overlay" (click)="onOverlayClick()">
       <div class="modal-portal-content" (click)="$event.stopPropagation()">
         <ng-content></ng-content>
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .modal-portal-overlay {
       position: fixed !important;
       top: 0 !important;
@@ -49,10 +49,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   `]
 })
 export class ModalContainerComponent {
-    @Input() isOpen = false;
-    @Output() close = new EventEmitter<void>();
+  @Input() isOpen = false;
+  @Output() close = new EventEmitter<void>();
 
-    onOverlayClick() {
-        this.close.emit();
-    }
+  onOverlayClick() {
+    this.close.emit();
+  }
 }

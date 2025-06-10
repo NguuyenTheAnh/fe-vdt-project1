@@ -16,14 +16,6 @@
                         </svg>
                         Làm mới
                     </button>
-                    <button (click)="exportApplications()" class="action-button btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Xuất dữ liệu
-                    </button>
                 </div>
             </div>
         </div>
@@ -262,13 +254,14 @@
                 </div>
             </div>
         </div>
-    </div>    <!-- Application Detail Modal -->
+    </div> <!-- Application Detail Modal -->
     <app-modal-container [isOpen]="isModalOpen" (close)="closeModal()">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl modal-content flex flex-col">
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-6 border-b border-gray-200 flex-shrink-0">
                 <h2 class="text-2xl font-semibold text-gray-800">Chi tiết đơn vay #{{selectedApplication?.id}}</h2>
-                <button (click)="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                <button (click)="closeModal()"
+                    class="text-gray-400 border-gray-100 hover:text-gray-600 transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -443,18 +436,19 @@
             </div> <!-- Modal Footer -->
             <div *ngIf="selectedApplication" class="p-6 border-t border-gray-200 flex justify-end flex-shrink-0">
                 <button (click)="closeModal()"
-                    class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+                    class="px-6 border-gray-100 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200">
                     Đóng
                 </button>
             </div>
-        </div></app-modal-container> <!-- Document Modal -->
+        </div>
+    </app-modal-container> <!-- Document Modal -->
     <app-modal-container [isOpen]="isDocumentModalOpen" (close)="closeDocumentModal()">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl modal-content">
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-6 border-b border-gray-200">
                 <h2 class="text-2xl font-semibold text-gray-800">Tài liệu hồ sơ</h2>
                 <button (click)="closeDocumentModal()"
-                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                    class="text-gray-400 hover:text-gray-600 border-gray-100 transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -541,7 +535,7 @@
             </div> <!-- Modal Footer -->
             <div class="p-6 border-t border-gray-200 flex justify-end">
                 <button (click)="closeDocumentModal()"
-                    class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+                    class="px-6 py-2 bg-gray-300 border-gray-100 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200">
                     Đóng
                 </button>
             </div>

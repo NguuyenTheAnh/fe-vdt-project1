@@ -15,10 +15,11 @@
 
 /* Apply scale to content container instead of host */
 .content-container {
-    transform: scale(0.93);
+    transform: scale(0.915);
     transform-origin: top left;
     width: 111.111%;
     height: 111.111%;
+    padding: none;
 }
 
 /* Override parent container padding */
