@@ -99,8 +99,8 @@ export class SystemConfigService {
   getConfigurationByKey(configKey: string): Observable<ApiResponse<SystemConfiguration>> {
     const encodedKey = encodeURIComponent(configKey);
     return this.http.get<ApiResponse<SystemConfiguration>>(
-      `${this.apiUrl}/key/${encodedKey}`,
-      { headers: this.getHeaders() }
+      `${this.apiUrl}/key/${encodedKey}`
+      // { headers: this.getHeaders() }
     );
   }
 

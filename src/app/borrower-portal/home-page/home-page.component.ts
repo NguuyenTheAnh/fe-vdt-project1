@@ -2,6 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { LoanService, LoanProduct } from '../../services/loan.service';
+import { SystemConfigService } from '../../services/system-config.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
@@ -24,19 +25,19 @@ export class HomePageComponent implements OnInit {
     isLoggedIn = false;
     popularLoans: LoanProduct[] = [];
     isLoading: boolean = false;
-    error: string | null = null;
-
-    // Modal properties
+    error: string | null = null;    // Modal properties
     selectedProduct: LoanProduct | null = null;
     isModalOpen: boolean = false;
     isLoadingProduct: boolean = false;
-    productError: string | null = null; constructor(
+    productError: string | null = null;
+
+    // Document type display mapping for Vietnamese localization
+    documentTypeDisplayMap: { [key: string]: string } = {}; constructor(
         private userService: UserService,
         private loanService: LoanService,
-        private router: Router
-    ) { }
-
-    ngOnInit(): void {
+        private router: Router,
+        private configService: SystemConfigService
+    ) { } ngOnInit(): void {
         // Subscribe để luôn cập nhật khi thông tin người dùng thay đổi
         this.userService.currentUser$.subscribe(user => {
             this.isLoggedIn = !!user;
@@ -44,6 +45,9 @@ export class HomePageComponent implements OnInit {
 
         // Lấy 3 khoản vay phổ biến nhất
         this.loadPopularLoans();
+
+        // Tải cấu hình tài liệu yêu cầu
+        this.loadDocumentTypeMapping();
     }
 
     loadPopularLoans(): void {
@@ -71,7 +75,67 @@ export class HomePageComponent implements OnInit {
             currency: 'VND',
             maximumFractionDigits: 0
         }).format(amount);
-    }    // Phương thức mở modal chi tiết sản phẩm vay
+    }
+
+    /**
+     * Tải mapping document types từ system config để hiển thị tiếng Việt
+     */
+    async loadDocumentTypeMapping(): Promise<void> {
+        try {
+            this.documentTypeDisplayMap = await this.configService.getRequiredDocuments();
+        } catch (error) {
+            console.error('Error loading document type mapping:', error);
+            // Fallback mapping nếu không load được từ system config
+            this.documentTypeDisplayMap = {
+                'ID_CARD': 'Căn cước công dân/CMND',
+                'HOUSEHOLD_REGISTRATION': 'Sổ hộ khẩu',
+                'INCOME_CERTIFICATE': 'Giấy xác nhận thu nhập',
+                'BANK_STATEMENT': 'Sao kê ngân hàng',
+                'MARRIAGE_CERTIFICATE': 'Giấy chứng nhận kết hôn',
+                'WORK_CONTRACT': 'Hợp đồng lao động',
+                'TAX_DECLARATION': 'Tờ khai thuế',
+                'PROPERTY_CERTIFICATE': 'Giấy chứng nhận quyền sở hữu tài sản',
+                'COLLATERAL_DOCUMENT': 'Tài liệu tài sản thế chấp',
+                'BUSINESS_LICENSE': 'Giấy phép kinh doanh'
+            };
+        }
+    }    /**
+     * Format required documents từ chuỗi tiếng Anh sang tiếng Việt
+     */
+    formatRequiredDocuments(requiredDocuments: string): string {
+        if (!requiredDocuments) return '';
+
+        // Split bằng dấu cách hoặc dấu phẩy để lấy các document types
+        const documentTypes = requiredDocuments.split(/[\s,]+/).filter(doc => doc.trim() !== '');
+
+        // Map các document types sang tiếng Việt
+        const vietnameseDocuments = documentTypes.map(doc => {
+            const displayName = this.documentTypeDisplayMap[doc.trim()];
+            return displayName || doc; // Fallback về tên gốc nếu không tìm thấy
+        });
+
+        return vietnameseDocuments.join(', ');
+    }
+
+    /**
+     * Lấy danh sách tài liệu yêu cầu dưới dạng array để hiển thị từng dòng
+     */
+    getRequiredDocumentsList(requiredDocuments: string): string[] {
+        if (!requiredDocuments) return [];
+
+        // Split bằng dấu cách hoặc dấu phẩy để lấy các document types
+        const documentTypes = requiredDocuments.split(/[\s,]+/).filter(doc => doc.trim() !== '');
+
+        // Map các document types sang tiếng Việt
+        const vietnameseDocuments = documentTypes.map(doc => {
+            const displayName = this.documentTypeDisplayMap[doc.trim()];
+            return displayName || doc; // Fallback về tên gốc nếu không tìm thấy
+        });
+
+        return vietnameseDocuments;
+    }
+
+    // Phương thức mở modal chi tiết sản phẩm vay
     openProductDetails(product: LoanProduct): void {
         this.isLoadingProduct = true;
         this.productError = null;
