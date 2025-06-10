@@ -55,6 +55,7 @@ import { LoanProductListDashboardComponent } from './admin/loan-product-list-das
 import { LoanApplicationListDashboardComponent } from './admin/loan-application-list-dashboard/loan-application-list-dashboard.component';
 import { DisbursementDashboardComponent } from './admin/disbursement-dashboard/disbursement-dashboard.component';
 import { ReportDashboardComponent } from './admin/report-dashboard/report-dashboard.component';
+import { DisbursementReportComponent } from './admin/report-dashboard/disbursement-report/disbursement-report.component';
 import { SystemConfigDashboardComponent } from './admin/system-config-dashboard/system-config-dashboard.component';
 import { AdminSidebarComponent } from './layout/admin-sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from './layout/admin-header/admin-header.component';
@@ -76,6 +77,7 @@ registerLocaleData(vi);
     LoanApplicationListDashboardComponent,
     DisbursementDashboardComponent,
     ReportDashboardComponent,
+    DisbursementReportComponent,
     SystemConfigDashboardComponent,
     AdminSidebarComponent,
     AdminHeaderComponent,
