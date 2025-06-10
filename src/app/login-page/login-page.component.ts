@@ -97,8 +97,26 @@ export class LoginPageComponent implements OnInit, AfterViewChecked {
             setTimeout(() => {
               this.authService.getUserService().appInitialized$.subscribe((isInitialized: boolean) => {
                 if (isInitialized) {
-                  console.log('App initialized and user role loaded, navigating to home');
-                  this.router.navigate(['/home']);
+                  // Lấy thông tin người dùng hiện tại để kiểm tra role
+                  const currentUser = this.authService.getUserService().getCurrentUser();
+
+                  if (currentUser && currentUser.role) {
+                    const userRole = currentUser.role.name;
+                    console.log('User role:', userRole);
+
+                    // Điều hướng dựa trên role
+                    if (userRole !== 'USER') {
+                      console.log('Non-user role detected, navigating to admin dashboard');
+                      this.router.navigate(['/admin/main-dashboard']);
+                    } else {
+                      console.log('User role detected, navigating to home');
+                      this.router.navigate(['/home']);
+                    }
+                  } else {
+                    // Fallback nếu không có thông tin role
+                    console.log('No role information found, navigating to home');
+                    this.router.navigate(['/home']);
+                  }
                 }
               });
             }, 500);
