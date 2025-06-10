@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { ApiResponse } from './auth.service';
 
@@ -46,6 +46,16 @@ export class AppNotificationService {
                         this.unreadCount = response.data || 0;
                         this.unreadCountSubject.next(this.unreadCount);
                     }
+                }),                // Handle lỗi khi role không được phép
+                catchError((error: any) => {
+                    if (error.status === 403 || error.status === 404) {
+                        console.log('User not authorized for notifications, setting count to 0');
+                        this.unreadCount = 0;
+                        this.unreadCountSubject.next(0);
+                        // Trả về observable giả để không break chain
+                        return of({ code: 1000, data: 0, message: 'Not authorized' } as ApiResponse<number>);
+                    }
+                    throw error;
                 })
             );
     }

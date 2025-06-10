@@ -146,6 +146,7 @@ export class MainDashboardComponent implements OnInit {
 
     try {
       const response = await this.reportService.getDashboardSummary().toPromise();
+
       if (response && response.code === 1000) {
         this.dashboardSummary = response.data;
         this.updateQuickStats(response.data);
@@ -153,8 +154,7 @@ export class MainDashboardComponent implements OnInit {
         this.dashboardError = 'Không thể tải dữ liệu dashboard';
         this.setErrorState();
       }
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
+    } catch (error: any) {
       this.dashboardError = 'Lỗi kết nối khi tải dữ liệu dashboard';
       this.setErrorState();
     } finally {

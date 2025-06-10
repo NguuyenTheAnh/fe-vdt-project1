@@ -12,16 +12,14 @@ import { UserService } from '../services/user.service';
 })
 export class AdminGuard implements CanActivate {
 
-    constructor(private userService: UserService, private router: Router) { }
-
-    canActivate(
+    constructor(private userService: UserService, private router: Router) { } canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): boolean {
         // Kiểm tra nếu người dùng đã đăng nhập
         const currentUser = this.userService.getCurrentUser();
 
-        if (currentUser && currentUser.role && currentUser.role.name === 'ADMIN') {
+        if (currentUser && currentUser.role && currentUser.role.name !== 'USER') {
             return true;
         }
 

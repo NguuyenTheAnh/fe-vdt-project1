@@ -60,10 +60,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
         // Kiểm tra vị trí cuộn ban đầu
         this.isScrolled = window.scrollY > 30;
     } private subscribeToNotifications(): void {
+        // Chỉ subscribe notifications cho role USER
+        if (!this.currentUser || !this.currentUser.role || this.currentUser.role.name !== 'USER') {
+            console.log('Not a USER role, skipping notification subscription');
+            return;
+        }
+
         // Đánh dấu đã subscribe để tránh duplicate
         this.notificationSubscribed = true;
 
-        // Gọi API để lấy unread count
+        // Gọi API để lấy unread count chỉ cho USER
         this.appNotificationService.getUnreadCount().subscribe();
 
         // Subscribe to unread notification count changes

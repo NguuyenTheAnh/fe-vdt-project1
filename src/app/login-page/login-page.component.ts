@@ -90,9 +90,7 @@ export class LoginPageComponent implements OnInit, AfterViewChecked {
             this.notification.success(
               'Đăng nhập thành công',
               'Chào mừng bạn quay trở lại!'
-            );
-
-            // Đợi quá trình khởi tạo app hoàn tất và thông tin người dùng được tải đầy đủ
+            );            // Đợi quá trình khởi tạo app hoàn tất và thông tin người dùng được tải đầy đủ
             // Chờ một chút để đảm bảo fetchCurrentUserProfile đã hoàn thành
             setTimeout(() => {
               this.authService.getUserService().appInitialized$.subscribe((isInitialized: boolean) => {
@@ -102,19 +100,15 @@ export class LoginPageComponent implements OnInit, AfterViewChecked {
 
                   if (currentUser && currentUser.role) {
                     const userRole = currentUser.role.name;
-                    console.log('User role:', userRole);
 
                     // Điều hướng dựa trên role
                     if (userRole !== 'USER') {
-                      console.log('Non-user role detected, navigating to admin dashboard');
                       this.router.navigate(['/admin/main-dashboard']);
                     } else {
-                      console.log('User role detected, navigating to home');
                       this.router.navigate(['/home']);
                     }
                   } else {
                     // Fallback nếu không có thông tin role
-                    console.log('No role information found, navigating to home');
                     this.router.navigate(['/home']);
                   }
                 }
