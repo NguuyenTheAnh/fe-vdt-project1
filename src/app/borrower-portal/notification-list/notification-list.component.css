@@ -443,7 +443,8 @@
     width: 100%;
     max-width: 900px;
     max-height: 85vh;
-    overflow: hidden;
+    overflow-y: auto !important;
+    overflow-x: hidden;
     background-color: white;
     border-radius: 1rem;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -686,36 +687,47 @@
     background: #C0392B;
 }
 
-/* Enhanced Modal Scrollbar Styles */
+/* Enhanced Modal Scrollbar Styles - Always visible */
 .modal-container.scrollbar-visible {
-    /* Firefox */
-    scrollbar-width: auto;
-    scrollbar-color: #E74C3C #f1f1f1;
+    /* Firefox - Force visible scrollbar */
+    scrollbar-width: auto !important;
+    scrollbar-color: #E74C3C #f8f9fa !important;
+    /* Always show scrollbar even when not needed */
+    overflow-y: scroll !important;
 }
 
-/* Webkit browsers (Chrome, Safari, Edge) - Optimized for smaller modal */
+/* Webkit browsers (Chrome, Safari, Edge) - Force visible scrollbar always */
 .modal-container.scrollbar-visible::-webkit-scrollbar {
-    width: 8px;
-    background-color: #f1f1f1;
+    width: 12px !important;
+    background-color: #f8f9fa;
     border-radius: 6px;
+    /* Force scrollbar to always be visible */
+    display: block !important;
 }
 
 .modal-container.scrollbar-visible::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #f8f9fa;
     border-radius: 6px;
     margin: 3px;
+    border: 1px solid #e9ecef;
+    /* Ensure track is always visible */
+    display: block !important;
 }
 
 .modal-container.scrollbar-visible::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #E74C3C, #C0392B);
     border-radius: 6px;
-    border: 1px solid #f1f1f1;
+    border: 2px solid #f8f9fa;
     transition: all 0.3s ease;
+    min-height: 30px;
+    /* Make thumb always visible */
+    display: block !important;
 }
 
 .modal-container.scrollbar-visible::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #C0392B, #A93226);
     transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
 
 .modal-container.scrollbar-visible::-webkit-scrollbar-thumb:active {
@@ -725,8 +737,12 @@
 /* Modal container height and padding adjustments for better scrolling */
 .modal-container {
     max-height: 85vh !important;
+    min-height: 70vh !important;
     display: flex;
     flex-direction: column;
+    /* Always show scrollbar */
+    overflow-y: scroll !important;
+    overflow-x: hidden;
 }
 
 /* Ensure proper spacing and scroll behavior - removed slideIn class to prevent animation conflicts */
