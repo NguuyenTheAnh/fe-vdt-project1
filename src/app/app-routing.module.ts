@@ -21,6 +21,7 @@ import { DisbursementDashboardComponent } from './admin/disbursement-dashboard/d
 import { ReportDashboardComponent } from './admin/report-dashboard/report-dashboard.component';
 import { SystemConfigDashboardComponent } from './admin/system-config-dashboard/system-config-dashboard.component';
 import { RoleDashboardComponent } from './admin/role-dashboard/role-dashboard.component';
+import { AccessDeniedComponent } from './admin/access-denied/access-denied.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -46,6 +47,7 @@ const routes: Routes = [
       { path: 'disbursement', component: DisbursementDashboardComponent },
       { path: 'report', component: ReportDashboardComponent },
       { path: 'system-config', component: SystemConfigDashboardComponent },
+      { path: 'access-denied', component: AccessDeniedComponent } // Thêm route cho Access Denied
     ]
   },
   { path: '404', component: PageNotFoundComponent },

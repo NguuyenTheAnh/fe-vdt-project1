@@ -1,0 +1,64 @@
+<div class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-3xl w-full text-center">
+        <!-- Error Code -->
+        <div class="relative mb-8">
+            <h1 class="text-9xl font-bold text-gray-200">403</h1>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div class="bg-[#E74C3C] text-white p-4 rounded-full shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636A9 9 0 015.636 18.364m12.728 0A9 9 0 0018.364 5.636" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8 transform transition-all duration-300 hover:shadow-xl">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Truy cập bị từ chối</h2>
+            <p class="text-gray-600 text-lg mb-6">
+                Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ quản trị viên để được hỗ trợ.
+            </p>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button (click)="goToMainDashboard()"
+                    class="px-5 py-3 bg-[#E74C3C] text-white border-2 border-[#E74C3C] rounded-lg hover:bg-[#C0392B] flex items-center shadow-sm hover:shadow-md transition-all duration-300 mt-4 md:mt-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Trang chủ
+                </button>
+            </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="text-center">
+            <p class="text-gray-500 text-sm">
+                Mã lỗi: 403 - Forbidden Access
+            </p>
+            <p class="text-gray-400 text-xs mt-2">
+                Nếu bạn cho rằng đây là lỗi, vui lòng liên hệ bộ phận IT
+            </p>
+        </div>
+
+        <!-- Decorative Elements -->
+        <div class="mt-12 flex justify-center space-x-4 opacity-30">
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+        </div>
+    </div>
+
+    <!-- Background Pattern -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+        <div
+            class="absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-br from-red-100 to-red-200 rounded-full opacity-50 blur-3xl">
+        </div>
+        <div
+            class="absolute -bottom-40 -left-32 w-80 h-80 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full opacity-50 blur-3xl">
+        </div>
+    </div>
+</div>

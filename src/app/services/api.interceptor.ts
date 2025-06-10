@@ -47,9 +47,7 @@ export class ApiInterceptor implements HttpInterceptor {
                 // Log lỗi để debug (giảm log không cần thiết)
                 if (error.status !== 0) { // Bỏ qua lỗi mạng
                     console.error(`Error ${error.status} for request ${request.url}`);
-                }
-
-                // Chỉ xử lý lỗi 401 (Unauthorized) nếu không phải là request luôn public
+                }                // Chỉ xử lý lỗi 401 (Unauthorized) nếu không phải là request luôn public
                 // và có token (tức là user đã đăng nhập)
                 if (error.status === 401 && !isAlwaysPublic && token) {
                     console.log('Received 401 error, attempting to refresh token');
@@ -57,10 +55,33 @@ export class ApiInterceptor implements HttpInterceptor {
                     return this.handleTokenRefresh(request, next);
                 }
 
+                // Xử lý lỗi 403 (Forbidden) cho người quản lý
+                if (error.status === 403 && token) {
+                    this.handle403Error();
+                    return throwError(() => error);
+                }
+
                 return throwError(() => error);
             })
         );
-    }// Hàm xử lý refresh token
+    }    // Hàm xử lý lỗi 403 Forbidden cho người quản lý
+    private handle403Error(): void {
+        // Lấy AuthService thông qua Injector để tránh circular dependency
+        const authService = this.injector.get(AuthService);
+
+        // Kiểm tra xem người dùng hiện tại có phải là admin không
+        const currentUser = authService.getCurrentUser();
+        const isAdmin = currentUser && currentUser.role && currentUser.role.name !== 'USER';
+
+        if (isAdmin) {
+            // Điều hướng đến trang access-denied
+            setTimeout(() => {
+                this.router.navigate(['/admin/access-denied']);
+            }, 100);
+        }
+    }
+
+    // Hàm xử lý refresh token
     private handleTokenRefresh(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         if (!this.isRefreshing) {
             this.isRefreshing = true;

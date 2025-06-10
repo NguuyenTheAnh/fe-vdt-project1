@@ -60,6 +60,7 @@ import { SystemConfigDashboardComponent } from './admin/system-config-dashboard/
 import { AdminSidebarComponent } from './layout/admin-sidebar/admin-sidebar.component';
 import { AdminHeaderComponent } from './layout/admin-header/admin-header.component';
 import { RoleDashboardComponent } from './admin/role-dashboard/role-dashboard.component';
+import { AccessDeniedComponent } from './admin/access-denied/access-denied.component';
 registerLocaleData(vi);
 
 @NgModule({
@@ -81,7 +82,8 @@ registerLocaleData(vi);
     SystemConfigDashboardComponent,
     AdminSidebarComponent,
     AdminHeaderComponent,
-    RoleDashboardComponent
+    RoleDashboardComponent,
+    AccessDeniedComponent
   ],
   imports: [
     BrowserModule,
