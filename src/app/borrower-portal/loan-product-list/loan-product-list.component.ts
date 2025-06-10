@@ -2,6 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoanService, LoanProduct, PageableResponse } from '../../services/loan.service';
 import { AuthService } from '../../services/auth.service';
+import { SystemConfigService } from '../../services/system-config.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
@@ -40,20 +41,83 @@ export class LoanProductListComponent implements OnInit {
   pageSize: number = 6; // Hiển thị mặc định 6 khoản vay mỗi trang
   totalPages: number = 0;
   totalElements: number = 0;
-
   // Sorting
   sortField: string = 'id';
   sortDirection: string = 'desc';
 
+  // Document type display mapping for Vietnamese localization
+  documentTypeDisplayMap: { [key: string]: string } = {};
+
   constructor(
     private loanService: LoanService,
     private authService: AuthService,
-    private router: Router
-  ) { }
-
-  ngOnInit(): void {
+    private router: Router,
+    private configService: SystemConfigService
+  ) { } ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
     this.loadLoanProducts();
+    // Load document type mapping for Vietnamese localization
+    this.loadDocumentTypeMapping();
+  }
+
+  /**
+   * Tải mapping document types từ system config để hiển thị tiếng Việt
+   */
+  async loadDocumentTypeMapping(): Promise<void> {
+    try {
+      this.documentTypeDisplayMap = await this.configService.getRequiredDocuments();
+    } catch (error) {
+      console.error('Error loading document type mapping:', error);
+      // Fallback mapping nếu không load được từ system config
+      this.documentTypeDisplayMap = {
+        'ID_CARD': 'Căn cước công dân/CMND',
+        'HOUSEHOLD_REGISTRATION': 'Sổ hộ khẩu',
+        'INCOME_CERTIFICATE': 'Giấy xác nhận thu nhập',
+        'BANK_STATEMENT': 'Sao kê ngân hàng',
+        'MARRIAGE_CERTIFICATE': 'Giấy chứng nhận kết hôn',
+        'WORK_CONTRACT': 'Hợp đồng lao động',
+        'TAX_DECLARATION': 'Tờ khai thuế',
+        'PROPERTY_CERTIFICATE': 'Giấy chứng nhận quyền sở hữu tài sản',
+        'COLLATERAL_DOCUMENT': 'Tài liệu tài sản thế chấp',
+        'BUSINESS_LICENSE': 'Giấy phép kinh doanh'
+      };
+    }
+  }
+
+  /**
+   * Format required documents từ chuỗi tiếng Anh sang tiếng Việt
+   */
+  formatRequiredDocuments(requiredDocuments: string): string {
+    if (!requiredDocuments) return '';
+
+    // Split bằng dấu cách hoặc dấu phẩy để lấy các document types
+    const documentTypes = requiredDocuments.split(/[\s,]+/).filter(doc => doc.trim() !== '');
+
+    // Map các document types sang tiếng Việt
+    const vietnameseDocuments = documentTypes.map(doc => {
+      const displayName = this.documentTypeDisplayMap[doc.trim()];
+      return displayName || doc; // Fallback về tên gốc nếu không tìm thấy
+    });
+
+    return vietnameseDocuments.join(', ');
+  }
+
+  /**
+   * Lấy danh sách tài liệu yêu cầu dưới dạng array để hiển thị từng dòng
+   */
+  getRequiredDocumentsList(requiredDocuments: string): string[] {
+    if (!requiredDocuments) return [];
+
+    // Split bằng dấu cách hoặc dấu phẩy để lấy các document types
+    const documentTypes = requiredDocuments.split(/[\s,]+/).filter(doc => doc.trim() !== '');
+
+    // Map các document types sang tiếng Việt
+    const vietnameseDocuments = documentTypes.map(doc => {
+      const displayName = this.documentTypeDisplayMap[doc.trim()];
+      return displayName || doc; // Fallback về tên gốc nếu không tìm thấy
+    });
+
+    return vietnameseDocuments;
   }
 
   loadLoanProducts(): void {
@@ -319,14 +383,20 @@ export class LoanProductListComponent implements OnInit {
       }
     }, 200); // Match the animation out duration
   }
-
   applyForLoan(product: LoanProduct): void {
     // Close the modal
     this.closeModal();
-    // Navigate to loan application form with product ID
-    this.router.navigate(['/borrower-portal/loan-application-form'], {
-      queryParams: { productId: product.id }
-    });
+
+    // Check if user is logged in
+    if (this.isLoggedIn) {
+      // Navigate to protected loan application form
+      this.router.navigate(['/borrower-portal/loan-application-form'], {
+        queryParams: { productId: product.id }
+      });
+    } else {
+      // Redirect to login page first
+      this.router.navigate(['/login']);
+    }
   }
 
   // Close modal when clicking outside or pressing Escape key
@@ -336,7 +406,6 @@ export class LoanProductListComponent implements OnInit {
       this.closeModal();
     }
   }
-
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
     // Check if click was on the modal overlay (the semi-transparent background)
@@ -348,4 +417,5 @@ export class LoanProductListComponent implements OnInit {
       }
     }
   }
+
 }

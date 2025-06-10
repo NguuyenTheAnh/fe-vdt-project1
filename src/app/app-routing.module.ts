@@ -28,9 +28,11 @@ const routes: Routes = [
   { path: 'home', component: HomePageComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
+  // Route công khai cho danh sách sản phẩm vay (không yêu cầu đăng nhập)
+  { path: 'loan-products', component: LoanProductListComponent },
   {
     path: 'borrower-portal', canActivate: [AuthGuard], children: [
-      { path: 'loan-product-list', component: LoanProductListComponent },
+      { path: 'loan-product-list', component: LoanProductListComponent }, // Giữ lại để tương thích
       { path: 'loan-application-form', component: LoanApplicationFormComponent },
       { path: 'application-list', component: ApplicationListComponent },
       { path: 'application-list/:id', component: ApplicationDetailComponent },

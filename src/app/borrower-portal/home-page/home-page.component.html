@@ -12,7 +12,7 @@
                         tài chính uy tín.
                     </p>
                     <div class="flex flex-wrap gap-5">
-                        <button routerLink="/borrower-portal/loan-product-list"
+                        <button routerLink="/loan-products"
                             class="bg-white border-gray-100 text-[#E74C3C] hover:bg-gray-100 py-3 px-8 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl flex items-center focus:outline-none focus:ring-2 focus:ring-[#E74C3C] focus:ring-offset-2">
                             <span>Tìm khoản vay ngay</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
@@ -218,7 +218,7 @@
 
             <!-- View All Loans Button -->
             <div *ngIf="!isLoading && popularLoans.length > 0" class="mt-10 flex justify-center">
-                <button routerLink="/borrower-portal/loan-product-list"
+                <button routerLink="/loan-products"
                     class="py-3 border-gray-100 px-8 bg-[#E74C3C] hover:bg-[#C0392B] text-white rounded-lg transition-colors duration-300 flex items-center justify-center shadow-md hover:shadow-lg">
                     <span>Xem tất cả khoản vay</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
@@ -254,9 +254,8 @@
                                     <path fill-rule="evenodd"
                                         d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
                                         clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                            <button routerLink="/borrower-portal/loan-product-list"
+                                </svg> </button>
+                            <button routerLink="/loan-products"
                                 class="bg-transparent text-white border border-white hover:bg-white/20 py-3 px-8 rounded-lg font-medium transition-all duration-300">
                                 Tìm hiểu thêm
                             </button>
@@ -272,9 +271,8 @@
                             Hành trình tài chính của bạn đã bắt đầu. Hãy lựa chọn sản phẩm vay phù hợp nhất để đạt được
                             mục tiêu cá nhân.
                         </p>
-
                         <div class="flex flex-wrap gap-5 justify-center">
-                            <button routerLink="/borrower-portal/loan-product-list"
+                            <button routerLink="/loan-products"
                                 class="bg-white border-gray-100 text-[#E74C3C] hover:bg-gray-100 py-3 px-8 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl flex items-center">
                                 <span>Xem các khoản vay</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
@@ -375,7 +373,8 @@
                             <span class="text-gray-700 font-medium">Thời hạn: {{ selectedProduct.minTerm }} - {{
                                 selectedProduct.maxTerm }} tháng</span>
                         </div>
-                    </div> <!-- Requirements Section -->
+                    </div>
+                    <!-- Requirements Section -->
                     <div *ngIf="selectedProduct.requiredDocuments" class="mb-6">
                         <h3 class="text-lg font-semibold mb-3 text-gray-800">Yêu cầu hồ sơ</h3>
                         <div class="space-y-2">
