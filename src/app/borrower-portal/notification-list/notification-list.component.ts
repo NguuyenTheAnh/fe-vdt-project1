@@ -16,11 +16,11 @@ import { trigger, transition, style, animate } from '@angular/animations';
   animations: [
     trigger('modalAnimation', [
       transition(':enter', [
-        style({ opacity: 0, transform: 'scale(0.95)' }),
-        animate('200ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))
+        style({ opacity: 0, transform: 'scale(0.9) translateY(-10px)' }),
+        animate('300ms cubic-bezier(0.34, 1.56, 0.64, 1)', style({ opacity: 1, transform: 'scale(1) translateY(0)' }))
       ]),
       transition(':leave', [
-        animate('150ms ease-in', style({ opacity: 0, transform: 'scale(0.95)' }))
+        animate('200ms ease-in', style({ opacity: 0, transform: 'scale(0.95) translateY(-5px)' }))
       ])
     ])
   ]
@@ -43,6 +43,7 @@ export class NotificationListComponent implements OnInit, OnDestroy {
   // Modal properties
   isModalOpen: boolean = false;
   selectedApplication: any = null;
+  selectedApplicationId: number | null = null;
   isLoadingApplication: boolean = false;
   applicationError: string | null = null;
 
@@ -206,18 +207,10 @@ export class NotificationListComponent implements OnInit, OnDestroy {
     this.isLoadingApplication = true;
     this.applicationError = null;
     this.selectedApplication = null;
+    this.selectedApplicationId = applicationId; // Store the ID for retry functionality
 
-    // Open modal immediately for better UX
-    this.isModalOpen = true;
-
-    // Use renderer for DOM manipulations
-    this.renderer.setStyle(document.body, 'overflow', 'hidden'); // Prevent background scrolling
-
-    // Thêm class cho body để có thể styling dựa trên trạng thái modal
-    this.renderer.addClass(document.body, 'modal-open');
-
-    // Cuộn trang lên trên cùng để đảm bảo modal hiển thị từ đầu
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // DON'T open modal immediately - wait for data to load first
+    // this.isModalOpen = true; // Removed this line
 
     this.loanService.getApplicationById(applicationId).subscribe({
       next: (response) => {
@@ -234,6 +227,18 @@ export class NotificationListComponent implements OnInit, OnDestroy {
             }
           }
 
+          // NOW open modal after data is ready
+          this.isModalOpen = true;
+
+          // Use renderer for DOM manipulations
+          this.renderer.setStyle(document.body, 'overflow', 'hidden'); // Prevent background scrolling
+
+          // Thêm class cho body để có thể styling dựa trên trạng thái modal
+          this.renderer.addClass(document.body, 'modal-open');
+
+          // Cuộn trang lên trên cùng để đảm bảo modal hiển thị từ đầu
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
           // Tìm tất cả thông báo tương ứng với đơn hàng này và đánh dấu đã đọc nếu chưa đọc
           const relatedNotifications = this.notifications.filter(n =>
             n.loanApplication && n.loanApplication.id === applicationId && !n.isRead
@@ -245,6 +250,8 @@ export class NotificationListComponent implements OnInit, OnDestroy {
               this.markNotificationAsReadViaAPI(notification);
             });
           }
+        } else {
+          this.applicationError = 'Không thể tải thông tin chi tiết đơn đăng ký.';
         }
         this.isLoadingApplication = false;
       },
@@ -254,7 +261,7 @@ export class NotificationListComponent implements OnInit, OnDestroy {
         this.isLoadingApplication = false;
       }
     });
-  }  // Đánh dấu thông báo đã đọc thông qua API PATCH
+  }// Đánh dấu thông báo đã đọc thông qua API PATCH
   markNotificationAsReadViaAPI(notification: UserNotification): void {
     if (notification.isRead) return;
 
@@ -278,6 +285,11 @@ export class NotificationListComponent implements OnInit, OnDestroy {
     });
   } closeModal(): void {
     this.isModalOpen = false;
+
+    // Reset loading states
+    this.isLoadingApplication = false;
+    this.applicationError = null;
+    this.selectedApplicationId = null;
 
     // Use renderer for DOM manipulations
     this.renderer.setStyle(document.body, 'overflow', 'auto'); // Re-enable scrolling
@@ -305,6 +317,15 @@ export class NotificationListComponent implements OnInit, OnDestroy {
 
     // Hiển thị thông báo thành công
     this.notificationService.success('Cập nhật thành công', 'Thông báo được đánh dấu đã đọc.');
+  }
+
+  // Retry loading application data
+  retryLoadApplication(applicationId?: number): void {
+    const idToUse = applicationId || this.selectedApplicationId;
+    if (idToUse) {
+      this.applicationError = null;
+      this.openApplicationModal(idToUse);
+    }
   }
 
   // Close modal when pressing Escape key

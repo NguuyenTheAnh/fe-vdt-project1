@@ -1,3 +1,8 @@
+/* Custom utility classes */
+.border-l-3 {
+    border-left-width: 3px;
+}
+
 /* Notification Item Styles */
 .notification-container {
     display: block !important;
@@ -436,8 +441,8 @@
 
 .modal-container {
     width: 100%;
-    max-width: 1200px;
-    max-height: 95vh;
+    max-width: 900px;
+    max-height: 85vh;
     overflow: hidden;
     background-color: white;
     border-radius: 1rem;
@@ -445,12 +450,23 @@
     transform: translateY(0) scale(1);
     transition: transform 0.3s ease-out;
     margin: 0 20px;
-    animation: slideIn 0.4s ease-out;
 }
 
 /* Additional Modal Content Styling for Better Scrolling */
 .modal-container .p-6 {
-    padding: 1.5rem !important;
+    padding: 1rem !important;
+}
+
+.modal-container .p-4 {
+    padding: 0.75rem !important;
+}
+
+.modal-container .p-3 {
+    padding: 0.5rem !important;
+}
+
+.modal-container .p-2 {
+    padding: 0.375rem !important;
 }
 
 /* Ensure content doesn't get cut off */
@@ -481,43 +497,43 @@
     }
 }
 
-/* Enhanced text sizes for new modal design */
+/* Enhanced text sizes for compact modal design */
 .modal-container h2 {
-    font-size: 1.875rem !important;
-    line-height: 2.25rem !important;
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
     font-weight: 700;
 }
 
 .modal-container h3 {
-    font-size: 1.5rem !important;
-    line-height: 2rem !important;
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
     font-weight: 600;
 }
 
 .modal-container h4 {
-    font-size: 1.25rem !important;
-    line-height: 1.75rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
     font-weight: 500;
 }
 
 .modal-container p {
-    font-size: 1.125rem !important;
-    line-height: 1.75rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
 }
 
 .modal-container span {
-    font-size: 1rem !important;
-    line-height: 1.5rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
 }
 
 .modal-container .text-sm {
-    font-size: 1.125rem !important;
-    line-height: 1.625rem !important;
+    font-size: 0.75rem !important;
+    line-height: 1rem !important;
 }
 
 .modal-container .text-base {
-    font-size: 1.25rem !important;
-    line-height: 1.75rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
 }
 
 .modal-container .text-lg {
@@ -677,29 +693,29 @@
     scrollbar-color: #E74C3C #f1f1f1;
 }
 
-/* Webkit browsers (Chrome, Safari, Edge) */
+/* Webkit browsers (Chrome, Safari, Edge) - Optimized for smaller modal */
 .modal-container.scrollbar-visible::-webkit-scrollbar {
-    width: 12px;
+    width: 8px;
     background-color: #f1f1f1;
-    border-radius: 10px;
+    border-radius: 6px;
 }
 
 .modal-container.scrollbar-visible::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 10px;
-    margin: 5px;
+    border-radius: 6px;
+    margin: 3px;
 }
 
 .modal-container.scrollbar-visible::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #E74C3C, #C0392B);
-    border-radius: 10px;
-    border: 2px solid #f1f1f1;
+    border-radius: 6px;
+    border: 1px solid #f1f1f1;
     transition: all 0.3s ease;
 }
 
 .modal-container.scrollbar-visible::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #C0392B, #A93226);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .modal-container.scrollbar-visible::-webkit-scrollbar-thumb:active {
@@ -708,13 +724,13 @@
 
 /* Modal container height and padding adjustments for better scrolling */
 .modal-container {
-    max-height: 90vh !important;
+    max-height: 85vh !important;
     display: flex;
     flex-direction: column;
 }
 
-/* Ensure proper spacing and scroll behavior */
-.modal-container .slideIn {
+/* Ensure proper spacing and scroll behavior - removed slideIn class to prevent animation conflicts */
+.modal-container .modal-content {
     flex: 1;
     overflow-y: auto;
     min-height: 0;
@@ -730,18 +746,6 @@
     from {
         opacity: 0;
         transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
     }
 
     to {
@@ -781,13 +785,6 @@
     animation: fadeIn 0.5s ease-in-out;
 }
 
-.slideIn {
-    animation: slideIn 0.3s ease-out;
-}
-
-.modal-animation {
-    animation: slideIn 0.3s ease-out;
-}
 
 .info-card {
     transition: all 0.3s ease;
@@ -939,9 +936,7 @@
     animation: fadeIn 0.3s ease-out;
 }
 
-.modal-container {
-    animation: slideIn 0.4s ease-out;
-}
+/* Removed duplicate modal-container rule - animation handled by Angular @modalAnimation */
 
 @keyframes fadeIn {
     from {
@@ -953,6 +948,8 @@
     }
 }
 
+/* Removed duplicate slideIn keyframes to prevent animation conflicts */
+/* 
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -964,6 +961,7 @@
         transform: translateY(0) scale(1);
     }
 }
+*/
 
 /* Notification Details Animation */
 .notification-details {
