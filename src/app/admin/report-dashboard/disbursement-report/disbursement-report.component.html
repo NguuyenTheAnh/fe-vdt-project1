@@ -1,0 +1,265 @@
+<!-- Disbursement Report Component -->
+<div class="disbursement-report-container">
+    <!-- Header Section -->
+    <div class="report-header">
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+            <div class="header-content">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="icon-wrapper bg-green-100 text-green-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-800">Báo cáo Giải ngân</h1>
+                </div>
+                <p class="text-gray-600 text-lg">Thống kê số tiền đã giải ngân theo thời gian</p>
+                <div class="flex items-center gap-2 mt-3">
+                    <div class="status-indicator" [class.active]="!isLoading"></div>
+                    <span class="text-sm text-gray-500">
+                        Cập nhật lần cuối: {{ getLastUpdateTime() }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex gap-3 flex-wrap">
+                <button (click)="toggleAutoRefresh()" [class.btn-primary]="autoRefresh"
+                    [class.btn-secondary]="!autoRefresh" class="action-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    {{ autoRefresh ? 'Tắt tự động' : 'Bật tự động' }}
+                </button>
+
+                <button (click)="refreshData()" [disabled]="isLoading" class="action-button btn-secondary">
+                    <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <div *ngIf="isLoading" class="loading-spinner-small"></div>
+                    Làm mới
+                </button>
+
+                <button (click)="exportData()" [disabled]="!disbursedData || disbursedData.length === 0"
+                    class="action-button btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Xuất báo cáo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Range Controls -->
+    <div class="date-range-section">
+        <div class="flex flex-col md:flex-row md:items-center gap-4">
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium text-gray-700">Khoảng thời gian:</label>
+                <select [(ngModel)]="selectedDateRange" (change)="onDateRangeChange()" class="form-select w-auto">
+                    <option *ngFor="let option of dateRangeOptions" [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Custom Date Range -->
+            <div *ngIf="showCustomDateRange" class="flex items-center gap-2">
+                <label class="text-sm text-gray-600">Từ:</label>
+                <input type="date" [(ngModel)]="customStartDate" (change)="onCustomDateRangeChange()"
+                    class="form-input w-auto">
+                <label class="text-sm text-gray-600">Đến:</label>
+                <input type="date" [(ngModel)]="customEndDate" (change)="onCustomDateRangeChange()"
+                    class="form-input w-auto">
+            </div>
+
+            <div class="text-sm text-gray-500">
+                <span *ngIf="!showCustomDateRange">{{ getDaysInRange() }} ngày</span>
+                <span *ngIf="disbursedData.length > 0">• {{ disbursedData.length }} ngày có dữ liệu</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-section">
+        <div class="flex items-center text-red-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+            </svg>
+            {{ error }}
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-section">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-gray-600">Đang tải dữ liệu giải ngân...</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div *ngIf="!isLoading && !error && disbursedData.length > 0" class="statistics-grid">
+        <!-- Total Disbursed -->
+        <div class="stat-card bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+            <div class="stat-header">
+                <div class="stat-icon bg-green-100 text-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ formatCurrency(disbursementStats.totalDisbursed) }}</h3>
+                    <p class="stat-label">Tổng số tiền giải ngân</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Transactions -->
+        <div class="stat-card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+            <div class="stat-header">
+                <div class="stat-icon bg-blue-100 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ disbursementStats.totalTransactions | number }}</h3>
+                    <p class="stat-label">Tổng số giao dịch</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Average Daily -->
+        <div class="stat-card bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+            <div class="stat-header">
+                <div class="stat-icon bg-purple-100 text-purple-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ formatCurrency(disbursementStats.averageDaily) }}</h3>
+                    <p class="stat-label">Trung bình mỗi ngày</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Peak Day -->
+        <div class="stat-card bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+            <div class="stat-header">
+                <div class="stat-icon bg-orange-100 text-orange-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">
+                        {{ disbursementStats.peakDay ? formatCurrency(disbursementStats.peakDay.totalDisbursedAmount) :
+                        'N/A' }}
+                    </h3>
+                    <p class="stat-label">
+                        Ngày cao nhất
+                        <span *ngIf="disbursementStats.peakDay" class="text-xs text-gray-500">
+                            ({{ formatDate(disbursementStats.peakDay.date) }})
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div *ngIf="!isLoading && !error && chartData" class="chart-section">
+        <div class="chart-header">
+            <h3 class="text-lg font-semibold text-gray-800">Biểu đồ giải ngân theo thời gian</h3>
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-color bg-green-500"></div>
+                    <span>Số tiền giải ngân</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bg-blue-500"></div>
+                    <span>Số giao dịch</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-container">
+            <!-- You can integrate Chart.js, ng2-charts, or any other charting library here -->
+            <!-- For now, we'll create a simple visual representation -->
+            <div class="simple-chart">
+                <div class="chart-grid">
+                    <div *ngFor="let item of disbursedData; let i = index" class="chart-bar-group">
+                        <div class="chart-bar"
+                            [style.height.%]="(item.totalDisbursedAmount / disbursementStats.peakDay?.totalDisbursedAmount!) * 100"
+                            [title]="formatDate(item.date) + ': ' + formatCurrency(item.totalDisbursedAmount)">
+                        </div>
+                        <div class="chart-label">{{ formatDate(item.date) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div *ngIf="!isLoading && !error && disbursedData.length > 0" class="data-table-section">
+        <div class="table-header">
+            <h3 class="text-lg font-semibold text-gray-800">Chi tiết dữ liệu</h3>
+            <span class="text-sm text-gray-500">{{ disbursedData.length }} bản ghi</span>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Số tiền giải ngân</th>
+                        <th>Số giao dịch</th>
+                        <th>Trung bình/giao dịch</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of disbursedData">
+                        <td>{{ formatDate(item.date) }}</td>
+                        <td class="font-medium">{{ formatCurrency(item.totalDisbursedAmount) }}</td>
+                        <td>{{ item.disbursedCount | number }}</td>
+                        <td>{{ formatCurrency(item.totalDisbursedAmount / item.disbursedCount) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !error && disbursedData.length === 0" class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <h3 class="text-xl font-medium text-gray-600 mb-2">Không có dữ liệu</h3>
+        <p class="text-gray-500">Không tìm thấy dữ liệu giải ngân trong khoảng thời gian đã chọn.</p>
+        <button (click)="refreshData()" class="mt-4 action-button btn-primary">
+            Thử lại
+        </button>
+    </div>
+</div>

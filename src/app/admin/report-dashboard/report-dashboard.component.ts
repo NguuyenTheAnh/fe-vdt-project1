@@ -5,6 +5,7 @@ import {
   ProductStatistic,
   ApprovalRatio,
   ApprovedAmountByTime,
+  DisbursedAmountByTime,
   DashboardSummary
 } from '../../services/report.service';
 
@@ -21,6 +22,7 @@ export class ReportDashboardComponent implements OnInit {
   isApprovalLoading = false;
   isTimeLoading = false;
   isDashboardLoading = false;
+  isDisbursementLoading = false;
 
   // Error states
   error: string | null = null;
@@ -29,6 +31,7 @@ export class ReportDashboardComponent implements OnInit {
   approvalError: string | null = null;
   timeError: string | null = null;
   dashboardError: string | null = null;
+  disbursementError: string | null = null;
 
   // Data
   statusStatistics: StatusStatistic[] = [];
@@ -36,6 +39,8 @@ export class ReportDashboardComponent implements OnInit {
   approvalRatio: ApprovalRatio | null = null;
   timeData: ApprovedAmountByTime[] = [];
   dashboardSummary: DashboardSummary | null = null;
+  disbursementData: DisbursedAmountByTime[] = [];
+  disbursementStats: any = null;
 
   // Chart data (processed for visualization)
   statusChartData: any = null;
@@ -47,6 +52,7 @@ export class ReportDashboardComponent implements OnInit {
   startDate: string = '';
   endDate: string = '';
   selectedPeriod: string = 'month';
+  disbursementPeriod: string = 'month';
 
   // Chart colors from theme
   chartColors: string[] = [];
@@ -77,7 +83,8 @@ export class ReportDashboardComponent implements OnInit {
       this.loadStatusStatistics(),
       this.loadProductStatistics(),
       this.loadApprovalRatio(),
-      this.loadTimeData()
+      this.loadTimeData(),
+      this.loadDisbursementData()
     ]).finally(() => {
       this.isLoading = false;
     });
@@ -115,10 +122,25 @@ export class ReportDashboardComponent implements OnInit {
     try {
       const response = await this.reportService.getApplicationsByStatus().toPromise();
       if (response && response.code === 1000) {
-        this.statusStatistics = response.data;
-        this.statusChartData = this.reportService.processChartData(response.data, 'bar');
+        // Assign colors if not provided by API
+        this.statusStatistics = response.data.map((stat, index) => ({
+          ...stat,
+          color: stat.color || this.chartColors[index % this.chartColors.length]
+        }));
+
+        console.log('Status Statistics loaded:', this.statusStatistics);
+        console.log('Max status count:', this.getMaxStatusCount());
+
+        // Debug each stat calculation
+        this.statusStatistics.forEach((stat, index) => {
+          const percentage = (stat.count / this.getMaxStatusCount()) * 100;
+          console.log(`Status ${index}: ${stat.statusText} - Count: ${stat.count} - Percentage: ${percentage}% - Color: ${stat.color}`);
+        });
+
+        this.statusChartData = this.reportService.processChartData(this.statusStatistics, 'bar');
+        console.log('Processed chart data:', this.statusChartData);
       } else {
-        this.statusError = 'Không thể tải thống kê theo trạng thái';
+        this.statusError = response?.message || 'Không thể tải thống kê theo trạng thái';
       }
     } catch (error) {
       console.error('Error loading status statistics:', error);
@@ -138,8 +160,12 @@ export class ReportDashboardComponent implements OnInit {
     try {
       const response = await this.reportService.getApplicationsByProduct().toPromise();
       if (response && response.code === 1000) {
-        this.productStatistics = response.data;
-        this.productChartData = this.reportService.processChartData(response.data, 'bar');
+        // Assign colors if not provided by API
+        this.productStatistics = response.data.map((stat, index) => ({
+          ...stat,
+          color: stat.color || this.chartColors[index % this.chartColors.length]
+        }));
+        this.productChartData = this.reportService.processChartData(this.productStatistics, 'bar');
       } else {
         this.productError = 'Không thể tải thống kê theo sản phẩm';
       }
@@ -203,6 +229,31 @@ export class ReportDashboardComponent implements OnInit {
   }
 
   /**
+   * Load disbursement data
+   */
+  async loadDisbursementData(): Promise<void> {
+    this.isDisbursementLoading = true;
+    this.disbursementError = null;
+
+    try {
+      const { startDate, endDate } = this.reportService.getDateRange(this.disbursementPeriod as any);
+      const response = await this.reportService.getDisbursedAmountByTime(startDate, endDate).toPromise();
+
+      if (response && response.code === 1000) {
+        this.disbursementData = response.data || [];
+        this.disbursementStats = this.reportService.calculateDisbursementStats(this.disbursementData);
+      } else {
+        this.disbursementError = response?.message || 'Không thể tải dữ liệu giải ngân';
+      }
+    } catch (error) {
+      console.error('Error loading disbursement data:', error);
+      this.disbursementError = 'Có lỗi xảy ra khi tải dữ liệu giải ngân';
+    } finally {
+      this.isDisbursementLoading = false;
+    }
+  }
+
+  /**
    * Handle period change
    */
   onPeriodChange(period: string): void {
@@ -211,6 +262,7 @@ export class ReportDashboardComponent implements OnInit {
     this.startDate = dateRange.startDate;
     this.endDate = dateRange.endDate;
     this.loadTimeData();
+    this.loadDisbursementData();
   }
 
   /**
@@ -220,6 +272,7 @@ export class ReportDashboardComponent implements OnInit {
     if (this.reportService.validateDateRange(this.startDate, this.endDate)) {
       this.selectedPeriod = 'custom';
       this.loadTimeData();
+      this.loadDisbursementData();
     } else {
       this.timeError = 'Ngày bắt đầu không thể sau ngày kết thúc';
     }
@@ -244,6 +297,9 @@ export class ReportDashboardComponent implements OnInit {
         break;
       case 'time':
         this.loadTimeData();
+        break;
+      case 'disbursement':
+        this.loadDisbursementData();
         break;
       case 'all':
         this.loadAllData();
@@ -345,6 +401,13 @@ export class ReportDashboardComponent implements OnInit {
     return Math.max(...this.timeData.map(s => s.totalApprovedAmount), 1);
   }
 
+  /**
+   * Get max disbursement amount for chart scaling
+   */
+  getMaxDisbursementAmount(): number {
+    return Math.max(...this.disbursementData.map(s => s.totalDisbursedAmount), 1);
+  }
+
   // Export functionality
   async exportReport(): Promise<void> {
     try {
@@ -354,6 +417,7 @@ export class ReportDashboardComponent implements OnInit {
         productStatistics: this.productStatistics,
         approvalRatio: this.approvalRatio,
         timeData: this.timeData,
+        disbursementData: this.disbursementData,
         exportDate: new Date().toISOString(),
         dateRange: {
           startDate: this.startDate,
@@ -378,5 +442,70 @@ export class ReportDashboardComponent implements OnInit {
       console.error('Export failed:', error);
       this.error = 'Không thể xuất báo cáo. Vui lòng thử lại.';
     }
+  }
+
+  // Disbursement-specific methods
+
+  /**
+   * Handle disbursement period change
+   */
+  onDisbursementPeriodChange(): void {
+    this.loadDisbursementData();
+  }
+
+  /**
+   * Refresh disbursement data
+   */
+  refreshDisbursementData(): void {
+    this.loadDisbursementData();
+  }
+
+  /**
+   * Get chart data for disbursement visualization
+   */
+  getChartData(): any[] {
+    if (!this.disbursementData || this.disbursementData.length === 0) {
+      return [];
+    }
+
+    const maxAmount = Math.max(...this.disbursementData.map(item => item.totalDisbursedAmount));
+
+    return this.disbursementData.map(item => ({
+      ...item,
+      percentage: maxAmount > 0 ? (item.totalDisbursedAmount / maxAmount) * 100 : 0
+    }));
+  }
+
+  /**
+   * Get recent disbursement data (last 3 entries)
+   */
+  getRecentData(): DisbursedAmountByTime[] {
+    if (!this.disbursementData || this.disbursementData.length === 0) {
+      return [];
+    }
+    return this.disbursementData.slice(-3).reverse();
+  }
+
+  /**
+   * Format date for display
+   */
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
+
+  /**
+   * Format date short for chart labels
+   */
+  formatDateShort(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit'
+    });
   }
 }
