@@ -448,6 +448,39 @@
     animation: slideIn 0.4s ease-out;
 }
 
+/* Additional Modal Content Styling for Better Scrolling */
+.modal-container .p-6 {
+    padding: 1.5rem !important;
+}
+
+/* Ensure content doesn't get cut off */
+.modal-container .grid {
+    min-height: fit-content;
+}
+
+/* Smooth scrolling behavior */
+.modal-container {
+    scroll-behavior: smooth;
+}
+
+/* Add subtle border to indicate scrollable area */
+.modal-container.scrollbar-visible {
+    border: 1px solid #e5e7eb;
+}
+
+/* Responsive modal height for smaller screens */
+@media (max-height: 600px) {
+    .modal-container {
+        max-height: 85vh !important;
+    }
+}
+
+@media (max-height: 500px) {
+    .modal-container {
+        max-height: 80vh !important;
+    }
+}
+
 /* Enhanced text sizes for new modal design */
 .modal-container h2 {
     font-size: 1.875rem !important;
@@ -637,164 +670,59 @@
     background: #C0392B;
 }
 
-/* Enhanced text sizes for modal content */
-.modal-content h2 {
-    font-size: 1.5rem !important;
-    line-height: 2rem !important;
-    font-weight: 600;
-}
-
-.modal-content h3 {
-    font-size: 1.25rem !important;
-    line-height: 1.75rem !important;
-    font-weight: 600;
-}
-
-.modal-content h4 {
-    font-size: 1.125rem !important;
-    line-height: 1.625rem !important;
-    font-weight: 500;
-}
-
-.modal-content p {
-    font-size: 1rem !important;
-    line-height: 1.5rem !important;
-}
-
-.modal-content span {
-    font-size: 0.95rem !important;
-    line-height: 1.4rem !important;
-}
-
-.modal-content .text-sm {
-    font-size: 1rem !important;
-    line-height: 1.5rem !important;
-}
-
-.modal-content .text-base {
-    font-size: 1.125rem !important;
-    line-height: 1.625rem !important;
-}
-
-.modal-content .text-lg {
-    font-size: 1.25rem !important;
-    line-height: 1.75rem !important;
-}
-
-.modal-content .text-xl {
-    font-size: 1.5rem !important;
-    line-height: 2rem !important;
-}
-
-/* Enhanced icon sizes for modal */
-.modal-content svg {
-    width: 1.5rem !important;
-    height: 1.5rem !important;
-}
-
-.modal-content .icon-sm {
-    width: 1.25rem !important;
-    height: 1.25rem !important;
-}
-
-.modal-content .icon-lg {
-    width: 2rem !important;
-    height: 2rem !important;
-}
-
-/* Enhanced padding and spacing for modal */
-.modal-content .p-1 {
-    padding: 0.5rem !important;
-}
-
-.modal-content .p-2 {
-    padding: 1rem !important;
-}
-
-.modal-content .p-3 {
-    padding: 1.25rem !important;
-}
-
-.modal-content .px-2 {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-}
-
-.modal-content .py-2 {
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
-}
-
-.modal-content .px-3 {
-    padding-left: 1.25rem !important;
-    padding-right: 1.25rem !important;
-}
-
-.modal-content .py-3 {
-    padding-top: 1.25rem !important;
-    padding-bottom: 1.25rem !important;
-}
-
-/* Enhanced info card styles for modal */
-.modal-content .info-card {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 1rem !important;
-    border-radius: 0.5rem;
-    margin: 0.5rem 0;
-}
-
-.modal-content .info-card span {
-    font-size: 1rem !important;
-    font-weight: 500;
-}
-
-.modal-content .info-card p {
-    font-size: 1.125rem !important;
-    font-weight: 600;
-    margin-top: 0.25rem;
-}
-
-.modal-header {
-    background-color: #fff;
-    border-bottom: 1px solid #f0f0f0;
-    padding: 1.5rem;
-}
-
-.modal-body {
-    max-height: 60vh;
-    overflow-y: auto;
-    padding: 1.5rem;
-    scrollbar-width: thin;
+/* Enhanced Modal Scrollbar Styles */
+.modal-container.scrollbar-visible {
+    /* Firefox */
+    scrollbar-width: auto;
     scrollbar-color: #E74C3C #f1f1f1;
 }
 
-.modal-body::-webkit-scrollbar {
-    width: 6px;
+/* Webkit browsers (Chrome, Safari, Edge) */
+.modal-container.scrollbar-visible::-webkit-scrollbar {
+    width: 12px;
+    background-color: #f1f1f1;
+    border-radius: 10px;
 }
 
-.modal-body::-webkit-scrollbar-track {
+.modal-container.scrollbar-visible::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 3px;
+    border-radius: 10px;
+    margin: 5px;
 }
 
-.modal-body::-webkit-scrollbar-thumb {
-    background: #E74C3C;
-    border-radius: 3px;
+.modal-container.scrollbar-visible::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #E74C3C, #C0392B);
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+    transition: all 0.3s ease;
 }
 
-.modal-footer {
-    background-color: #f9fafb;
-    border-top: 1px solid #f0f0f0;
-    padding: 1.5rem;
+.modal-container.scrollbar-visible::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #C0392B, #A93226);
+    transform: scale(1.1);
 }
 
-/* Required Documents Section */
-.list-disc {
-    list-style-type: disc;
+.modal-container.scrollbar-visible::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #A93226, #922B21);
 }
 
-.list-inside {
-    list-style-position: inside;
+/* Modal container height and padding adjustments for better scrolling */
+.modal-container {
+    max-height: 90vh !important;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure proper spacing and scroll behavior */
+.modal-container .slideIn {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* Enhanced scrollbar visibility on hover */
+.modal-container:hover::-webkit-scrollbar-thumb {
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
 
 /* Animation keyframes */
