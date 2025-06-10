@@ -1,0 +1,40 @@
+/* Modal container styles for fixing transform issues */
+.modal-portal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 9999 !important;
+    /* Create a new stacking context to escape parent transforms */
+    transform: translateZ(0) !important;
+    will-change: transform !important;
+}
+
+.modal-portal-content {
+    transform: translateZ(0) !important;
+    will-change: transform !important;
+    max-height: 90vh;
+    overflow-y: auto;
+    max-width: calc(100vw - 2rem);
+}
+
+/* Ensure this component is not affected by parent transforms */
+app-modal-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    pointer-events: none !important;
+    z-index: 9999 !important;
+}
+
+app-modal-container .modal-portal-overlay {
+    pointer-events: all !important;
+}

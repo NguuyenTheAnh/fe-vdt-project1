@@ -61,6 +61,7 @@ import { AdminSidebarComponent } from './layout/admin-sidebar/admin-sidebar.comp
 import { AdminHeaderComponent } from './layout/admin-header/admin-header.component';
 import { RoleDashboardComponent } from './admin/role-dashboard/role-dashboard.component';
 import { AccessDeniedComponent } from './admin/access-denied/access-denied.component';
+import { ModalContainerComponent } from './layout/modal-container/modal-container.component';
 registerLocaleData(vi);
 
 @NgModule({
@@ -81,9 +82,9 @@ registerLocaleData(vi);
     DisbursementReportComponent,
     SystemConfigDashboardComponent,
     AdminSidebarComponent,
-    AdminHeaderComponent,
-    RoleDashboardComponent,
-    AccessDeniedComponent
+    AdminHeaderComponent, RoleDashboardComponent,
+    AccessDeniedComponent,
+    ModalContainerComponent
   ],
   imports: [
     BrowserModule,

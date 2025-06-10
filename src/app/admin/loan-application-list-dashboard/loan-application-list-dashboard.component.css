@@ -1,14 +1,24 @@
 /* Custom styles for loan application list dashboard */
 
-/* Scale down the entire page content to 90% */
+/* Remove transform from host to fix modal positioning issues */
 :host {
     display: block;
+    /* transform: scale(0.93); - Removed to fix modal positioning */
+    /* transform-origin: top left; - Removed */
+    width: 100%;
+    /* Changed from 111.111% */
+    height: 100%;
+    /* Changed from 111.111% */
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Apply scale to content container instead of host */
+.content-container {
     transform: scale(0.93);
     transform-origin: top left;
     width: 111.111%;
     height: 111.111%;
-    margin: 0 !important;
-    padding: 0 !important;
 }
 
 /* Override parent container padding */
@@ -533,4 +543,35 @@ button:active {
     .min-h-screen {
         padding: 0.5rem !important;
     }
+}
+
+/* Modal-specific fixes to ensure proper positioning */
+app-modal-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    pointer-events: none !important;
+    z-index: 9999 !important;
+    /* Create new stacking context to escape transform */
+    transform: translateZ(0) !important;
+}
+
+app-modal-container .modal-portal-overlay {
+    pointer-events: all !important;
+}
+
+/* Ensure modal content is properly styled */
+.modal-content {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    max-width: calc(100vw - 2rem);
+    margin: 1rem auto;
+}
+
+/* Override any transform effects on modal content */
+.modal-content * {
+    transform: none !important;
 }
