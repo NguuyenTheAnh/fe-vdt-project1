@@ -25,15 +25,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       /* Ensure modal is rendered in a new stacking context */
       transform: translateZ(0) !important;
       will-change: transform !important;
-    }
-
-    .modal-portal-content {
+    }    .modal-portal-content {
       transform: translateZ(0) !important;
       will-change: transform !important;
-      max-height: 90vh;
-      overflow-y: auto;
       max-width: calc(100vw - 2rem);
-    }
+      /* Remove height constraints and overflow - let inner content handle it */
+      overflow: visible;    }
 
     /* Ensure this component is not affected by parent transforms */
     :host {

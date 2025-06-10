@@ -19,9 +19,12 @@
 .modal-portal-content {
     transform: translateZ(0) !important;
     will-change: transform !important;
-    max-height: 90vh;
-    overflow-y: auto;
     max-width: calc(100vw - 2rem);
+    /* Remove all height constraints and overflow control */
+    overflow: visible;
+    /* Let the inner modal content handle its own sizing */
+    width: auto;
+    height: auto;
 }
 
 /* Ensure this component is not affected by parent transforms */

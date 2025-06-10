@@ -575,3 +575,37 @@ app-modal-container .modal-portal-overlay {
 .modal-content * {
     transform: none !important;
 }
+
+/* Modal layout improvements */
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    min-height: 50vh;
+}
+
+.modal-content .flex-1 {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #E74C3C #f8fafc;
+}
+
+.modal-content .flex-1::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content .flex-1::-webkit-scrollbar-track {
+    background: #f8fafc;
+    border-radius: 3px;
+}
+
+.modal-content .flex-1::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.modal-content .flex-1::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #C0392B 0%, #A93226 100%);
+    box-shadow: 0 1px 3px rgba(231, 76, 60, 0.3);
+}
