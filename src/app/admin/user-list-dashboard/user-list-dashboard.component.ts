@@ -3,11 +3,23 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { UserService, User, UserListResponse, GetUsersParams, AdminUserUpdateRequest } from '../../services/user.service';
 import { RoleService, Role } from '../../services/role.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-user-list-dashboard',
   templateUrl: './user-list-dashboard.component.html',
-  styleUrls: ['./user-list-dashboard.component.css']
+  styleUrls: ['./user-list-dashboard.component.css'],
+  animations: [
+    trigger('modalAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.95)' }),
+        animate('200ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))
+      ]),
+      transition(':leave', [
+        animate('150ms ease-in', style({ opacity: 0, transform: 'scale(0.95)' }))
+      ])
+    ])
+  ]
 })
 export class UserListDashboardComponent implements OnInit, OnDestroy {
   // Data from API

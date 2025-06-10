@@ -17,6 +17,38 @@
     display: none !important;
 }
 
+/* Enhanced Modal Animation */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Enhanced slideDown animation for collapsible sections */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 300px;
+    }
+}
+
+.animate-slideDown {
+    animation: slideDown 0.3s ease-out;
+}
+
 /* Status Toggle Modal Animation */
 .status-toggle-modal {
     animation: modalFadeIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
