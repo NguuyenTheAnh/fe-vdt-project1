@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { UserService, User, UserListResponse, GetUsersParams } from '../../services/user.service';
+import { UserService, User, UserListResponse, GetUsersParams, AdminUserUpdateRequest } from '../../services/user.service';
 import { RoleService, Role } from '../../services/role.service';
 
 @Component({
@@ -51,6 +51,18 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
   selectedUserForDetail: User | null = null;
   isLoadingUserDetail = false;
   userDetailError: string | null = null;
+  // Edit User Modal
+  isEditUserModalVisible = false;
+  selectedUserForEdit: User | null = null;
+  editUserForm: AdminUserUpdateRequest = {
+    fullName: '',
+    phoneNumber: '',
+    address: '',
+    accountStatus: 'ACTIVE',
+    roleName: ''
+  };
+  isUpdatingUser = false;
+  showAdvancedSettings = false;
 
   // Status labels
   statusLabels = {
@@ -192,7 +204,6 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
     // TODO: Implement view details functionality
     console.log('View user details:', user);
   }
-
   editUser(user: User): void {
     // Security check: prevent editing admin user
     if (user.id === 1) {
@@ -200,9 +211,7 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.notification.info('Chỉnh sửa người dùng', `Chỉnh sửa người dùng: ${user.fullName}`);
-    // TODO: Implement edit user functionality
-    console.log('Edit user:', user);
+    this.showEditUserModal(user);
   }
   toggleUserStatus(user: User): void {
     // Security check: prevent toggling admin user status
@@ -299,6 +308,87 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
   handleAddUserModalCancel(): void {
     this.isAddUserModalVisible = false;
     this.resetAddUserForm();
+  }  // Edit User Modal Methods
+  toggleAdvancedSettings(): void {
+    this.showAdvancedSettings = !this.showAdvancedSettings;
+  }
+
+  validateEditUserForm(): boolean {
+    if (!this.editUserForm.fullName?.trim()) {
+      this.notification.error('Lỗi xác thực', 'Vui lòng nhập họ và tên');
+      return false;
+    }
+
+    if (!this.editUserForm.phoneNumber?.trim()) {
+      this.notification.error('Lỗi xác thực', 'Vui lòng nhập số điện thoại');
+      return false;
+    }
+
+    if (!this.editUserForm.address?.trim()) {
+      this.notification.error('Lỗi xác thực', 'Vui lòng nhập địa chỉ');
+      return false;
+    }
+
+    if (!this.editUserForm.roleName?.trim()) {
+      this.notification.error('Lỗi xác thực', 'Vui lòng chọn vai trò');
+      return false;
+    }
+
+    if (!this.editUserForm.accountStatus) {
+      this.notification.error('Lỗi xác thực', 'Vui lòng chọn trạng thái tài khoản');
+      return false;
+    }
+
+    // Optional fields validation
+    if (this.editUserForm.email && this.editUserForm.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(this.editUserForm.email)) {
+        this.notification.error('Lỗi xác thực', 'Email không đúng định dạng');
+        return false;
+      }
+    }
+
+    if (this.editUserForm.password && this.editUserForm.password.trim() && this.editUserForm.password.length < 6) {
+      this.notification.error('Lỗi xác thực', 'Mật khẩu phải có ít nhất 6 ký tự');
+      return false;
+    }
+
+    return true;
+  }
+
+  resetEditUserForm(): void {
+    this.editUserForm = {
+      fullName: '',
+      phoneNumber: '',
+      address: '',
+      accountStatus: 'ACTIVE',
+      roleName: ''
+    };
+    this.showAdvancedSettings = false;
+  }
+
+  showEditUserModal(user: User): void {
+    this.isEditUserModalVisible = true;
+    this.selectedUserForEdit = user;
+    this.editUserForm = {
+      fullName: user.fullName,
+      phoneNumber: user.phoneNumber || '',
+      address: user.address || '',
+      accountStatus: user.accountStatus,
+      roleName: user.role.name
+    };
+    this.loadRoles(); // Load available roles for the dropdown
+  }
+
+  handleEditUserModalOk(): void {
+    if (this.validateEditUserForm()) {
+      this.updateUser();
+    }
+  }
+  handleEditUserModalCancel(): void {
+    this.isEditUserModalVisible = false;
+    this.selectedUserForEdit = null;
+    this.resetEditUserForm();
   }
 
   loadRoles(): void {
@@ -365,9 +455,7 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
     if (this.addUserForm.password.length < 6) {
       this.notification.error('Mật khẩu không hợp lệ', 'Mật khẩu phải có ít nhất 6 ký tự');
       return false;
-    }
-
-    return true;
+    } return true;
   }
 
   createUser(): void {
@@ -389,6 +477,39 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
         this.isCreatingUser = false;
         console.error('Error creating user:', error);
         this.notification.error('Lỗi hệ thống', 'Đã xảy ra lỗi khi tạo người dùng');
+      }
+    });
+  }
+  updateUser(): void {
+    if (!this.selectedUserForEdit) return;
+
+    this.isUpdatingUser = true;
+
+    this.userService.adminUpdateUser(this.selectedUserForEdit.id, this.editUserForm).subscribe({
+      next: (user: User | null) => {
+        this.isUpdatingUser = false;
+        if (user) {
+          this.notification.success('Cập nhật người dùng thành công', 'Thông tin người dùng đã được cập nhật');
+          this.isEditUserModalVisible = false;
+          this.loadUsers(); // Reload the user list
+        } else {
+          this.notification.error('Cập nhật người dùng thất bại', 'Không thể cập nhật thông tin người dùng');
+        }
+      },
+      error: (error: any) => {
+        this.isUpdatingUser = false;
+        console.error('Error updating user:', error);
+
+        // Handle specific error messages
+        if (error.status === 400) {
+          this.notification.error('Lỗi', 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại thông tin.');
+        } else if (error.status === 403) {
+          this.notification.error('Lỗi', 'Bạn không có quyền cập nhật thông tin người dùng này.');
+        } else if (error.status === 404) {
+          this.notification.error('Lỗi', 'Không tìm thấy người dùng cần cập nhật.');
+        } else {
+          this.notification.error('Lỗi hệ thống', 'Đã xảy ra lỗi khi cập nhật người dùng');
+        }
       }
     });
   }
@@ -526,7 +647,6 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
     // Re-enable body scroll when modal closes
     document.body.classList.remove('modal-open');
   }
-
   formatDate(dateString: string | null): string {
     if (!dateString) return 'Chưa cập nhật';
 
@@ -541,6 +661,14 @@ export class UserListDashboardComponent implements OnInit, OnDestroy {
       });
     } catch (error) {
       return 'Ngày không hợp lệ';
+    }
+  }
+
+  // Edit User Modal Methods  
+  showEditUserModalFromDetail(): void {
+    if (this.selectedUserForDetail) {
+      this.closeUserDetailModal();
+      this.showEditUserModal(this.selectedUserForDetail);
     }
   }
 }

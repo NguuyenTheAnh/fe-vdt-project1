@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DisbursementService, DisbursementResponse, PagedDisbursementResponse, DisbursementSummaryResponse, CreateDisbursementRequest, GetDisbursementsParams } from '../../services/disbursement.service';
 import { ApplicationService, LoanApplicationResponse, LoanApplicationStatus } from '../../services/application.service';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-disbursement-dashboard',
@@ -40,9 +41,11 @@ export class DisbursementDashboardComponent implements OnInit {
   // Modal properties
   isCreateModalOpen = false;
   isViewModalOpen = false;
+  isDeleteModalOpen = false;
   selectedDisbursement: DisbursementResponse | null = null;
   selectedApplication: LoanApplicationResponse | null = null;
   disbursementSummary: DisbursementSummaryResponse | null = null;
+  selectedTransactionId: number | null = null;
 
   // Create disbursement form
   createForm: CreateDisbursementRequest = {
@@ -59,7 +62,8 @@ export class DisbursementDashboardComponent implements OnInit {
 
   constructor(
     private disbursementService: DisbursementService,
-    private applicationService: ApplicationService
+    private applicationService: ApplicationService,
+    private modal: NzModalService
   ) { }
 
   ngOnInit(): void {
@@ -262,20 +266,34 @@ export class DisbursementDashboardComponent implements OnInit {
 
   // Delete disbursement
   deleteDisbursement(transactionId: number): void {
-    if (confirm('Bạn có chắc chắn muốn xóa giao dịch này?')) {
-      this.disbursementService.deleteDisbursement(transactionId).subscribe({
+    this.selectedTransactionId = transactionId;
+    this.isDeleteModalOpen = true;
+  }
+
+  // Confirm delete disbursement
+  confirmDeleteDisbursement(): void {
+    if (this.selectedTransactionId) {
+      this.disbursementService.deleteDisbursement(this.selectedTransactionId).subscribe({
         next: (success) => {
           if (success) {
             this.loadDisbursements();
             this.loadApprovedApplications();
+            this.closeDeleteModal();
           }
         },
         error: (error) => {
           this.error = 'Không thể xóa giao dịch. Vui lòng thử lại.';
           console.error('Error deleting disbursement:', error);
+          this.closeDeleteModal();
         }
       });
     }
+  }
+
+  // Close delete modal
+  closeDeleteModal(): void {
+    this.isDeleteModalOpen = false;
+    this.selectedTransactionId = null;
   }
 
   // Helper methods

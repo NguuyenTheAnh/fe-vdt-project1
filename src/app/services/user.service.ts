@@ -20,6 +20,17 @@ export interface User {
     };
 }
 
+// Interface for admin user update request (PATCH /users/{id})
+export interface AdminUserUpdateRequest {
+    email?: string;
+    password?: string;
+    fullName?: string;
+    phoneNumber?: string;
+    address?: string;
+    accountStatus?: 'ACTIVE' | 'INACTIVE';
+    roleName?: string;
+}
+
 export interface UserListResponse {
     content: User[];
     pageable: {
@@ -389,6 +400,33 @@ export class UserService {
             catchError(error => {
                 console.error('Error updating user status:', error);
                 return of(false);
+            })
+        );
+    }
+
+    /**
+     * Cập nhật thông tin người dùng bởi quản trị viên (PATCH /users/{id})
+     * Yêu cầu quyền: PATCH_USERS_UPDATE_BY_ID hoặc ADMIN role
+     * @param userId - ID của người dùng cần cập nhật
+     * @param updateData - Dữ liệu cần cập nhật
+     * @returns Observable<User | null> - Thông tin người dùng sau khi cập nhật hoặc null nếu thất bại
+     */
+    adminUpdateUser(userId: number, updateData: AdminUserUpdateRequest): Observable<User | null> {
+        console.log(`Admin updating user ${userId} with data:`, updateData);
+
+        return this.apiService.patch<User>(`/users/${userId}`, updateData).pipe(
+            map(response => {
+                if (response && response.code === 1000 && response.data) {
+                    console.log('User updated successfully by admin:', response.data);
+                    return response.data;
+                } else {
+                    console.warn('Invalid response from admin update user API:', response);
+                    return null;
+                }
+            }),
+            catchError(error => {
+                console.error('Error updating user by admin:', error);
+                return of(null);
             })
         );
     }

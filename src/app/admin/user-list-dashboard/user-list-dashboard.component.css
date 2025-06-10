@@ -271,3 +271,205 @@ select:focus {
     transform: scale(1.1);
     color: #E74C3C !important;
 }
+
+/* Edit User Modal Styles */
+::ng-deep .edit-user-modal .ant-modal-content {
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+::ng-deep .edit-user-modal .ant-modal-header {
+    background: linear-gradient(135deg, #E74C3C, #C0392B);
+    border-bottom: none !important;
+    padding: 20px 24px !important;
+}
+
+::ng-deep .edit-user-modal .ant-modal-title {
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 18px !important;
+}
+
+::ng-deep .edit-user-modal .ant-modal-close {
+    color: white !important;
+    top: 20px !important;
+    right: 20px !important;
+}
+
+::ng-deep .edit-user-modal .ant-modal-close:hover {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+::ng-deep .edit-user-modal .ant-modal-body {
+    padding: 24px !important;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+::ng-deep .edit-user-modal .ant-modal-footer {
+    border-top: 1px solid #e5e7eb !important;
+    padding: 16px 24px !important;
+    background: #f9fafb !important;
+}
+
+::ng-deep .edit-user-modal .ant-btn-primary {
+    background: #E74C3C !important;
+    border-color: #E74C3C !important;
+    font-weight: 500 !important;
+}
+
+::ng-deep .edit-user-modal .ant-btn-primary:hover {
+    background: #C0392B !important;
+    border-color: #C0392B !important;
+}
+
+/* Edit user form styling */
+.edit-user-content {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.edit-user-content .ant-input {
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    padding: 10px 12px;
+    transition: all 0.2s ease;
+}
+
+.edit-user-content .ant-input:focus {
+    border-color: #E74C3C;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.edit-user-content .ant-select {
+    border-radius: 8px;
+}
+
+.edit-user-content .ant-select .ant-select-selector {
+    border: 2px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    padding: 4px 8px !important;
+    transition: all 0.2s ease;
+}
+
+.edit-user-content .ant-select.ant-select-focused .ant-select-selector {
+    border-color: #E74C3C !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
+}
+
+/* User info header in edit modal */
+.edit-user-content .bg-gradient-to-r {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.3s ease;
+}
+
+.edit-user-content .bg-gradient-to-r:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(99, 102, 241, 0.15));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+/* Form section animations */
+.edit-user-content form>div {
+    animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Advanced settings section */
+.edit-user-content .border-t {
+    animation: fadeIn 0.4s ease-out 0.2s both;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Advanced settings slideDown animation */
+.animate-slideDown {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 200px;
+    }
+}
+
+/* Responsive adjustments for edit modal */
+@media (max-width: 768px) {
+    ::ng-deep .edit-user-modal .ant-modal {
+        margin: 8px !important;
+        max-width: calc(100vw - 16px) !important;
+    }
+
+    ::ng-deep .edit-user-modal .ant-modal-body {
+        padding: 16px !important;
+        max-height: 60vh;
+    }
+
+    .edit-user-content .grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Edit Modal Buttons - Remove rounded corners and set gray border */
+::ng-deep .edit-user-modal .ant-modal-footer .ant-btn {
+    border-radius: 0 !important;
+    border: 1px solid #f3f4f6 !important;
+    /* border-gray-100 */
+}
+
+::ng-deep .edit-user-modal .ant-modal-footer .ant-btn-default {
+    border-color: #f3f4f6 !important;
+    background-color: #ffffff !important;
+    color: #374151 !important;
+}
+
+::ng-deep .edit-user-modal .ant-modal-footer .ant-btn-primary {
+    border-color: #f3f4f6 !important;
+    background-color: #E74C3C !important;
+    color: #ffffff !important;
+}
+
+::ng-deep .edit-user-modal .ant-modal-footer .ant-btn:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+::ng-deep .edit-user-modal .ant-modal-footer .ant-btn-default:hover {
+    border-color: #f3f4f6 !important;
+    background-color: #f9fafb !important;
+    color: #374151 !important;
+}
+
+::ng-deep .edit-user-modal .ant-modal-footer .ant-btn-primary:hover {
+    border-color: #f3f4f6 !important;
+    background-color: #C0392B !important;
+    color: #ffffff !important;
+}
