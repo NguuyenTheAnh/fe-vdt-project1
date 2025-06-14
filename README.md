@@ -1,10 +1,9 @@
-# Hệ Thống Quản Lý Khoản Vay - Frontend
+# Hệ thống quản lý cho vay (Loan Management System - VDT 2025)
 
-Một hệ thống quản lý khoản vay toàn diện được xây dựng bằng Angular, được thiết kế để tối ưu hóa quy trình xử lý khoản vay, quản lý người vay và các hoạt động quản trị cho các tổ chức tài chính.
+## Giới thiệu
 
-## Tổng quan
+Hệ thống quản lý cho vay là một ứng dụng web RESTful API được phát triển bằng Spring Boot, cung cấp giải pháp toàn diện cho việc quản lý quy trình cho vay từ đăng ký, xét duyệt, đến giải ngân và theo dõi. Hệ thống hỗ trợ quản lý người dùng, sản phẩm cho vay, hồ sơ vay, tài liệu, thông báo và báo cáo thống kê.
 
-Ứng dụng frontend này cung cấp giao diện hoàn chỉnh cho các hoạt động quản lý khoản vay bao gồm cổng thông tin người vay, dashboard quản trị, quản lý sản phẩm vay, theo dõi giải ngân và khả năng báo cáo toàn diện.
 
 ## Tính năng
 
@@ -196,11 +195,3 @@ Frontend tích hợp với RESTful backend API cung cấp:
 - Quản lý tài liệu
 - Dịch vụ thông báo
 - Báo cáo và phân tích
-
-## Tính Năng Bảo Mật
-
-- Routes được bảo vệ với authentication guards
-- Hiển thị component theo vai trò
-- Xử lý tải file bảo mật
-- Bảo vệ XSS và validation input
-- Ép buộc HTTPS trong production
