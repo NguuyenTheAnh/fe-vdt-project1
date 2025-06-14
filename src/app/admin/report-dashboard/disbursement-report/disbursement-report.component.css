@@ -200,7 +200,7 @@
 
 .chart-grid {
     display: flex;
-    align-items: end;
+    align-items: flex-end;
     height: 300px;
     gap: 0.5rem;
     padding: 1rem 0;

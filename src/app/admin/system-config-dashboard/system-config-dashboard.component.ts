@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import {
   SystemConfigService,
   SystemConfiguration,
@@ -72,7 +73,8 @@ export class SystemConfigDashboardComponent implements OnInit {
 
   constructor(
     private configService: SystemConfigService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private modal: NzModalService
   ) { }
 
   async ngOnInit() {
@@ -322,9 +324,17 @@ export class SystemConfigDashboardComponent implements OnInit {
    * Remove document type
    */
   removeDocument(key: string) {
-    if (confirm(`Bạn có chắc muốn xóa loại tài liệu "${this.parsedDocuments[key]}"?`)) {
-      delete this.parsedDocuments[key];
-    }
+    this.modal.confirm({
+      nzTitle: 'Xác nhận xóa',
+      nzContent: `Bạn có chắc muốn xóa loại tài liệu "${this.parsedDocuments[key]}"?`,
+      nzOkText: 'Xóa',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzCancelText: 'Hủy',
+      nzOnOk: () => {
+        delete this.parsedDocuments[key];
+      }
+    });
   }
 
   /**
